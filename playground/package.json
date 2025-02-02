@@ -1,0 +1,21 @@
+{
+  "private": true,
+  "name": "bouzu-ui-playground",
+  "type": "module",
+  "scripts": {
+    "generate-custom-icons": "node ./src/scripts/generate-custom-icon-list.js",
+    "dev": "npm run generate-custom-icons && NODE_ENV=development nuxi dev --host --https --ssl-cert cert/localhost.pem --ssl-key cert/localhost-key.pem --dotenv env/.env.local",
+    "build": "nuxi build --dotenv env/.env",
+    "generate": "nuxi generate",
+    "start": "nuxi start"
+  },
+  "dependencies": {
+    "@kgierke/nuxt-basic-auth": "^1.7.0",
+    "nuxt": "^3.13.2"
+  },
+  "devDependencies": {
+    "sass": "^1.79.2",
+    "sass-loader": "^16.0.1"
+  },
+  "version": "1.0.0"
+}

@@ -1,0 +1,85 @@
+@charset "UTF-8";
+@import "normalize.css";
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+html {
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	// font-size: f.get-vw(10);
+	scroll-behavior: smooth; // スムーズスクロール
+	background-color: var(--color-background);
+	// オーバースクロールで更新を停止する
+	// overscroll-behavior-y: none; // スクロール限界を超えた時のブラウザ挙動を制御、none はブラウザまで伝えない。
+
+	// Adobe Fonts 読み込み時のフラッシュを防ぐ
+	// 参考 https://michimani.net/post/development-remove-web-fonts-fout/
+	// visibility: hidden;
+	// &.wf-active,
+	// &.loading-delay {
+	// 	visibility: visible;
+	// }
+}
+body {
+	position: relative;
+	z-index: 0;
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	background-color: var(--color-background);
+	overflow-y: auto;
+
+	// font-size: 1.4rem;
+	color: var(--color-text);
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	-webkit-text-size-adjust: 100%;
+	font-feature-settings: "kern" 1;
+
+	::selection {
+		background: var(--color-primary);
+		color: var(--color-background);
+	}
+	img::selection {
+		background: transparent;
+	}
+
+	&._scrollLock {
+		overflow: hidden;
+	}
+}
+img {
+	max-width: 100%;
+}
+a {
+	transition-duration: 0.25s;
+	transition-timing-function: ease;
+	color: var(--color-link);
+	text-decoration: none;
+}
+figure {
+	margin: 0;
+}
+ul {
+	padding-left: 1.6em;
+	margin-top: 0;
+	margin-bottom: 0;
+
+	li + li {
+		margin-top: 0.6em;
+	}
+}
+
+// recaptchaバッジの非表示
+.grecaptcha-badge {
+	visibility: hidden;
+}
+
+/* text decoration */
+.pc a[href^="tel:"] {
+	cursor: default;
+	pointer-events: none;
+}

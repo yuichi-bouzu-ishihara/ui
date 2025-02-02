@@ -1,0 +1,88 @@
+/**
+ * Typography に関する関数をまとめたファイル
+ */
+import { useString } from '../string'
+import { useUI } from '../ui'
+import type { UIConfig } from '../../types'
+import type { TypographyConfig, FontFamily, FontWeight, TypeFace } from '../../types/typography'
+import { useAppConfig } from '#imports'
+
+const DATA_VALUE = 'typography'
+
+export const useTypography = () => {
+	/**
+	 * 初期化
+	 */
+	const init = () => {
+		// window object がない場合は何もしない
+		if (typeof window === 'undefined' || !window.getComputedStyle) {
+			throw new Error('Typography の初期化に失敗しました。windowオブジェクトが存在しないか、window.getComputedStyleが利用できません。')
+		}
+
+		const config = useAppConfig().ui as UIConfig ?? {}
+		// 設定がない場合は何もしない
+		if (!config.typography) return null
+
+		const typography: TypographyConfig = config.typography
+		const styleElement = document.createElement('style')
+		styleElement.setAttribute('type', 'text/css')
+		styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
+
+		let cssVariables = ':root {'
+		for (const [key, value] of Object.entries(typography)) {
+			// valueの型を明示的に指定
+			const typedValue = value as { family?: FontFamily, weight?: FontWeight } | TypeFace
+
+			if (key === 'font') {
+				if ('family' in typedValue && typedValue.family) {
+					cssVariables += `
+					--typography-font-family: ${typedValue.family.base || 'inherit'};
+					--typography-font-family-serif: ${typedValue.family.serif || 'inherit'};
+					--typography-font-family-en: ${typedValue.family.en || 'inherit'};
+					--typography-font-family-normal: ${typedValue.family.normal || 'inherit'};
+					--typography-font-family-bold: ${typedValue.family.bold || 'inherit'};
+					--typography-font-family-extrabold: ${typedValue.family.extrabold || 'inherit'};
+				`
+				}
+				if ('weight' in typedValue && typedValue.weight) {
+					cssVariables += `
+					--typography-font-weight-normal: ${typedValue.weight.normal || 'inherit'};
+					--typography-font-weight-bold: ${typedValue.weight.bold || 'inherit'};
+					--typography-font-weight-extrabold: ${typedValue.weight.extrabold || 'inherit'};
+				`
+				}
+			}
+			else if (isTypeFace(typedValue)) {
+				cssVariables += `
+				--typography-${useString().camelToKebab(key)}-font-family: ${typedValue.fontFamily || 'inherit'};
+				--typography-${useString().camelToKebab(key)}-font-size: ${typedValue.fontSize || 'inherit'};
+				--typography-${useString().camelToKebab(key)}-font-weight: ${typedValue.fontWeight || 'normal'};
+				--typography-${useString().camelToKebab(key)}-line-height: ${typedValue.lineHeight || 1.675};
+				--typography-${useString().camelToKebab(key)}-cap-height-baseline-top: ${typedValue.capHeightBaselineTop || '0em'};
+				--typography-${useString().camelToKebab(key)}-cap-height-baseline-bottom: ${typedValue.capHeightBaselineBottom || '0em'};
+			`
+			}
+			else if (key === 'mark') {
+				cssVariables += `
+				--typography-mark: var(--${typedValue});
+			`
+			}
+		}
+		cssVariables += '}'
+
+		styleElement.innerHTML = cssVariables
+		document.head.appendChild(styleElement)
+
+		return true
+	}
+
+	// TypeFace 型を確認するための型ガード関数
+	const isTypeFace = (value: any): value is TypeFace => {
+		return value && typeof value === 'object' && ('fontSize' in value || 'fontWeight' in value || 'lineHeight' in value)
+	}
+
+	return {
+		init,
+		isTypeFace,
+	}
+}

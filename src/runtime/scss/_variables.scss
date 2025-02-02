@@ -1,0 +1,54 @@
+// カラー設定
+$color-priorities: "primary", "secondary", "tertiary", "dark", "darkblack", "light", "ultralight", "success", "danger",
+	"info", "background", "text", "mark", "underline";
+$color-tint: "", "000", "003", "005", "007", "010", "015", "020", "025", "030", "040", "050", "060", "070", "080", "090",
+	"100";
+
+// グラデーション設定
+$gradation-priorities: "special", "vertical", "horizontal";
+
+// 基準ビューポートの設定
+$viewport-base: 1080; // px 値。 現在は、デザイン時の画面サイズに設定している。
+
+// ボーダー
+$border-radius-full: 1000px;
+$border-radius-xxlarge: 24;
+$border-radius-xlarge: 12;
+$border-radius-large: 8;
+$border-radius-medium: 4;
+$border-radius-small: 2;
+
+// シャドウ
+$box-shadow-base: 0 0 24px 0 rgba(black, 0.2);
+$box-shadow-light: 0 0 24px 0 var(--color-light-040);
+
+// 画面左右のスペース
+$space-left: 56px;
+$space-right: 56px;
+
+// トランジション
+$transition-base-property: all;
+
+$transition-base-duration: 0.25s;
+$transition-fast-duration: 0.15s;
+$transition-slow-duration: 0.65s;
+
+$transition-base-timing-function: ease;
+$transition-bounce-timing-function: cubic-bezier(0, 1.45, 0.38, 1);
+
+$transition-base: $transition-base-property $transition-base-duration $transition-base-timing-function;
+
+// エフェクト
+$backdrop-filter: blur(40px);
+
+// ヘッダー
+$header-height: 72;
+$header-height-l: $header-height;
+
+// Breakpoints -- composables/break-point.ts 定義と合わせる。
+$media-xxl: "(min-width: 1680px)";
+$media-xl: "(min-width: 1280px)";
+$media-l: "(min-width: 1024px)";
+$media-m: "(min-width: 680px)";
+$media-s: "(min-width: 430px)";
+$media-xs: "(min-width: 0px)";

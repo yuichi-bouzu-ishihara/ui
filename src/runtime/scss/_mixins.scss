@@ -1,0 +1,117 @@
+@use "./_variables.scss" as v;
+
+// コンポーネントスタイル
+@mixin component-styles($selector) {
+	#{$selector} {
+		// 基準スタイル
+		@content ('base');
+	}
+
+	#__nuxt._darkmode #{$selector} {
+		// ダークモード用スタイル
+		@content ('darkmode');
+	}
+
+	#__nuxt._auto #{$selector} {
+		// 自動サイズ用スタイル
+		@content ('auto');
+	}
+
+	#__nuxt._px #{$selector} {
+		// ピクセルサイズ用スタイル
+		@content ('px');
+	}
+}
+
+/* タップハイライトを透明に */
+@mixin tap-highlight-transparent() {
+	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+/*
+ * テキストを3点リーダーで省略する
+ */
+@mixin lineClamp($line: 1) {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-line-clamp: $line;
+	-webkit-box-orient: vertical;
+	word-break: break-all;
+}
+
+// Breakpoints
+// 基本は xl サイズでの実装をしている。
+@mixin breakpoint-xxl {
+	@media (v.$media-xxl) {
+		@content;
+	}
+}
+@mixin breakpoint-xl {
+	@media (v.$media-xl) {
+		@content;
+	}
+}
+@mixin breakpoint-l {
+	@media (v.$media-l) {
+		@content;
+	}
+}
+@mixin breakpoint-m {
+	@media (v.$media-m) {
+		@content;
+	}
+}
+@mixin breakpoint-s {
+	@media (v.$media-s) {
+		@content;
+	}
+}
+@mixin breakpoint-xs {
+	@media (v.$media-xs) {
+		@content;
+	}
+}
+@mixin breakpoint($size: "l") {
+	@if $size == "xxl" {
+		@include breakpoint-xxl() {
+			@content;
+		}
+	} @else if $size == "xl" {
+		@include breakpoint-xl() {
+			@content;
+		}
+	} @else if $size == "l" {
+		@include breakpoint-l() {
+			@content;
+		}
+	} @else if $size == "m" {
+		@include breakpoint-m() {
+			@content;
+		}
+	} @else if $size == "s" {
+		@include breakpoint-s() {
+			@content;
+		}
+	} @else if $size == "xs" {
+		@include breakpoint-xs() {
+			@content;
+		}
+	} @else if $size == "base" {
+		// 基本のブレークポイント。 スマホ or タブレット以上の 「 m 」 設定。
+		@include breakpoint-m() {
+			@content;
+		}
+	}
+}
+
+// 色を返すmixin
+@mixin color-var($priority, $tint: "") {
+	$css-var: if($tint == "", var(--color-#{$priority}), var(--color-#{$priority}-#{$tint}));
+	@content ($css-var);
+}
+
+// グラデーションを返すmixin
+@mixin gradation-var($priority) {
+	$css-var: var(--gradation-#{$priority});
+	@content ($css-var);
+}

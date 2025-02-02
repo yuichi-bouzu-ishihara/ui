@@ -1,0 +1,44 @@
+@use "./variables" as var;
+@use "sass:math";
+
+// vw を計算して返す。
+// 第一引数で基準となる画面幅での px サイズ
+// 第二引数で基準となる画面幅 px サイズ
+// -----------------------------------------
+// ※ 1280px は、PC想定でデザインした画面サイズ。
+// ※ スマホやタブレットに向けて最適化する場合は、
+// ※ html にメディアクエリで分岐して、375 などデザインしたサイズを入れるなどする想定。
+@function get-vw($size, $viewport: var.$viewport-base) {
+	$rate: math.div(100, $viewport);
+	@return $rate * $size * 1vw;
+}
+
+// vw を計算して、max 関数でラップして返す。
+// 第一引数で基準となる画面幅での px サイズ
+// 第二引数で基準となる画面幅 px サイズ
+@function get-max-pxvw($size, $viewport: var.$viewport-base) {
+	$var: auto;
+	// 0 は max(0,0) と返すと無効になってしまうので回避する。
+	@if ($size == 0) {
+		$var: 0;
+	} @else if($size < 0) {
+		$var: calc(-1 * #{max(#{get-vw($size)}, #{-1 * $size}px)});
+	} @else {
+		$var: max(#{get-vw($size)}, #{$size}px);
+	}
+	@return $var;
+}
+
+// px 数値でサイズを指定し、絶対値かどうかで vw に変換して返す。
+// 第一引数で基準となる画面幅での px サイズ
+// 第二引数で絶対値指定かどうかのフラグ
+// 第三引数で基準となる画面幅 px サイズ
+@function get-size($size, $px: true, $viewport: var.$viewport-base) {
+	$var: auto;
+	@if $px {
+		$var: #{$size}px;
+	} @else {
+		$var: get-max-pxvw($size, $viewport);
+	}
+	@return $var;
+}
