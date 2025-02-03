@@ -215,7 +215,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		background-color: var(--color-dark);
 		border-radius: var(--button-medium-radius);
 		padding: 0;
-		pointer-events: auto;
+		pointer-events: none;
 		cursor: pointer;
 		transition: all var.$transition-fast-duration var.$transition-base-timing-function;
 
@@ -440,6 +440,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			height: 100%;
 			padding: 0;
 			cursor: inherit;
+			pointer-events: auto;
 
 			&-slot {
 				// font - start -----
