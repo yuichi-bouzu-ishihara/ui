@@ -22,7 +22,7 @@ const { darkmode } = useMode()
 
 // Props -------------------------------------
 const props = defineProps({
-	color: { type: String, default: '100' }, // カラーの設定
+	color: { type: String, default: 'text' }, // カラーの設定
 	gradation: { type: String, default: '' }, // グラデーションの設定
 	originalColor: { type: Boolean, default: false }, // カラーを svg のオリジナルカラーにするかどうか
 	name: { type: String, default: '' },
@@ -35,18 +35,7 @@ const nameClass = ref('')
 
 // Computed -------------------------------------
 const classes = computed(() => {
-	let color = ''
-	if (isPureNumber(props.color)) {
-		const colorValue = darkmode.value ? 'light' : 'dark'
-		let tint: string | number = props.color
-		if (Number(tint) < 100) {
-			tint = Number(tint) < 10 ? `0${tint}` : tint
-		}
-		color = `_${colorValue}${tint}`
-	}
-	else {
-		color = `_${props.color}`
-	}
+	let color = `_color-${props.color.replace('color-', '').replace('-', '')}`
 
 	// グラデーションが設定されている場合は、カラーを空にする
 	if (props.gradation !== '') {
@@ -152,7 +141,7 @@ watch(() => props.name, async (nv) => {
 	// Color
 	@each $priority in var.$color-priorities {
 		@each $tint in var.$color-tint {
-			&._#{$priority}#{$tint} {
+			&._color-#{$priority}#{$tint} {
 				@include mix.color-var($priority, $tint) using ($css-var) {
 					@include icon-color($css-var);
 				}

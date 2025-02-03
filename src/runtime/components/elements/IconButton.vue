@@ -1,14 +1,15 @@
 <template>
-	<Button class="iconButton" v-bind="$attrs" rounded @click="emit(EMIT_CLICK)"
-		@disabled-click="emit(EMIT_DISABLED_CLICK)" @loading-click="emit(EMIT_LOADING_CLICK)">
+	<Button class="iconButton" v-bind="$attrs" @click="emit('click')" @disabled-click="emit('disabled-click')"
+		@loading-click="emit('loading-click')">
 		<Icon class="iconButton-icon" v-bind="{ name, size, color, gradation }" />
 	</Button>
 </template>
 
 <script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+import { useButton } from '../../composables/elements/button'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
-import { computed, useAttrs } from '#imports'
 
 // Props ---------------------------
 const props = defineProps({
@@ -22,10 +23,7 @@ const props = defineProps({
 })
 
 // Emits ---------------------------
-const EMIT_CLICK = 'click'
-const EMIT_DISABLED_CLICK = 'disabled-click'
-const EMIT_LOADING_CLICK = 'loading-click'
-const emit = defineEmits([EMIT_CLICK, EMIT_DISABLED_CLICK, EMIT_LOADING_CLICK])
+const emit = defineEmits(['click', 'disabled-click', 'loading-click'])
 
 // Computed ---------------------------
 const name = computed(() => props.icon.name)
@@ -96,24 +94,28 @@ const buttonSize = computed(() => {
 	}
 })
 const color = computed(() => {
-	let str = ''
+	let str = 'text'
 	switch (priority.value) {
 		case 'primary':
-			str = 'light'
+			str = useButton().primary?.textColor ?? str
 			break
 		case 'secondary':
-			str = 'background'
+			str = useButton().secondary?.textColor ?? str
 			break
 		case 'tertiary':
+			str = useButton().tertiary?.textColor ?? str
+			break
 		case 'quaternary':
+			str = useButton().quaternary?.textColor ?? str
+			break
 		case 'link':
-			str = 'text'
+			str = useButton().link?.textColor ?? str
 			break
 		case 'info':
-			str = ''
+			str = useButton().info?.textColor ?? str
 			break
 		case 'minimal':
-			str = 'text060'
+			str = useButton().minimal?.textColor ?? str
 			break
 	}
 	return str
