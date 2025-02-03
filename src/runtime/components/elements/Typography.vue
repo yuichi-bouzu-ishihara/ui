@@ -403,6 +403,11 @@ $cn: '.typography'; // コンポーネントセレクタ名
 			font-size: $fs-body;
 			font-weight: $fw-body;
 			line-height: $lh-body;
+
+			&._capHeightBaseline {
+				margin-top: $cpbtop-body;
+				margin-bottom: $cpbbottom-body;
+			}
 		}
 
 		&._caption1 {
