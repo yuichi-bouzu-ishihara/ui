@@ -64,7 +64,7 @@ $cn: '.logo'; // コンポーネントセレクタ名
 
 		font-size: 1.0em;
 		line-height: 1;
-		width: calc(1em * var(--logo-aspect));
+		width: calc(var(--logo-width) / var(--logo-height) * 1em);
 		height: 1em;
 		overflow: hidden;
 

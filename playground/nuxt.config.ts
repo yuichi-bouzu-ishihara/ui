@@ -29,7 +29,8 @@ export default defineNuxtConfig({
         logo: {
           src: '/assets/logo.svg',
           alt: 'logo',
-          aspect: 222 / 38,
+          width: 222,
+          height: 38,
         },
       },
     }],

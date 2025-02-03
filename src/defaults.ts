@@ -32,7 +32,8 @@ export const defaultOptions = {
 	logo: {
 		src: '',
 		alt: '',
-		aspect: 1,
+		width: 0,
+		height: 0,
 	},
 	breakPoint: {
 		// ※ scss/_variables.scss と合わせる。

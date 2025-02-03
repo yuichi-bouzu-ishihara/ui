@@ -54,6 +54,7 @@ export const useLogo = () => {
 		init,
 		src: config.value ? readonly(config.value).src : '',
 		alt: config.value ? readonly(config.value).alt : '',
-		aspect: config.value ? readonly(config.value).aspect : 1,
+		width: config.value ? readonly(config.value).width : 0,
+		height: config.value ? readonly(config.value).height : 0,
 	}
 }
