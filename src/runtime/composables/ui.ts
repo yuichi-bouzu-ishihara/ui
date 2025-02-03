@@ -14,6 +14,7 @@ import { useSkeletonShape } from './elements/skeleton-shape'
 import { useSpinner } from './elements/spinner'
 import { useRoundProgressBar } from './elements/round-progress-bar'
 import { useContainer } from './layout/container'
+import { useLogo } from './elements/logo'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -50,5 +51,6 @@ const init = () => {
 	useSpinner().init()
 	useRoundProgressBar().init()
 	useContainer().init()
+	useLogo().init()
 	useDev().init()
 }

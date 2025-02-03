@@ -29,6 +29,11 @@ export const defaultOptions = {
 	dev: {
 		path: '/dev',
 	},
+	logo: {
+		src: '',
+		alt: '',
+		aspect: 1,
+	},
 	breakPoint: {
 		// ※ scss/_variables.scss と合わせる。
 		xxl: '1680px',

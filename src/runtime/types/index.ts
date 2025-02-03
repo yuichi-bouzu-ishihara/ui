@@ -11,6 +11,7 @@ import type { SpinnerConfig } from './spinner'
 import type { RoundProgressBarConfig } from './round-progress-bar'
 import type { WebfontConfig } from './webfont'
 import type { ContainerConfig } from './container'
+import type { LogoConfig } from './logo'
 
 // AppConfigの型定義
 export type UIConfig = {
@@ -28,4 +29,5 @@ export type UIConfig = {
 	roundProgressBar?: RoundProgressBarConfig
 	webfont?: WebfontConfig
 	container?: ContainerConfig
+	logo?: LogoConfig
 }
