@@ -163,12 +163,7 @@ $xsmall-size: 32;
 			height: func.get-size($large-size);
 		}
 
-		.button-inner {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 100%;
-			height: 100%;
+		.button-inner-slot {
 			padding: 0;
 		}
 	}

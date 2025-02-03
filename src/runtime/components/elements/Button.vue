@@ -6,11 +6,9 @@
 	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h }">
 		<template v-if="to">
 			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true }">
-				<Row class="button-inner-slot" justify="center" align="center">
-					<Typography v-bind="typography">
-						<slot />
-					</Typography>
-				</Row>
+				<Typography class="button-inner-slot" v-bind="typography">
+					<slot />
+				</Typography>
 				<template v-if="loading">
 					<div class="button-inner-loader" @click.stop="click">
 						<Spinner v-bind="spinner" />
@@ -20,11 +18,9 @@
 		</template>
 		<template v-else>
 			<button class="button-inner" :type="buttonType" @click="click">
-				<Row class="button-inner-slot" justify="center" align="center">
-					<Typography v-bind="typography">
-						<slot />
-					</Typography>
-				</Row>
+				<Typography class="button-inner-slot" v-bind="typography">
+					<slot />
+				</Typography>
 				<template v-if="loading">
 					<div class="button-inner-loader" @click.stop="click">
 						<Spinner v-bind="spinner" />
@@ -156,6 +152,7 @@ const typography = computed(() => {
 		bold: true,
 		unselectable: true,
 		nowrap: true,
+		capHeightBaseline: true,
 	}
 })
 const spinner = computed(() => {
@@ -219,10 +216,6 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		cursor: pointer;
 		transition: all var.$transition-fast-duration var.$transition-base-timing-function;
 
-		.typography {
-			margin-top: calc(-1 * var(--button-medium-text-size) * 0.2);
-		}
-
 		// hoverスタイル
 		&:hover:not(._disabled) {
 			opacity: 0.84;
@@ -242,10 +235,6 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-xsmall-padding-h);
-
-				.typography {
-					margin-top: calc(-1 * var(--button-xsmall-text-size) * 0.2);
-				}
 			}
 		}
 
@@ -256,10 +245,6 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-small-padding-h);
 			}
-
-			.typography {
-				margin-top: calc(-1 * var(--button-small-text-size) * 0.2);
-			}
 		}
 
 		// Large
@@ -269,10 +254,6 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-large-padding-h);
-			}
-
-			.typography {
-				margin-top: calc(-1 * var(--button-large-text-size) * 0.2);
 			}
 		}
 
@@ -434,6 +415,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			// button スタイルの初期化 - end -------
 
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			width: 100%;
@@ -442,11 +424,23 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			cursor: inherit;
 			pointer-events: auto;
 
+			&::before {
+				content: '';
+				display: block;
+				width: 100%;
+				height: 0;
+			}
+
 			&-slot {
 				// font - start -----
 				text-decoration: none;
 				// font - end -----
 
+				display: inline-flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				gap: $btn-slot-gap;
 				width: 100%;
 				height: 100%;
 				padding: 0 var(--button-medium-padding-h);
@@ -457,15 +451,6 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				&:focus:not(.focus-visible),
 				&:active:not(._disabled) {
 					outline: none;
-				}
-
-				.typography {
-					display: inline-flex;
-					flex-direction: row;
-					justify-content: center;
-					align-items: center;
-					gap: $btn-slot-gap;
-					margin-top: -0.16em;
 				}
 			}
 
