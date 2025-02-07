@@ -20,7 +20,7 @@ const { isPureNumber } = useNumber()
 // Props --------------------------------
 const props = defineProps({
 	tag: { type: String, default: 'div' },
-	color: { type: [String, Number], default: '100' },
+	color: { type: String, default: 'text' },
 	gradation: { type: String, default: '' }, // グラデーションの設定
 
 	bold: { type: Boolean, default: false }, // 太字強制
@@ -98,17 +98,7 @@ const classes = computed(() => {
 
 	// グラデーションが設定されている場合は、カラーを処理しない
 	if (gradation === '') {
-		if (useNumber().isPureNumber(props.color)) {
-			const colorValue = 'text'
-			let tint = props.color
-			if (Number(tint) < 100) {
-				tint = Number(tint).toString().padStart(3, '0')
-			}
-			color = `_color-${colorValue}${tint}`
-		}
-		else {
-			color = `_color-${props.color}`
-		}
+		color = `_color-${props.color.replace('color-', '').replace('-', '')}`
 	}
 
 	obj[`${color}`] = true
@@ -155,25 +145,22 @@ watch(
 		() => props.footnote,
 		() => props.inherit,
 	],
-	(
-		[
-			largeTitle,
-			title1,
-			title2,
-			title3,
-			headline,
-			subheadline,
-			lead,
-			body,
-			caption1,
-			caption2,
-			caption3,
-			callout,
-			footnote,
-			inherit,
-		],
-		[],
-	) => {
+	([
+		largeTitle,
+		title1,
+		title2,
+		title3,
+		headline,
+		subheadline,
+		lead,
+		body,
+		caption1,
+		caption2,
+		caption3,
+		callout,
+		footnote,
+		inherit,
+	]) => {
 		// 優先度を文字列で type に設定する。
 		if (largeTitle) type.value = 'largeTitle'
 		if (title1) type.value = 'title1'

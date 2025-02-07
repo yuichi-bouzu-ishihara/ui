@@ -33,6 +33,7 @@ export function useFetchClient() {
 	 * @param {any} obj query string 化するオブジェクト。ネストは不可。例：{page:1, limit:100,,,}
 	 * @returns ?page=1&limit=100 などの文字列。引数が空だった場合は、空の文字列が返る。
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const queryString = (obj: any) => {
 		// query string 化する
 		let str = new URLSearchParams(obj).toString()

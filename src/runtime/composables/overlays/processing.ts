@@ -1,7 +1,7 @@
 /**
  * Processing
  * @note 通信中のローディング画面を表示する
- * @note spinner が true の場合は Spinner を表示する （ percent　より優先 ）
+ * @note spinner が true の場合は Spinner を表示する （ percentより優先 ）
  * @note percent が 0 以上の場合は パーセンテージを表示する
  */
 
@@ -57,10 +57,7 @@ const open = (pl: Payload): Promise<unknown> => {
 
 /**
  * 更新する
- * @param {string} [message] メッセージ
- * @param {string} [icon] アイコン
- * @param {boolean} [spinner] 通信中
- * @param {number} [percent] パーセンテージ
+ * @param {Payload} pl - 更新するペイロード
  */
 const update = (pl: Payload) => {
 	message.value = pl.message ?? ''

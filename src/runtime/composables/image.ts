@@ -99,8 +99,8 @@ const base64ToBlob = async (base64: string): Promise<Blob> => {
 		})
 		return blob
 	}
-	catch (e) {
-		throw new Error('Could not convert Base64 to Blob.')
+	catch (error) {
+		throw new Error('Could not convert Base64 to Blob.', { cause: error })
 	}
 }
 
@@ -232,7 +232,7 @@ const dimensions = (base64: string): Promise<{ width: number, height: number }> 
 
 /**
  * 指定urlの画像をダウンロードする
- * @param {string} url - ダウンロードする画像のURL
+ * @param {string} imageUrl - ダウンロードする画像のURL
  * @param {string} [fileName] - ダウンロードする画像のファイル名
  */
 const download = async (imageUrl: string, fileName: string = '') => {

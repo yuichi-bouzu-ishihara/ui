@@ -35,7 +35,7 @@
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
     "release": "npm run lint && npm run generate-icons && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
-    "release:local": "npm run generate-icons && npm pack && mv *.tgz ./packs/",
+    "release:local": "npm run lint && npm run generate-icons && npm pack && mv *.tgz ./packs/",
     "start": "npm --prefix playground run start",
     "docker-build": "npm run copy-version-to-playground && NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production nuxt build && npm --prefix playground run build",
     "lint": "eslint .",
@@ -67,7 +67,7 @@
     "vue-tsc": "^2.2.0"
   },
   "volta": {
-    "node": "18.20.2",
-    "npm": "10.6.0"
+    "node": "20.17.0",
+    "npm": "11.1.0"
   }
 }

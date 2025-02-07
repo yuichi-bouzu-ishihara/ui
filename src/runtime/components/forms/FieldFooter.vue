@@ -11,6 +11,7 @@
 			</template>
 			<template v-else-if="description">
 				<Typography caption3 color="dark60">
+					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-html="description" />
 				</Typography>
 			</template>

@@ -48,6 +48,7 @@ export const useGradation = () => {
 	 */
 	const variables = (name: string) => {
 		if (typeof window === 'undefined' || !window.getComputedStyle) return ''
+		if (!config.value) return ''
 		if (!(name in config.value)) return ''
 		return `var(--gradation-${name})`
 	}

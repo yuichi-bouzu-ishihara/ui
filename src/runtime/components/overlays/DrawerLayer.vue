@@ -19,36 +19,36 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
+import { /* computed, */ watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useDrawer } from '../../composables/overlays/drawer'
-import { useCss } from '../../composables/css'
+// import { useCss } from '../../composables/css'
 import TransitionFade from '../transition/TransitionFade.vue'
 import Box from '../layout/Box.vue'
 import Backdrop from './Backdrop.vue'
-import Drawer from './Drawer.vue'
+// import Drawer from './Drawer.vue'
 
 // Composables ---------------------------
 const { lefts, rights, closeOne, closeAll } = useDrawer()
-const { getSize } = useCss()
+// const { getSize } = useCss()
 const route = useRoute()
 
 // Computed -------------------------
 // 階層を深く見せるスタイル
-const leftDepthStyle = computed(() => (index: number) => {
-	const depth = lefts.value.length - 1
-	const scale = 1 - (depth - index) * 0.04
-	const x = 8 * (depth - index)
-	const brightness = 1 - (depth - index) * 0.25
-	return { transform: `transform-origin: center right; translateX(${getSize(x)}) scale(${scale})`, filter: `brightness(${brightness})` }
-})
-const rightDepthStyle = computed(() => (index: number) => {
-	const depth = rights.value.length - 1
-	const scale = 1 - (depth - index) * 0.04
-	const x = -8 * (depth - index)
-	const brightness = 1 - (depth - index) * 0.25
-	return { transform: `translateX(${getSize(x)}) scale(${scale})`, filter: `brightness(${brightness})` }
-})
+// const leftDepthStyle = computed(() => (index: number) => {
+// 	const depth = lefts.value.length - 1
+// 	const scale = 1 - (depth - index) * 0.04
+// 	const x = 8 * (depth - index)
+// 	const brightness = 1 - (depth - index) * 0.25
+// 	return { transform: `transform-origin: center right; translateX(${getSize(x)}) scale(${scale})`, filter: `brightness(${brightness})` }
+// })
+// const rightDepthStyle = computed(() => (index: number) => {
+// 	const depth = rights.value.length - 1
+// 	const scale = 1 - (depth - index) * 0.04
+// 	const x = -8 * (depth - index)
+// 	const brightness = 1 - (depth - index) * 0.25
+// 	return { transform: `translateX(${getSize(x)}) scale(${scale})`, filter: `brightness(${brightness})` }
+// })
 
 // Watchers -------------------------
 watch(

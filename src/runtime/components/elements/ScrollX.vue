@@ -17,10 +17,7 @@ const props = defineProps({
 const el = ref<HTMLElement | null>(null)
 
 // Emit ---------------------------------------------------------
-const EMIT_START = 'start'
-const EMIT_END = 'end'
-const EMIT_SCROLL = 'scroll'
-const emit = defineEmits([EMIT_START, EMIT_END, EMIT_SCROLL])
+// const emit = defineEmits(['start', 'end', 'scroll'])
 
 // Computed --------------------------------------------------------
 const classes = computed(() => {

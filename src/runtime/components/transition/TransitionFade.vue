@@ -30,16 +30,14 @@ const variables = computed(() => {
 })
 
 // Emits ----------------------
-const EMIT_SHOW_END = 'show-end'
-const EMIT_HIDE_END = 'hide-end'
-const emit = defineEmits([EMIT_SHOW_END, EMIT_HIDE_END])
+const emit = defineEmits(['show-end', 'hide-end'])
 
 // Methods ----------------------
 const afterEnter = () => {
-	emit(EMIT_SHOW_END)
+	emit('show-end')
 }
 const afterLeave = () => {
-	emit(EMIT_HIDE_END)
+	emit('hide-end')
 }
 </script>
 

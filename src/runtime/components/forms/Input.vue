@@ -214,7 +214,7 @@ $cn: '.input'; // コンポーネントセレクタ名
 			&:-webkit-autofill:active,
 			&:-internal-autofill-selected {
 				-webkit-text-fill-color: var(--color-text) !important;
-				-webkit-box-shadow: 0 0 0px 1000px var(--color-light) inset !important;
+				-webkit-box-shadow: 0 0 0px 1000px var(--color-background) inset !important;
 				background-color: transparent !important;
 			}
 		}

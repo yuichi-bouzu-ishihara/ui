@@ -3,7 +3,7 @@
 	ボタンUIコンポーネント
 -->
 <template>
-	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h }">
+	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h, minW: w, minH: h }">
 		<template v-if="to">
 			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true }">
 				<Typography class="button-inner-slot" v-bind="typography">
@@ -35,7 +35,6 @@
 import { computed } from 'vue'
 import { useButton } from '../../composables/elements/button'
 import Spinner from '../elements/Spinner.vue'
-import Row from '../layout/Row.vue'
 import Box from '../layout/Box.vue'
 import BasicLink from './BasicLink.vue'
 import Typography from './Typography.vue'
@@ -152,7 +151,6 @@ const typography = computed(() => {
 		bold: true,
 		unselectable: true,
 		nowrap: true,
-		capHeightBaseline: true,
 	}
 })
 const spinner = computed(() => {
@@ -235,6 +233,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-xsmall-padding-h);
+				margin-top: var(--button-xsmall-text-adjust-top);
 			}
 		}
 
@@ -244,6 +243,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-small-padding-h);
+				margin-top: var(--button-small-text-adjust-top);
 			}
 		}
 
@@ -254,6 +254,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-large-padding-h);
+				margin-top: var(--button-large-text-adjust-top);
 			}
 		}
 
@@ -396,13 +397,17 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		}
 
 		&._noPaddingH {
-			padding-left: 0;
-			padding-right: 0;
+			#{$cn}-inner-slot {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 
 		&._noPaddingV {
-			padding-top: 0;
-			padding-bottom: 0;
+			#{$cn}-inner-slot {
+				padding-top: 0;
+				padding-bottom: 0;
+			}
 		}
 
 		&-inner {
@@ -444,6 +449,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				width: 100%;
 				height: 100%;
 				padding: 0 var(--button-medium-padding-h);
+				margin-top: var(--button-medium-text-adjust-top);
 				pointer-events: none;
 				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
 

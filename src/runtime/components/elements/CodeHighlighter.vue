@@ -4,8 +4,9 @@
 			{{ title }}
 		</div>
 		<pre class="codeHighlighter-pre" :class="languageClass">
+			<!-- eslint-disable-next-line vue/no-v-html -->
 			<code v-html="highlightedCode" />
-    </pre>
+		</pre>
 	</div>
 </template>
 
@@ -25,7 +26,7 @@ const languageClass = computed(() => `_${props.lang}`)
 // Function to highlight code (simple example)
 const highlightedCode = computed(() => {
 	const str = props.code.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-	return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+	return str.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g, function (match) {
 		let cls = 'number'
 		if (match.startsWith('"')) {
 			if (match.endsWith(':')) {

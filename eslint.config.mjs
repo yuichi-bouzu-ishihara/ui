@@ -23,7 +23,7 @@ export default createConfigForNuxt({
       'comma-dangle': ['error', 'always-multiline'],
       'comma-spacing': ['error', { before: false, after: true }],
       'keyword-spacing': ['error', { before: true, after: true }],
-      'space-before-function-paren': ['error', 'always'],
+      // 'space-before-function-paren': ['error', 'always'],
       'object-curly-spacing': ['error', 'always'],
       'arrow-spacing': ['error', { before: true, after: true }],
       'key-spacing': ['error', { beforeColon: false, afterColon: true, mode: 'strict' }],

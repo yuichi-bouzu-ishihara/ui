@@ -29,9 +29,9 @@ export type FontFamily = {
 }
 
 export type FontWeight = {
-	normal: number
-	bold: number
-	extrabold: number
+	normal: string
+	bold: string
+	extrabold: string
 }
 
 export type TypeFace = {

@@ -6,10 +6,10 @@
 					<Container no-padding full>
 						<SlotHeader class="sheet-inner-header" v-bind="{ title }" blur>
 							<template v-if="leftIcon" #left>
-								<IconMenu :icon="leftIcon" color="text" @click="emit(EMIT_LEFT_ICON_CLICK)" />
+								<IconMenu :icon="leftIcon" color="text" @click="emit('left-icon-click')" />
 							</template>
 							<template v-if="close" #right>
-								<IconMenu icon="cross" color="text" @click="emit(EMIT_CLOSE)" />
+								<IconMenu icon="cross" color="text" @click="emit('close')" />
 							</template>
 						</SlotHeader>
 					</Container>
@@ -39,11 +39,7 @@ import Center from '../layout/Center.vue'
 import Container from '../layout/Container.vue'
 import SlotHeader from '../navigation/SlotHeader.vue'
 import IconMenu from '../navigation/IconMenu.vue'
-import { useMode } from '../../composables/mode'
 import { useBreakPoint } from '../../composables/break-point'
-
-// Composables ---------------------------
-const { darkmode } = useMode()
 
 // Props -----------------------
 const props = defineProps({
@@ -55,9 +51,7 @@ const props = defineProps({
 })
 
 // Emits -----------------------
-const EMIT_CLOSE = 'close'
-const EMIT_LEFT_ICON_CLICK = 'left-icon-click'
-const emit = defineEmits([EMIT_CLOSE, EMIT_LEFT_ICON_CLICK])
+const emit = defineEmits(['close', 'left-icon-click'])
 
 // Computed -----------------------------------------------
 const classes = computed(() => {

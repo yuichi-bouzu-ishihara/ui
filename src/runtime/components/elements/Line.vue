@@ -16,12 +16,10 @@ $cn: '.line'; // コンポーネントセレクタ名
 		height: 0.5px;
 		margin: 0;
 		border: none;
-		background-color: var(--color-dark-020);
+		background-color: var(--color-text-020);
 	}
 
-	@if $mode =='darkmode' {
-		background-color: var(--color-light-020);
-	}
+	@if $mode =='darkmode' {}
 
 	@if $mode =='auto' {}
 }

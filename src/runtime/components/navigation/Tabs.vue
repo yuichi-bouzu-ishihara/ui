@@ -105,7 +105,7 @@ $min-height: 24; // 最小の高さ
 			bottom: 0;
 			width: 100%;
 			height: func.get-size($border-height);
-			background-color: var(--color-dark-020);
+			background-color: var(--color-text-020);
 		}
 
 		&-list {
@@ -140,41 +140,13 @@ $min-height: 24; // 最小の高さ
 			left: 0;
 			bottom: 0;
 			height: func.get-size($active-bar-height);
-			background-color: var(--color-dark);
+			background-color: var(--color-text);
 			transition: var.$transition-base;
 		}
 	}
 
-	@if $mode =='darkmode' {
-		&::after {
-			background-color: var(--color-light-020);
-		}
+	@if $mode =='darkmode' {}
 
-		&-bar {
-			background-color: var(--color-light);
-		}
-	}
-
-	@if $mode =='auto' {
-		min-height: func.get-size($min-height, false);
-
-		&::after {
-			border-bottom-width: func.get-size($border-height, false);
-		}
-
-		&-list {
-			&-item {
-				padding-bottom: func.get-size(10, false);
-
-				&._icon {
-					padding-bottom: func.get-size(16, false);
-				}
-			}
-		}
-
-		&-bar {
-			height: func.get-size($active-bar-height, false);
-		}
-	}
+	@if $mode =='auto' {}
 }
 </style>

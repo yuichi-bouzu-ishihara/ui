@@ -61,8 +61,8 @@ const update = () => {
 	 * 以下はより完全な判定方法ですが、'ontouchstart' in window がエミュレートのオン/オフで変化しない、
 	 * つまり、サイト読み込み時から判定が変わらないので、使用しないことにしています。
 	 * 現在は、touchDevice state は /stores/dev.ts でのみ使用しているため、開発時にのみ動作すれば良いためです。
+	 * const newTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches
 	 */
-	//　const newTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || window.matchMedia('(pointer: coarse)').matches
 
 	if (touchDevice.value !== newTouchDevice) {
 		touchDevice.value = newTouchDevice
@@ -81,7 +81,7 @@ const update = () => {
 	os.value = getOSInfo()
 	browser.value = getBrowserInfo()
 	userAgent.value = navigator.userAgent.toLowerCase()
-	device.value = /Mobile|iP(hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'mobile' : 'desktop'
+	device.value = /Mobile|iP(?:hone|od|ad)|Android|BlackBerry|IEMobile/.test(navigator.userAgent) ? 'mobile' : 'desktop'
 	devicePixelRatio.value = window.devicePixelRatio
 	language.value = navigator.language
 
@@ -93,7 +93,7 @@ const update = () => {
 
 /**
  * ブラウザ情報を取得する
- * @returns { name: string, version: string}
+ * @returns { name: string, version: string } ブラウザの名前とバージョンを含むオブジェクト
  */
 const getBrowserInfo = () => {
 	const userAgent = navigator.userAgent
@@ -104,32 +104,32 @@ const getBrowserInfo = () => {
 
 	if (/CriOS/i.test(userAgent) && /iPhone|iPad|iPod/.test(userAgent)) {
 		name = 'Chrome'
-		match = userAgent.match(/CriOS\/(\d+(\.\d+)?)/)
+		match = userAgent.match(/CriOS\/\d+(\.\d+)?/)
 		version = match ? match[1] : ''
 	}
 	else if (/Firefox/i.test(userAgent)) {
 		name = 'Firefox'
-		match = userAgent.match(/Firefox\/(\d+(\.\d+)?)/)
+		match = userAgent.match(/Firefox\/\d+(\.\d+)?/)
 		version = match ? match[1] : ''
 	}
 	else if (/Chrome/i.test(userAgent)) {
 		name = 'Chrome'
-		match = userAgent.match(/Chrome\/(\d+(\.\d+)?)/)
+		match = userAgent.match(/Chrome\/\d+(\.\d+)?/)
 		version = match ? match[1] : ''
 	}
 	else if (/Safari/i.test(userAgent) && /iPhone|iPad|iPod/.test(userAgent)) {
 		name = 'Safari'
-		match = userAgent.match(/Version\/(\d+(\.\d+)?)/)
+		match = userAgent.match(/Version\/\d+(\.\d+)?/)
 		version = match ? match[1] : ''
 	}
 	else if (/MSIE/i.test(userAgent)) {
 		name = 'Internet Explorer'
-		match = userAgent.match(/MSIE (\d+(\.\d+)?)/)
+		match = userAgent.match(/MSIE \d+(\.\d+)?/)
 		version = match ? match[1] : ''
 	}
 	else if (/Edge/i.test(userAgent)) {
 		name = 'Edge'
-		match = userAgent.match(/Edge\/(\d+(\.\d+)?)/)
+		match = userAgent.match(/Edge\/\d+(\.\d+)?/)
 		version = match ? match[1] : ''
 	}
 
@@ -141,7 +141,7 @@ const getBrowserInfo = () => {
 
 /**
  * OS情報を取得する
- * @returns { name: string, version: string}
+ * @returns { name: string, version: string } OSの名前とバージョンを含むオブジェクト
  */
 const getOSInfo = () => {
 	const userAgent = navigator.userAgent

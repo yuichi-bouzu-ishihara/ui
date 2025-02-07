@@ -1,6 +1,6 @@
 <template>
 	<Box class="skeletonShape" :class="classes" :style="styles" :r="shape === 'circle' ? 'circle' : 0" max-w="100%"
-		:bg-blur="config.blur" v-bind="box" />
+		:bg-blur="blur" v-bind="box" />
 </template>
 
 <script setup lang="ts">
@@ -9,7 +9,7 @@ import Box from '../layout/Box.vue'
 import { useSkeletonShape } from '../../composables/elements/skeleton-shape'
 
 // Composables ------------------
-const { config } = useSkeletonShape()
+const { blur } = useSkeletonShape()
 
 // Props ------------------
 const props = defineProps({
@@ -39,6 +39,8 @@ const box = computed(() => {
 		return {
 			w: props.w,
 			h: props.w,
+			minW: props.w,
+			minH: props.w,
 		}
 	}
 	else {

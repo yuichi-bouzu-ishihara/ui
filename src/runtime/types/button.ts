@@ -24,6 +24,7 @@ type ButtonPriority = {
 
 type ButtonSize = {
 	textSize: string // テキストサイズ e.g. 14px
+	textAdjustTop: string // テキストの上下位置調整 e.g. -2px
 	paddingH: string // テキストの水平パディング e.g. 14px
 	height: string
 	radius: string // 角丸 e.g. 4px

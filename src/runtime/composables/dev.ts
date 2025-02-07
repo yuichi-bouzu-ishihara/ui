@@ -64,13 +64,17 @@ export const useDev = () => {
 
 		const handleTouchStart = async (event: TouchEvent) => {
 			if (event.touches.length === 3) {
-				!isNavigating && navigate()
+				if (!isNavigating) {
+					await navigate()
+				}
 			}
 		}
 
 		const handleKeyDown = (event: KeyboardEvent) => {
 			if (event.ctrlKey && event.shiftKey && event.altKey && (event.key === 'Enter' || event.code === 'Enter')) {
-				!isNavigating && navigate()
+				if (!isNavigating) {
+					navigate()
+				}
 			}
 		}
 

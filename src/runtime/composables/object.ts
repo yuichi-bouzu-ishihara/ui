@@ -11,9 +11,8 @@ export const useObject = () => {
 }
 
 /**
- * 配列をシャッフルする
+ * オブジェクトが空かどうかを返す。
  * @param obj
- * @returns
  */
 const isEmpty = (obj: object): boolean => {
 	return Object.keys(obj).length === 0 && obj.constructor === Object
@@ -22,9 +21,9 @@ const isEmpty = (obj: object): boolean => {
 /**
  * Objectかどうかを返す。
  * @param {any} value - 判定する値
- * @returns {boolean}
  * @note ArrayはObjectだが、falseで返す。
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isObject = (value: any): boolean => {
 	let flag = value !== null && typeof value === 'object'
 	if (flag) {
@@ -41,6 +40,7 @@ const isObject = (value: any): boolean => {
  * @param {any} b - 比較するオブジェクト
  * @returns {boolean} - 等しい場合はtrue
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const isEqual = (a: any, b: any): boolean => {
 	// オブジェクトでなければ、単純な比較を行います
 	if (!isObject(a) || !isObject(b)) {

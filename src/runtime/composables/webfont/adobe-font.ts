@@ -60,32 +60,32 @@ export const useWebFontAdobeFont = () => {
 					// 読み込み除外 OS 以外は、WEBフォントを読み込む
 					if (!exOS.includes(os.value.name)) {
 						promises.push(
-							new Promise(async () => {
+							new Promise<void>((resolve, reject) => {
 								const cssUrl = `https://use.typekit.net/${fontConfig.projectId}.css`
-								try {
-									// CSSをフェッチ
-									const response = await fetch(cssUrl)
-									const cssText = await response.text()
+								fetch(cssUrl)
+									.then(response => response.text())
+									.then((cssText) => {
+										// @font-faceを抽出
+										const fontFaceRegex = /@font-face\s*\{[^}]*\}/g
+										const fontFaces = cssText.match(fontFaceRegex)
 
-									// @font-faceを抽出
-									const fontFaceRegex = /@font-face\s*\{[^}]*\}/g
-									const fontFaces = cssText.match(fontFaceRegex)
+										if (fontFaces) {
+											const modifiedFontFaces = fontFaces.map((face) => {
+												return face.replace('}', `size-adjust: ${sizeAdjust}; ascent-override: ${ascentOverride}; descent-override: ${descentOverride}; }`)
+											}).join('\n')
 
-									if (fontFaces) {
-										const modifiedFontFaces = fontFaces.map((face) => {
-											return face.replace('}', `size-adjust: ${sizeAdjust}; ascent-override: ${ascentOverride}; descent-override: ${descentOverride}; }`)
-										}).join('\n')
-
-										// <style>タグに追加
-										const styleElement = document.createElement('style')
-										styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
-										styleElement.textContent = modifiedFontFaces
-										document.head.appendChild(styleElement)
-									}
-								}
-								catch (error) {
-									console.error('Error loading or modifying font-face:', error)
-								}
+											// <style>タグに追加
+											const styleElement = document.createElement('style')
+											styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
+											styleElement.textContent = modifiedFontFaces
+											document.head.appendChild(styleElement)
+										}
+										resolve()
+									})
+									.catch((error) => {
+										console.error('Error loading or modifying font-face:', error)
+										reject(error)
+									})
 							}),
 						)
 					}

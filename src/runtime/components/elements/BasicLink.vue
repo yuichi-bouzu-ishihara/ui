@@ -30,7 +30,7 @@ const classes = computed(() => {
 })
 // 外部リンクかどうか
 const isExternalLink = computed(() => {
-	return typeof props.to === 'string' && /^(https?:)?\/\//.test(props.to)
+	return typeof props.to === 'string' && /^(?:https?:)?\/\//.test(props.to)
 })
 const target = computed(() => {
 	return props.blank ? '_blank' : '_self'

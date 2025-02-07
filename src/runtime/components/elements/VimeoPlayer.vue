@@ -122,7 +122,7 @@ const getVideoSize = async () => {
 		videoNativeHeight.value = height
 		videoRatioHeight.value = height / width
 	}
-	catch (error: any) {
+	catch (error: unknown) {
 		console.error('Vimeo video size error:', error)
 	}
 }
@@ -179,7 +179,7 @@ watch(
 			.then(() => {
 				// 動画のロードが成功した後の処理
 			})
-			.catch((error: any) => {
+			.catch((error: unknown) => {
 				console.error('Vimeo video loading error:', error)
 			})
 	},

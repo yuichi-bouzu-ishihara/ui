@@ -92,10 +92,9 @@ const handleStyle = computed(() => {
 
 // Methods ---------------------
 const changePosition = () => {
+	const min = (handlePosition.value.x / width.value) * (Number(String(props.max)) - Number(String(props.min)))
 	// 値を更新
-	value.value
-		= (handlePosition.value.x / width.value) * (Number(String(props.max)) - Number(String(props.min)))
-		+ Number(String(props.min))
+	value.value = min + Number(String(props.min))
 	// 0 以上 width 以下に制限
 	handlePosition.value.x = Math.min(Math.max(handlePosition.value.x, 0), width.value)
 }

@@ -20,11 +20,7 @@ const lastScrollTop = ref(0)
 const scrolling = ref(false) // Add a new flag to track if it's currently scrolling
 
 // Emit ---------------------------------------------------------
-const EMIT_START = 'start'
-const EMIT_END = 'end'
-const EMIT_SCROLL = 'scroll'
-const EMIT_CLICK_OUTSIDE = 'click-outside' // slot エレメント以外がクリックされた
-const emit = defineEmits([EMIT_START, EMIT_END, EMIT_SCROLL, EMIT_CLICK_OUTSIDE])
+const emit = defineEmits(['start', 'end', 'scroll', 'click-outside'])
 
 // Methods ------------------------------------------------------
 const handleScroll = () => {
@@ -33,7 +29,7 @@ const handleScroll = () => {
 	if (lastScrollTop.value === currentScrollTop) return
 
 	if (!scrolling.value) {
-		emit(EMIT_START)
+		emit('start')
 		scrolling.value = true
 	}
 
@@ -42,19 +38,19 @@ const handleScroll = () => {
 	}
 
 	scrollTimer = setTimeout(() => {
-		emit(EMIT_END)
+		emit('end')
 		scrolling.value = false
 	}, 100)
 
 	if (currentScrollTop !== undefined) {
 		lastScrollTop.value = currentScrollTop
-		emit(EMIT_SCROLL, currentScrollTop)
+		emit('scroll', currentScrollTop)
 	}
 }
 
 const handleClick = (event: MouseEvent) => {
 	if (event.target === el.value) {
-		emit(EMIT_CLICK_OUTSIDE)
+		emit('click-outside')
 	}
 }
 

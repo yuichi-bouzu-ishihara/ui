@@ -6,7 +6,7 @@
 			<Box v-if="loading" w="100%" :h="loaderHeight" :pb="gap">
 				<slot name="loader">
 					<Center>
-						<Spinner :size="loaderIconSize" color="dark60" />
+						<Spinner />
 					</Center>
 				</slot>
 			</Box>
@@ -18,7 +18,7 @@
 			<Box v-if="loading" w="100%" :h="loaderHeight" :pt="gap">
 				<slot name="loader">
 					<Center>
-						<Spinner :size="loaderIconSize" color="dark60" />
+						<Spinner />
 					</Center>
 				</slot>
 			</Box>

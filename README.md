@@ -7,7 +7,10 @@ Find and replace all on all files (CMD+SHIFT+F):
 - Description: My new Nuxt module
 -->
 
-# bouzu UI [![Nuxt][nuxt-src]][nuxt-href]
+# Honoo UI
+[![Node.js >= 20.17.0](https://img.shields.io/badge/Node.js-%3E=20.17.0-grey?labelColor=black)](https://nodejs.org) 
+[![NPM >= 11.1.0](https://img.shields.io/badge/npm-%3E=11.1.0-grey?labelColor=black)](https://www.npmjs.com/)
+[![Nuxt >= 3.15.4](https://img.shields.io/badge/Nuxt.js-%3E=3.15.4-grey?labelColor=black)](https://nuxt.com)
 
 ## Features
 
@@ -24,7 +27,7 @@ Install the module to your Nuxt application with one command:
 2. 使用したいバージョンが貼られたタグのコミットに移動します。
 3. `npm run release:local` を実行します。
 4. `/packs/bouzu-ui-{package.version}.tgz` が出力されたか確認します。
-5. 利用したいプロジェクトに移動し `npm i {path}/bouzu-ui-components/packs/bouzu-ui-{package.version}.tgz` を実行します。
+5. 利用したいプロジェクトに移動し `npm i {path}/ui/packs/bouzu-ui-{package.version}.tgz` を実行します。
 
 That's it! You can now use My Module in your Nuxt app ✨
 
@@ -59,7 +62,7 @@ That's it! You can now use My Module in your Nuxt app ✨
   npm run test:watch
   
   # Release new version
-  npm run local:release
+  npm run release:local
   ```
 
 </details>

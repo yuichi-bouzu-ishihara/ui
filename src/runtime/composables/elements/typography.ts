@@ -77,6 +77,7 @@ export const useTypography = () => {
 	}
 
 	// TypeFace 型を確認するための型ガード関数
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const isTypeFace = (value: any): value is TypeFace => {
 		return value && typeof value === 'object' && ('fontSize' in value || 'fontWeight' in value || 'lineHeight' in value)
 	}

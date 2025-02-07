@@ -136,37 +136,46 @@ const gradation = computed(() => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.iconButton'; // コンポーネントセレクタ名
 
-$large-size: 48;
-$medium-size: 44;
-$small-size: 36;
-$xsmall-size: 32;
+$large-size: 48px;
+$medium-size: 44px;
+$small-size: 36px;
+$xsmall-size: 32px;
 
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		position: relative;
 
 		&._xsmall {
-			width: func.get-size($xsmall-size);
-			height: func.get-size($xsmall-size);
+			width: $xsmall-size;
+			height: $xsmall-size;
+			min-width: $xsmall-size;
+			min-height: $xsmall-size;
 		}
 
 		&._small {
-			width: func.get-size($small-size);
-			height: func.get-size($small-size);
+			width: $small-size;
+			height: $small-size;
+			min-width: $small-size;
+			min-height: $small-size;
 		}
 
 		&._medium {
-			width: func.get-size($medium-size);
-			height: func.get-size($medium-size);
+			width: $medium-size;
+			height: $medium-size;
+			min-width: $medium-size;
+			min-height: $medium-size;
 		}
 
 		&._large {
-			width: func.get-size($large-size);
-			height: func.get-size($large-size);
+			width: $large-size;
+			height: $large-size;
+			min-width: $large-size;
+			min-height: $large-size;
 		}
 
 		.button-inner-slot {
 			padding: 0;
+			margin-top: 0 !important; // Button slot の上下の調整をキャンセル。
 		}
 	}
 

@@ -8,9 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useIcon } from '../../composables/elements/icon'
-import { useMode } from '../../composables/mode'
 import { useCss } from '../../composables/css'
 import { useGradation } from '../../composables/gradation'
 import { useNumber } from '../../composables/number'
@@ -18,7 +17,6 @@ import { useNumber } from '../../composables/number'
 // Stores & Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値に関する関数
-const { darkmode } = useMode()
 
 // Props -------------------------------------
 const props = defineProps({
@@ -28,10 +26,6 @@ const props = defineProps({
 	name: { type: String, default: '' },
 	size: { type: [Number, String], default: 11 },
 })
-
-// Data -------------------------------------
-const image = ref('')
-const nameClass = ref('')
 
 // Computed -------------------------------------
 const classes = computed(() => {
@@ -79,19 +73,12 @@ const styles = computed(() => {
 	}
 	return { width: value, height: value, ...img }
 })
-
-// Watchers -------------------------------------
-watch(() => props.name, async (nv) => {
-	if (nv !== '') {
-		const data = useIcon().reference(nv)
-		if (data.class) {
-			nameClass.value = data.class
-		}
-		if (data.path) {
-			image.value = data.path
-		}
-	}
-}, { immediate: true })
+const image = computed(() => {
+	return useIcon().reference(props.name).path
+})
+const nameClass = computed(() => {
+	return useIcon().reference(props.name).class
+})
 </script>
 
 <style lang="scss">

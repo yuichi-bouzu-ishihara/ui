@@ -50,19 +50,9 @@ const props = defineProps({
 })
 
 // Emits -------------------------------------------
-const EMIT_UPDATE_MODEL_VALUE = 'update:modelValue'
-const EMIT_ENTER_KEY_DOWN = 'enter-key-down'
-const EMIT_VALID = 'valid'
-const EMIT_INVALID = 'invalid'
-const EMIT_FOCUS = 'focus'
-const EMIT_BLUR = 'blur'
 const emit = defineEmits<{
-	(e: 'update:modelValue', text: string): void
-	(e: 'enter-key-down'): void
-	(e: 'valid'): void
-	(e: 'invalid', message: string): void
-	(e: 'focus'): void
-	(e: 'blur'): void
+	(e: 'update:modelValue' | 'invalid', textOrMessage: string): void
+	(e: 'enter-key-down' | 'valid' | 'focus' | 'blur'): void
 }>()
 
 // Data -------------------------------------------
@@ -90,7 +80,7 @@ const text = computed({
 	get: () => props.modelValue,
 	set: (value) => {
 		// 値に変更があると呼ばれるsetter
-		emit(EMIT_UPDATE_MODEL_VALUE, value)
+		emit('update:modelValue', value)
 	},
 })
 const placeholderText = computed(() => {
@@ -134,14 +124,14 @@ const handleKeydown = (event: KeyboardEvent) => {
 }
 const handleFocus = () => {
 	isFocus.value = true
-	emit(EMIT_FOCUS)
+	emit('focus')
 }
 const handleBlur = () => {
 	if (props.validation === 'blur') {
 		validate()
 	}
 	isFocus.value = false
-	emit(EMIT_BLUR)
+	emit('blur')
 }
 const validate = () => {
 	let message = ''
@@ -159,12 +149,12 @@ const validate = () => {
 
 	if (!message) {
 		state.value = 'valid'
-		emit(EMIT_VALID)
+		emit('valid')
 		validationMessage.value = ''
 	}
 	else {
 		state.value = 'invalid'
-		emit(EMIT_INVALID, message)
+		emit('invalid', message)
 		validationMessage.value = message
 	}
 }
