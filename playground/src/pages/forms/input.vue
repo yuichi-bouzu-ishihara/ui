@@ -4,7 +4,9 @@
 			<Typography title1 color="100">
 				<Input v-model="value" name="inputTest" label="Label" placeholder="Placeholder" :focus="focus" />
 			</Typography>
-			<Switch v-model="focus">Focus</Switch>
+			<Switch v-model="focus">
+				Focus
+			</Switch>
 		</Column>
 	</div>
 </template>

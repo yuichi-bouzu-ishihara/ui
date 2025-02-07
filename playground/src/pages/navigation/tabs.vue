@@ -16,7 +16,7 @@ const list = ref([
       list.value.forEach((item) => {
         item.current = item.name === 'Menu1'
       })
-    }
+    },
   },
   {
     name: 'Menu2',
@@ -25,7 +25,7 @@ const list = ref([
       list.value.forEach((item) => {
         item.current = item.name === 'Menu2'
       })
-    }
+    },
   },
 ])
 // ver.Link
