@@ -1,11 +1,11 @@
 <template>
 	<Box class="pageElementsCarousel" w="100vw" pl="40" pr="40">
-		<Carousel :index="i" :list="list" @change="i = $event" />
+		<Carousel v-model:index="i" :list="list" />
 	</Box>
 </template>
 
 <script setup lang="ts">
-const i = ref(2)
+const i = ref(0)
 const list = [
 	{
 		src: 'https://placehold.jp/24/f0f0f0/cccccc/1000x300.png?text=no%20image%201',

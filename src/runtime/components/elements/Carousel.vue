@@ -15,20 +15,17 @@ type ListItem = {
 	alt: string
 }
 
-// Props ------------------
-const props = defineProps({
-	index: { type: Number, default: 0 },
-	list: { type: Array as () => ListItem[], default: () => [] },
-})
+// Models ------------------
+const index = defineModel<number>('index')
 
-// Emits ------------------
-const emit = defineEmits({
-	change: (_index: number) => true,
+// Props ------------------
+defineProps({
+	list: { type: Array as () => ListItem[], default: () => [] },
 })
 
 // Data ------------------
 const element = ref<HTMLElement | null>(null)
-const activeIndex = ref(props.index)
+const activeIndex = ref(index.value)
 let scrollTimeout: NodeJS.Timeout | null = null
 
 // Methods ------------------
@@ -38,17 +35,15 @@ const updateIndexOnScroll = () => {
 		const itemWidth = element.value.clientWidth
 		const nextIndex = Math.round(scrollLeft / itemWidth)
 		if (activeIndex.value !== nextIndex) {
-			// console.log('updateIndexOnScroll', nextIndex)
-			activeIndex.value = nextIndex
+			// スクロールが止まったときに更新する
+			if (scrollTimeout) {
+				clearTimeout(scrollTimeout)
+			}
+			scrollTimeout = setTimeout(() => {
+				activeIndex.value = nextIndex
+				index.value = nextIndex
+			}, 150) // 150ms 後にスクロールが止まったと判断
 		}
-
-		// スクロールが止まったときに emit する
-		if (scrollTimeout) {
-			clearTimeout(scrollTimeout)
-		}
-		scrollTimeout = setTimeout(() => {
-			emit('change', activeIndex.value)
-		}, 150) // 150ms 後にスクロールが止まったと判断
 	}
 }
 const setIndex = (nv: number) => {
@@ -62,7 +57,7 @@ const setIndex = (nv: number) => {
 
 // Watch ------------------
 watch(
-	() => props.index,
+	() => index.value,
 	(nv) => {
 		if (nv !== undefined) {
 			setIndex(nv)
@@ -71,8 +66,7 @@ watch(
 )
 
 // Lifecycle Hooks ------------------
-onMounted(async () => {
-	await nextTick()
+onMounted(() => {
 	if (element.value) {
 		element.value.addEventListener('scroll', updateIndexOnScroll)
 	}
