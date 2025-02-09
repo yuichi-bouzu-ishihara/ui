@@ -321,6 +321,15 @@ export const defaultOptions = {
 	roundProgressBar: {
 		color: 'color-light',
 	},
+	tabs: {
+		typography: 'body', // テキストサイズ e.g. largeTitle, title, body, caption,,,
+		height: '28px', // 高さ e.g. 44px
+		barRadius: '0', // 角丸 e.g. 4px
+		barHeight: '1.5px', // バーの高さ e.g. 4px
+		barColor: 'color-text', // バーの色 e.g. color-light, color-dark
+		barBackgroundHeight: '0.5px', // バーの背景の高さ e.g. 44px
+		barBackgroundColor: 'color-text-020', // バーの背景色 e.g. color-light, color-dark
+	},
 	container: {
 		base: '560px', // 幅未設定時。iPhone Max に合わせる。
 		wide: '1080px', // 幅広設定。ヘッダーの左右UIを考慮して、120pxずつ余裕を持

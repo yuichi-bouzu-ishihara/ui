@@ -9,6 +9,7 @@ import type { ButtonConfig } from './button'
 import type { SkeletonShapeConfig } from './skeleton-shape'
 import type { SpinnerConfig } from './spinner'
 import type { RoundProgressBarConfig } from './round-progress-bar'
+import type { TabsConfig } from './tabs'
 import type { WebfontConfig } from './webfont'
 import type { ContainerConfig } from './container'
 
@@ -26,6 +27,7 @@ export type UIConfig = {
 	skeletonShape?: SkeletonShapeConfig
 	spinner?: SpinnerConfig
 	roundProgressBar?: RoundProgressBarConfig
+	tabs?: TabsConfig
 	webfont?: WebfontConfig
 	container?: ContainerConfig
 }
