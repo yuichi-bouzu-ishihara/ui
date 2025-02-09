@@ -12,12 +12,16 @@
 		</div>
 		<template v-if="navigation">
 			<template v-if="isShowPrev">
-				<IconButton class="slider-prev" :style="{ left: getSize(-NAVI_UI_SIZE) }" :icon="{ name: 'arrowLeft' }"
-					:x="-NAVI_ADJUST" v-bind="NAVI" @click="prev" />
+				<div class="slider-prev">
+					<IconButton :style="{ left: getSize(-NAVI_UI_SIZE / 2) }" :icon="{ name: 'arrowLeft', size: 16 }"
+						:w="NAVI_UI_SIZE" :h="NAVI_UI_SIZE" rounded @click="prev" />
+				</div>
 			</template>
 			<template v-if="isShowNext">
-				<IconButton class="slider-next" :style="{ right: getSize(-NAVI_UI_SIZE) }" :icon="{ name: 'arrowRight' }"
-					:x="NAVI_ADJUST" v-bind="NAVI" @click="next" />
+				<div class="slider-next">
+					<IconButton :style="{ right: getSize(-NAVI_UI_SIZE / 2) }" :icon="{ name: 'arrowRight', size: 16 }"
+						:w="NAVI_UI_SIZE" :h="NAVI_UI_SIZE" rounded @click="next" />
+				</div>
 			</template>
 		</template>
 	</Box>
@@ -33,10 +37,7 @@ import IconButton from './IconButton.vue'
 const { getSize } = useCss()
 
 // Constants ------------------
-const NAVI_UI_SIZE = 44
-const NAVI_ICON_SCALE = 2.4
-const NAVI_ADJUST = 0
-const NAVI = { link: true, scale: NAVI_ICON_SCALE, w: NAVI_UI_SIZE }
+const NAVI_UI_SIZE = 40
 
 // Props ------------------
 const props = defineProps({
