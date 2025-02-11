@@ -1,15 +1,15 @@
 <template>
 	<div class="tabs">
-		<Row class="tabs-list" align="center" nowrap>
+		<Row class="tabs-list" align="start" nowrap fit-h>
 			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
 				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
 				@click="tab.click && tab.click()">
-				<Row justify="center" align="center" gap="8">
+				<Row justify="center" align="start" gap="8" fit-h>
 					<template v-if="tab.icon">
-						<Icon :name="tab.icon.name" :size="tab.icon.size || 16" />
+						<Icon :type="tab.icon.name" :size="tab.icon.size || 16" />
 					</template>
 					<template v-else-if="tab.name">
-						<Typography caption1 bold center unselectable lineclamp="1">
+						<Typography v-bind="typography" bold center unselectable cap-height-baseline lineclamp="1">
 							{{ tab.name }}
 						</Typography>
 					</template>
@@ -25,6 +25,7 @@
 <script setup lang="ts">
 import { computed, toRefs } from 'vue'
 import { useRoute } from 'vue-router'
+import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
 import Typography from '../elements/Typography.vue'
 import BasicLink from '../elements/BasicLink.vue'
@@ -71,6 +72,10 @@ const activeIndex = computed(() => {
 	}
 	return index
 })
+const typography = computed(() => {
+	console.log({ [`${useTabs().typography}`]: true })
+	return { [`${useTabs().typography}`]: true }
+})
 </script>
 
 <style lang="scss">
@@ -79,23 +84,15 @@ const activeIndex = computed(() => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.tabs'; // コンポーネントセレクタ名
 
-$portfolios-gap: 32; // ポートフォリオメニュー同士のスペース
-$side-space: 52; // 左右に空けるスペース
-
-// その他メニュー同士のスペース。
-// ※ウィンドウ幅によって隙間は縮んで欲しいので、max 設定はしない。
-$others-gap: 28;
-
-$active-bar-height: 1.5; // アクティブバーの高さ
 $border-height: 0.5; // ボーダーの高さ
-
-$min-height: 24; // 最小の高さ
 
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		position: relative;
+		z-index: 0;
 		width: 100%;
-		min-height: func.get-size($min-height);
+		min-height: var(--tabs-height);
+		height: var(--tabs-height);
 
 		&::after {
 			content: '';
@@ -103,20 +100,21 @@ $min-height: 24; // 最小の高さ
 			position: absolute;
 			left: 0;
 			bottom: 0;
+			z-index: -1;
 			width: 100%;
-			height: func.get-size($border-height);
-			background-color: var(--color-text-020);
+			height: var(--tabs-bar-background-height);
+			background-color: var(--tabs-bar-background-color);
 		}
 
 		&-list {
 			&-item {
+				height: 100%;
 				cursor: pointer;
-				padding-bottom: func.get-size(10);
 				transition: var.$transition-base;
 				opacity: 0.6;
 
 				&._icon {
-					padding-bottom: func.get-size(16);
+					padding-bottom: 16px;
 				}
 
 				&._current,
@@ -139,8 +137,8 @@ $min-height: 24; // 最小の高さ
 			position: absolute;
 			left: 0;
 			bottom: 0;
-			height: func.get-size($active-bar-height);
-			background-color: var(--color-text);
+			height: var(--tabs-bar-height);
+			background-color: var(--tabs-bar-color);
 			transition: var.$transition-base;
 		}
 	}
