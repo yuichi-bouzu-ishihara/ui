@@ -1,4 +1,4 @@
-import { useRouteTracker } from './route-tracker'
+// import { useRouteTracker } from './route-tracker'
 import { useScroll } from './scroll'
 import { useViewport } from './viewport'
 import { useEnvironment } from './environment'
@@ -35,7 +35,7 @@ const init = () => {
 		throw new Error('Invalid UI Settings')
 	}
 
-	useRouteTracker().init()
+	// useRouteTracker().init()
 	useScroll().init()
 	useViewport().init()
 	useEnvironment().init()
