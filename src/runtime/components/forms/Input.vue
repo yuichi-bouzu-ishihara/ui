@@ -322,6 +322,24 @@ $cn: '.input'; // コンポーネントセレクタ名
 			#{$cn}-label {
 				color: var(--color-danger) !important;
 			}
+
+			&:hover:not(._disabled):not(._readonly):not(._focus) {
+				#{$cn}-label {
+					&-inner {
+						color: var(--color-danger-060);
+					}
+				}
+
+				&._noLabel {
+					#{$cn}-field {
+
+						// プレースホルダー
+						&::placeholder {
+							color: var(--color-danger-060);
+						}
+					}
+				}
+			}
 		}
 
 		&._readonly,

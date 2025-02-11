@@ -10,7 +10,7 @@
 				</Typography>
 			</template>
 			<template v-else-if="description">
-				<Typography caption3 color="dark60">
+				<Typography caption3 color="text-060">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-html="description" />
 				</Typography>
@@ -53,12 +53,12 @@ $cn: '.fieldFooter'; // コンポーネントセレクタ名
 		&-border {
 			width: 100%;
 			height: .5px;
-			background-color: var(--color-dark-030);
+			background-color: var(--color-control-030);
 
 			&-inner {
 				width: 100%;
 				height: 100%;
-				background-color: var(--color-dark);
+				background-color: var(--color-indicator);
 				opacity: 0;
 				transform-origin: center left;
 				transform: scaleX(0);
@@ -81,15 +81,7 @@ $cn: '.fieldFooter'; // コンポーネントセレクタ名
 		}
 	}
 
-	@if $mode =='darkmode' {
-		&-border {
-			background-color: var(--color-light-030);
-
-			&-inner {
-				background-color: var(--color-light);
-			}
-		}
-	}
+	@if $mode =='darkmode' {}
 
 	@if $mode =='auto' {}
 }

@@ -7,7 +7,7 @@
 			<Icon v-if="hasChildren" class="devMenu-header-icon" :name="isOpen ? 'arrowUp' : 'arrowDown'" size="12"
 				color="text" />
 		</Row>
-		<BasicLink v-else class="devMenu-children-item" active-class="_current" no-hover-style :to="{ name: page }">
+		<BasicLink v-else class="devMenu-children-item" active-class="_current" no-hover-style replace :to="{ name: page }">
 			<Typography body bold unselectable color="text" lineclamp="1">
 				{{ name }}
 			</Typography>
@@ -18,7 +18,7 @@
 					class="devMenu-children">
 					<template v-for="(child, i) in children" :key="`devMenu-children-item-${i}`">
 						<DevMenu v-if="!(child as Menu).page" v-bind="child" />
-						<BasicLink v-else class="devMenu-children-item" active-class="_current" no-hover-style
+						<BasicLink v-else class="devMenu-children-item" active-class="_current" no-hover-style replace
 							:to="{ name: (child as Menu).page }">
 							<!-- 型アサーションを使用 -->
 							<Typography caption1 bold unselectable color="text" lineclamp="1">

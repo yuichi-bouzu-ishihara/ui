@@ -7,15 +7,15 @@
 		<VueDraggable v-model="model" class="inputTag-items" :disabled="isDragDisabled" :animation="150"
 			:style="{ display: 'flex', flexWrap: 'wrap', gap: `${gap}px`, justifyContent: 'start', alignItems: 'stretch' }">
 			<Box v-for="(tag, index) in model" :key="`inputTag-items-item-${index}`" class="inputTag-items-item" pt="3.2"
-				pb="4.8" pl="8" pr="4" r="2" color="ultralight" relative inline-block @mouseover="handleDrag"
+				pb="4.8" pl="8" pr="4" r="2" color="text" relative inline-block @mouseover="handleDrag"
 				@mouseleave="handleDrag(false)">
 				<Row gap="4" align="center">
-					<Typography inherit lineclamp="1" color="dark90">
+					<Typography inherit lineclamp="1" color="background" cap-height-baseline>
 						{{ tag }}
 					</Typography>
 					<Button minimal xsmall w="20" h="20" @click="remove(tag)">
 						<Box pt="2" mr="-4">
-							<Icon name="cross" size="10" color="dark" />
+							<Icon name="cross" size="10" color="background" />
 						</Box>
 					</Button>
 				</Row>
@@ -99,9 +99,15 @@ const inputStyle = computed(() => {
 	return { minWidth }
 })
 const freeInputPlaceholder = computed(() => {
+	if (!isInput.value) return ''
+
 	let str = props.placeholder
-	if (props.label && !isFocus.value) {
-		str = ''
+	if (props.label) {
+		if (!isFocus.value) {
+			if (!model.value.length) {
+				str = ''
+			}
+		}
 	}
 	return str
 })
@@ -208,7 +214,7 @@ $padding-bottom: 10;
 			text-indent: inherit;
 			text-shadow: inherit;
 			text-align: inherit;
-			color: var(--color-dark);
+			color: var(--color-text);
 
 			display: block;
 			position: absolute;
