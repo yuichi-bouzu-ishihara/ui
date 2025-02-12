@@ -50,6 +50,7 @@ const props = defineProps({
 	tertiary: { type: Boolean, default: false },
 	quaternary: { type: Boolean, default: false },
 	info: { type: Boolean, default: false },
+	light: { type: Boolean, default: false },
 	dark: { type: Boolean, default: false },
 	link: { type: Boolean, default: false },
 	minimal: { type: Boolean, default: false },
@@ -104,6 +105,7 @@ const priority = computed(() => {
 	if (props.tertiary) return 'tertiary'
 	if (props.quaternary) return 'quaternary'
 	if (props.info) return 'info'
+	if (props.light) return 'light'
 	if (props.dark) return 'dark'
 	if (props.link) return 'link'
 	if (props.minimal) return 'minimal'
@@ -322,6 +324,40 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				inset: 0;
 				display: block;
 				border: var(--button-quaternary-border-width) solid var(--button-quaternary-border-color);
+				border-radius: inherit;
+				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
+			}
+		}
+
+		// light
+		&._light {
+			background-image: var(--button-light-background-color);
+			background-color: var(--button-light-background-color);
+			backdrop-filter: blur(var(--button-light-background-blur));
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: block;
+				border: var(--button-light-border-width) solid var(--button-light-border-color);
+				border-radius: inherit;
+				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
+			}
+		}
+
+		// dark
+		&._dark {
+			background-image: var(--button-dark-background-color);
+			background-color: var(--button-dark-background-color);
+			backdrop-filter: blur(var(--button-dark-background-blur));
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: block;
+				border: var(--button-light-border-width) solid var(--button-light-border-color);
 				border-radius: inherit;
 				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
 			}
