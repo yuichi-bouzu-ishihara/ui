@@ -2,25 +2,25 @@
 	<div class="inputTag" :class="classes" @mouseover="isHover = true" @mouseleave="isHover = false">
 		<Typography v-if="label" tag="label" :for="getId" class="inputTag-label">
 			<span class="inputTag-label-inner">{{ label
-				}}</span><span v-if="required" class="inputTag-label-required">*</span>
+			}}</span><span v-if="required" class="inputTag-label-required">*</span>
 		</Typography>
 		<VueDraggable v-model="model" class="inputTag-items" :disabled="isDragDisabled" :animation="150"
-			:style="{ display: 'flex', flexWrap: 'wrap', gap: `${gap}px`, justifyContent: 'start', alignItems: 'stretch' }">
-			<Box v-for="(tag, index) in model" :key="`inputTag-items-item-${index}`" class="inputTag-items-item" pt="3.2"
-				pb="4.8" pl="8" pr="4" r="2" color="text" relative inline-block @mouseover="handleDrag"
-				@mouseleave="handleDrag(false)">
+			:style="{ display: 'flex', flexWrap: 'wrap', gap: `${gap}px`, justifyContent: 'start', alignItems: 'stretch' }"
+			:draggable="'._draggable'" @start="handleMove(true);" @end="handleMove(false)">
+			<Box v-for="tag in model" :key="tag.id" class="inputTag-items-item _draggable" pt="3.2" pb="4.8" pl="8" pr="4"
+				r="2" color="text" relative inline-block @mouseover="handleDrag" @mouseleave="handleDrag(false)">
 				<Row gap="4" align="center">
 					<Typography inherit lineclamp="1" color="background" cap-height-baseline>
-						{{ tag }}
+						{{ tag.value }}
 					</Typography>
-					<Button minimal xsmall w="20" h="20" @click="remove(tag)">
+					<Button minimal xsmall w="20" h="20" @click="remove(tag.id)">
 						<Box pt="2" mr="-4">
 							<Icon name="cross" size="10" color="background" />
 						</Box>
 					</Button>
 				</Row>
 			</Box>
-			<Row align="center" style="width: auto">
+			<Row align="center" style="width: auto" :class="isMoving ? '' : '_draggable'">
 				<Textarea v-if="isInput" :id="getId" v-model="text" :style="inputStyle" :placeholder="freeInputPlaceholder"
 					type="text" rows="1" :autoheight="false" :focus="isDragging ? false : focus" v-bind="{ name }"
 					@input="handleInput" @focus="handleFocus" @blur="handleBlur" />
@@ -42,7 +42,7 @@ import Textarea from '../forms/Textarea.vue'
 // Composables ----------------------
 
 // Models ----------------------
-const model = defineModel<string[]>({ default: () => [] })
+const model = defineModel<{ id: number, value: string }[]>({ default: () => [] })
 
 // Props ----------------------
 const props = defineProps({
@@ -73,6 +73,7 @@ const text = ref<string>('')
 const isFocus = ref(false) // フォーカスがあたっているかどうか
 const isHover = ref(false)
 const isDragging = ref(false)
+const isMoving = ref(false) // ドラッグして動かしているかどうか
 const isDragDisabled = ref(false)
 const getId: string = `inputTag-${props.name}`
 const validationMessage = ref('')
@@ -121,14 +122,14 @@ const handleDrag = (flag: boolean = true) => {
 	isDragging.value = flag
 }
 const add = () => {
-	if (text.value && !model.value.includes(text.value)) {
-		model.value.push(text.value)
+	if (text.value && !model.value.some(tag => tag.value === text.value)) {
+		model.value.push({ id: Date.now(), value: text.value })
 		text.value = ''
 	}
 	validate()
 }
-const remove = (tag: string) => {
-	model.value.splice(model.value.indexOf(tag), 1)
+const remove = (id: number) => {
+	model.value.splice(model.value.findIndex(tag => tag.id === id), 1)
 	validate()
 }
 const handleInput = async () => {
@@ -152,6 +153,9 @@ const handleBlur = () => {
 		add()
 	}
 	validate()
+}
+const handleMove = (flag: boolean) => {
+	isMoving.value = flag
 }
 const validate = () => {
 	let message = ''
