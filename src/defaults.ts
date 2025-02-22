@@ -23,6 +23,7 @@ const background = '#2D2E31' // 背景色
 const text = '#FFFFFF' // テキスト色
 const control = '#0C8CE9' // コントロール色。 e.g. checkbox background, switch UI background...
 const indicator = '#FFFFFF' // インジケーター色。 e.g. checkbox check Icon, switch UI handle...
+const accent = '#7FB74D'
 
 export const defaultOptions = {
 	themeColor: 'default',
@@ -58,6 +59,7 @@ export const defaultOptions = {
 		text, // テキスト色 黒
 		control,
 		indicator,
+		accent,
 	},
 	gradation: {
 		// ※ scss/_variables.scss と合わせる。
