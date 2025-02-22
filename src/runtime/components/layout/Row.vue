@@ -107,11 +107,15 @@ const slotStyle = computed(() => {
 			rowGap = getSize(Number(props.gap) * (Number(props.split) - 1) / Number(props.split))
 		}
 		else if (Array.isArray(props.gap)) {
-			const [_y, x] = props.gap
-			rowGap = getSize(Number(x) * (Number(props.split) - 1) / Number(props.split))
+			const [x, _y] = props.gap
+			let xg = x
+			if (isPureNumber(String(x))) {
+				xg = getSize(Number(x))
+			}
+			rowGap = `calc(${xg} * ${Number(props.split) - 1} / ${Number(props.split)})`
 		}
 		else {
-			rowGap = `calc(${String(props.gap)} * ${Number(props.split) - 1})`
+			rowGap = `calc(${String(props.gap)} * ${Number(props.split) - 1} / ${Number(props.split)})`
 		}
 		return {
 			'--flex-basis': props.split ? `calc(${100 / Number(props.split)}% - ${rowGap})` : 'auto',

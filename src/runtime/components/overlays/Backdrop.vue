@@ -25,7 +25,7 @@ const tint = ref<string>('')
 // 薄さ加減を監視する
 watch(
 	[() => props.ultraSoft, () => props.soft, () => props.medium, () => props.hard, () => props.solid],
-	([ultraSoft, soft, medium, hard, solid], []) => {
+	([ultraSoft, soft, medium, hard, solid]) => {
 		// 優先度を文字列で type に設定する。
 		if (ultraSoft) tint.value = 'ultraSoft'
 		if (soft) tint.value = 'soft'

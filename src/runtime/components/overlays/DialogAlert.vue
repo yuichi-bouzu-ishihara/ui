@@ -10,6 +10,7 @@
 				</Typography>
 				<template v-if="message">
 					<Typography caption3 center linebreak>
+						<!-- eslint-disable-next-line vue/no-v-html -->
 						<div v-html="message" />
 					</Typography>
 				</template>

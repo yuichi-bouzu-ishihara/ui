@@ -214,7 +214,7 @@ $cn: '.input'; // コンポーネントセレクタ名
 			&:-webkit-autofill:active,
 			&:-internal-autofill-selected {
 				-webkit-text-fill-color: var(--color-text) !important;
-				-webkit-box-shadow: 0 0 0px 1000px var(--color-light) inset !important;
+				-webkit-box-shadow: 0 0 0px 1000px var(--color-background) inset !important;
 				background-color: transparent !important;
 			}
 		}
@@ -321,6 +321,24 @@ $cn: '.input'; // コンポーネントセレクタ名
 		&._invalid {
 			#{$cn}-label {
 				color: var(--color-danger) !important;
+			}
+
+			&:hover:not(._disabled):not(._readonly):not(._focus) {
+				#{$cn}-label {
+					&-inner {
+						color: var(--color-danger-060);
+					}
+				}
+
+				&._noLabel {
+					#{$cn}-field {
+
+						// プレースホルダー
+						&::placeholder {
+							color: var(--color-danger-060);
+						}
+					}
+				}
 			}
 		}
 

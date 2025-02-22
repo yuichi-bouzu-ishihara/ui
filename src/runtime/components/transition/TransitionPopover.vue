@@ -39,23 +39,18 @@ const variables = computed(() => {
 })
 
 // Methods --------------
-const EMIT_SHOW_START = 'show-start'
-const EMIT_SHOW_END = 'show-end'
-const EMIT_HIDE_START = 'hide-start'
-const EMIT_HIDE_END = 'hide-end'
-
-const emit = defineEmits([EMIT_SHOW_START, EMIT_SHOW_END, EMIT_HIDE_START, EMIT_HIDE_END])
+const emit = defineEmits(['show-start', 'show-end', 'hide-start', 'hide-end'])
 const beforeEnter = () => {
-	emit(EMIT_SHOW_START)
+	emit('show-start')
 }
 const afterEnter = () => {
-	emit(EMIT_SHOW_END)
+	emit('show-end')
 }
 const beforeLeave = () => {
-	emit(EMIT_HIDE_START)
+	emit('hide-start')
 }
 const afterLeave = () => {
-	emit(EMIT_HIDE_END)
+	emit('hide-end')
 }
 </script>
 

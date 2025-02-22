@@ -45,6 +45,9 @@ $backdrop-filter: blur(40px);
 $header-height: 72;
 $header-height-l: $header-height;
 
+// タブバー
+$tab-bar-height: 64; // スマホタブバーのデフォルトの高さ px
+
 // Breakpoints -- composables/break-point.ts 定義と合わせる。
 $media-xxl: "(min-width: 1680px)";
 $media-xl: "(min-width: 1280px)";

@@ -1,6 +1,6 @@
 <template>
 	<div class="indicatorScroll">
-		<Box class="indicatorScroll-bg" v-bind="{ color }" />
+		<!-- <Box class="indicatorScroll-bg" v-bind="{ color }" /> -->
 		<Box class="indicatorScroll-bar" v-bind="{ h, color }" />
 	</div>
 </template>
@@ -29,14 +29,14 @@ $cn: '.indicatorScroll'; // コンポーネントセレクタ名
 		align-items: center;
 		overflow: hidden;
 
-		&-bg {
-			position: absolute;
-			top: 0;
-			left: 0;
-			width: 100%;
-			height: 100%;
-			opacity: 0.1;
-		}
+		// &-bg {
+		// 	position: absolute;
+		// 	top: 0;
+		// 	left: 0;
+		// 	width: 100%;
+		// 	height: 100%;
+		// 	opacity: 0.1;
+		// }
 
 		&-bar {
 			width: 1px;

@@ -105,7 +105,7 @@ const classes = computed(() => {
  */
 watch(
 	() => props.focus,
-	(newFocusValue, oldFocusValue) => {
+	(newFocusValue) => {
 		if (field.value) {
 			if (newFocusValue) {
 				field.value.focus()
@@ -159,6 +159,7 @@ $cn: '.select'; // コンポーネントセレクタ名
 		position: relative;
 		width: 100%;
 		padding-top: func.get-size(14);
+		cursor: pointer;
 
 		&-field {
 			// input スタイル初期化
@@ -183,14 +184,15 @@ $cn: '.select'; // コンポーネントセレクタ名
 			text-shadow: inherit;
 			text-align: inherit;
 
-			color: var(--color-dark);
+			color: var(--color-text);
 			width: 100%;
 			padding-top: 0.2em;
 			padding-bottom: 0.36em;
+			cursor: pointer;
 
 			// プレースホルダーを非表示にする
 			&::placeholder {
-				color: rgba(var(--color-dark), 0);
+				color: var(--color-text-000);
 			}
 
 			&:-webkit-autofill,
@@ -198,8 +200,8 @@ $cn: '.select'; // コンポーネントセレクタ名
 			&:-webkit-autofill:focus,
 			&:-webkit-autofill:active,
 			&:-internal-autofill-selected {
-				-webkit-text-fill-color: var(--color-dark) !important;
-				-webkit-box-shadow: 0 0 0px 1000px var(--color-light) inset !important;
+				-webkit-text-fill-color: var(--color-text) !important;
+				-webkit-box-shadow: 0 0 0px 1000px var(--color-background) inset !important;
 				background-color: transparent !important;
 			}
 		}
@@ -219,7 +221,7 @@ $cn: '.select'; // コンポーネントセレクタ名
 			text-indent: inherit;
 			text-shadow: inherit;
 			text-align: inherit;
-			color: var(--color-dark);
+			color: var(--color-text);
 
 			display: block;
 			position: absolute;
@@ -257,17 +259,18 @@ $cn: '.select'; // コンポーネントセレクタ名
 
 			#{$cn}-field {
 				&::placeholder {
-					color: var(--color-dark-030);
+					color: var(--color-text-030);
 				}
 			}
 		}
 
 		&:hover:not(._disabled) {
+
 			#{$cn}-field {
 
 				// プレースホルダーを表示する
 				&::placeholder {
-					color: var(--color-dark-060);
+					color: var(--color-text-060);
 				}
 			}
 
@@ -287,12 +290,11 @@ $cn: '.select'; // コンポーネントセレクタ名
 
 				// プレースホルダーを表示する
 				&::placeholder {
-					color: var(--color-dark-030);
+					color: var(--color-text-030);
 				}
 			}
 
 			#{$cn}-label {
-				font-family: var(--typography-font-family-bold);
 				font-weight: bold;
 				font-size: func.get-size(10);
 				transform: translate(0em, 0em);
@@ -337,74 +339,8 @@ $cn: '.select'; // コンポーネントセレクタ名
 		}
 	}
 
-	@if $mode =='darkmode' {
-		&-field {
-			color: var(--color-light);
+	@if $mode =='darkmode' {}
 
-			&:-webkit-autofill,
-			&:-webkit-autofill:hover,
-			&:-webkit-autofill:focus,
-			&:-webkit-autofill:active,
-			&:-internal-autofill-selected {
-				-webkit-text-fill-color: var(--color-light) !important;
-				-webkit-box-shadow: 0 0 0px 1000px var(--color-darkblack) inset !important;
-				background-color: transparent !important;
-			}
-		}
-
-		&-label {
-			color: var(--color-light);
-		}
-
-		// ラベルがない時は、 placeholder を表示する
-		&._noLabel {
-
-			#{$cn}-field {
-				&::placeholder {
-					color: var(--color-light-030);
-				}
-			}
-		}
-
-		&:hover:not(._disabled) {
-			#{$cn}-field {
-
-				// プレースホルダーを表示する
-				&::placeholder {
-					color: var(--color-light-060);
-				}
-			}
-		}
-
-		&._focus {
-			#{$cn}-field {
-
-				// プレースホルダーを表示する
-				&::placeholder {
-					color: var(--color-light-030);
-				}
-			}
-		}
-	}
-
-	@if $mode =='auto' {
-		padding-top: func.get-size(14, false);
-
-		&-icon {
-			right: func.get-size(4, false);
-		}
-
-		&._focus {
-			#{$cn}-label {
-				font-size: func.get-size(10, false);
-			}
-		}
-
-		&._input {
-			#{$cn}-label {
-				font-size: func.get-size(10, false);
-			}
-		}
-	}
+	@if $mode =='auto' {}
 }
 </style>

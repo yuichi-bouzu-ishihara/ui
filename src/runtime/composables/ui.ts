@@ -1,4 +1,4 @@
-import { useRouteTracker } from './route-tracker'
+// import { useRouteTracker } from './route-tracker'
 import { useScroll } from './scroll'
 import { useViewport } from './viewport'
 import { useEnvironment } from './environment'
@@ -13,7 +13,9 @@ import { useButton } from './elements/button'
 import { useSkeletonShape } from './elements/skeleton-shape'
 import { useSpinner } from './elements/spinner'
 import { useRoundProgressBar } from './elements/round-progress-bar'
+import { useTabs } from './navigation/tabs'
 import { useContainer } from './layout/container'
+import { useLogo } from './elements/logo'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -34,7 +36,7 @@ const init = () => {
 		throw new Error('Invalid UI Settings')
 	}
 
-	useRouteTracker().init()
+	// useRouteTracker().init()
 	useScroll().init()
 	useViewport().init()
 	useEnvironment().init()
@@ -49,6 +51,8 @@ const init = () => {
 	useSkeletonShape().init()
 	useSpinner().init()
 	useRoundProgressBar().init()
+	useTabs().init()
 	useContainer().init()
+	useLogo().init()
 	useDev().init()
 }

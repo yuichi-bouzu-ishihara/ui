@@ -8,9 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useIcon } from '../../composables/elements/icon'
-import { useMode } from '../../composables/mode'
 import { useCss } from '../../composables/css'
 import { useGradation } from '../../composables/gradation'
 import { useNumber } from '../../composables/number'
@@ -18,35 +17,19 @@ import { useNumber } from '../../composables/number'
 // Stores & Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値に関する関数
-const { darkmode } = useMode()
 
 // Props -------------------------------------
 const props = defineProps({
-	color: { type: String, default: '100' }, // カラーの設定
+	color: { type: String, default: 'text' }, // カラーの設定
 	gradation: { type: String, default: '' }, // グラデーションの設定
 	originalColor: { type: Boolean, default: false }, // カラーを svg のオリジナルカラーにするかどうか
 	name: { type: String, default: '' },
 	size: { type: [Number, String], default: 11 },
 })
 
-// Data -------------------------------------
-const image = ref('')
-const nameClass = ref('')
-
 // Computed -------------------------------------
 const classes = computed(() => {
-	let color = ''
-	if (isPureNumber(props.color)) {
-		const colorValue = darkmode.value ? 'light' : 'dark'
-		let tint: string | number = props.color
-		if (Number(tint) < 100) {
-			tint = Number(tint) < 10 ? `0${tint}` : tint
-		}
-		color = `_${colorValue}${tint}`
-	}
-	else {
-		color = `_${props.color}`
-	}
+	let color = `_color-${props.color.replace('color-', '').replace('-', '')}`
 
 	// グラデーションが設定されている場合は、カラーを空にする
 	if (props.gradation !== '') {
@@ -90,19 +73,12 @@ const styles = computed(() => {
 	}
 	return { width: value, height: value, ...img }
 })
-
-// Watchers -------------------------------------
-watch(() => props.name, async (nv) => {
-	if (nv !== '') {
-		const data = useIcon().reference(nv)
-		if (data.class) {
-			nameClass.value = data.class
-		}
-		if (data.path) {
-			image.value = data.path
-		}
-	}
-}, { immediate: true })
+const image = computed(() => {
+	return useIcon().reference(props.name).path
+})
+const nameClass = computed(() => {
+	return useIcon().reference(props.name).class
+})
 </script>
 
 <style lang="scss">
@@ -152,7 +128,7 @@ watch(() => props.name, async (nv) => {
 	// Color
 	@each $priority in var.$color-priorities {
 		@each $tint in var.$color-tint {
-			&._#{$priority}#{$tint} {
+			&._color-#{$priority}#{$tint} {
 				@include mix.color-var($priority, $tint) using ($css-var) {
 					@include icon-color($css-var);
 				}

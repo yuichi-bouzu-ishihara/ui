@@ -26,6 +26,7 @@ const equal = (a: Array<number | string>, b: Array<number | string>) => {
  * @param {Array<any>} arr - シャッフルする配列
  * @returns {Array<any>} シャッフルされた配列
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const shuffle = (arr: Array<any>): Array<any> => {
 	const newArray = []
 	while (arr.length > 0) {
@@ -43,6 +44,7 @@ const shuffle = (arr: Array<any>): Array<any> => {
  * @param {Array<any>} arr - 配列
  * @returns {Array<any>} ユニークになった配列
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const unique = (arr: Array<any>): Array<any> => {
 	return Array.from(new Set(arr.map(item => JSON.stringify(item)))).map(item => JSON.parse(item))
 }

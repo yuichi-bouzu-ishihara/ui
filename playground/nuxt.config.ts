@@ -26,6 +26,12 @@ export default defineNuxtConfig({
         dev: {
           path: '/',
         },
+        logo: {
+          src: '/assets/logo.svg',
+          alt: 'logo',
+          width: 222,
+          height: 38,
+        },
       },
     }],
   ],

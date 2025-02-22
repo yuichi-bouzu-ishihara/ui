@@ -49,7 +49,7 @@ const getScrollPosition = (path: string) => {
 
 /**
  * 前のページ URL があるかどうか
- * @returns {boolean}
+ * @returns {boolean} 前のページ URL がある場合はtrue、ない場合はfalse
  */
 const isPrevRoute = () => {
 	let flag = false

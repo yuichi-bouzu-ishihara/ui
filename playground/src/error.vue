@@ -4,12 +4,15 @@
 			<Column justify="center" gap="12">
 				<Icon name="exclamation" size="40" />
 				<Typography v-if="title" title2 extrabold center>
+					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-html="title" />
 				</Typography>
 				<Typography v-if="message" caption1 bold center>
+					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-html="message" />
 				</Typography>
 				<Typography v-if="code" footnote center color="60">
+					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-html="code" />
 				</Typography>
 				<Button small rounded w="200" @click="handleClick">
@@ -40,24 +43,13 @@ const handleClick = () => {
 
 // Lifecycle Hooks ------------------
 onMounted(async () => {
-	useRouteTracker().init()
-	useScroll().init()
-	useViewport().init()
-	useEnvironment().init()
-	useWebFonts().init({
-		jaAdjust: Number(useCss().getVariable('fontJaSizeAdjust')),
-		exLocation: [''],
-		exOS: ['']
-	})
-	useMode().setDarkmode(false)
-	useBreakPoint().init()
-	useDev().init()
+	useUI().init()
 
 	const error = props.error as CustomError
-	code.value = error.code || props.error?.statusCode
+	code.value = String(error.code) || String(props.error?.statusCode)
 
-	if (Object.values(CustomErrorCode).includes(code.value)) {
-		title.value = CustomErrorCode[code.value] // エラーコードに対応するタイトルを設定
+	if (Object.keys(CustomErrorCode).includes(code.value)) {
+		title.value = CustomErrorCode[code.value as keyof typeof CustomErrorCode] as string // エラーコードに対応するタイトルを設定
 		message.value = error.message
 	}
 	else {

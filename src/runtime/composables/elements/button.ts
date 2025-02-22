@@ -54,5 +54,16 @@ export const useButton = () => {
 	return {
 		init,
 		config: readonly(config),
+		primary: config.value ? readonly(config.value).primary : null,
+		secondary: config.value ? readonly(config.value).secondary : null,
+		tertiary: config.value ? readonly(config.value).tertiary : null,
+		quaternary: config.value ? readonly(config.value).quaternary : null,
+		link: config.value ? readonly(config.value).link : null,
+		info: config.value ? readonly(config.value).info : null,
+		minimal: config.value ? readonly(config.value).minimal : null,
+		large: config.value ? readonly(config.value).large : null,
+		medium: config.value ? readonly(config.value).medium : null,
+		small: config.value ? readonly(config.value).small : null,
+		xsmall: config.value ? readonly(config.value).xsmall : null,
 	}
 }

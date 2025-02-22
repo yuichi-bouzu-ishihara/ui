@@ -1,5 +1,6 @@
 <template>
 	<Box class="devHeader" color="background080" bg-blur>
+		<!-- eslint-disable-next-line no-irregular-whitespace -->
 		<Container full no-padding>
 			<SlotHeader>
 				<template #left>
@@ -112,7 +113,7 @@ watch(
 // ページ遷移したらメニューを閉じる
 watch(
 	() => route.path,
-	(newVal: string) => {
+	() => {
 		showMenu.value = false
 	},
 	{ immediate: true },
@@ -129,7 +130,12 @@ watch(
 watch(
 	() => isSizeAuto.value,
 	(newVal: boolean) => {
-		newVal ? useMode().setSizeType('auto') : useMode().setSizeType('px')
+		if (newVal) {
+			useMode().setSizeType('auto')
+		}
+		else {
+			useMode().setSizeType('px')
+		}
 		emit('sizeAuto', newVal)
 	},
 )

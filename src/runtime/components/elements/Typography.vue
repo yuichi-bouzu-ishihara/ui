@@ -20,7 +20,7 @@ const { isPureNumber } = useNumber()
 // Props --------------------------------
 const props = defineProps({
 	tag: { type: String, default: 'div' },
-	color: { type: [String, Number], default: '100' },
+	color: { type: String, default: 'text' },
 	gradation: { type: String, default: '' }, // グラデーションの設定
 
 	bold: { type: Boolean, default: false }, // 太字強制
@@ -41,6 +41,8 @@ const props = defineProps({
 	right: { type: Boolean, default: false }, // 右寄せ
 	center: { type: Boolean, default: false }, // 中央寄せ
 	justify: { type: Boolean, default: false }, // 均等割付
+
+	vertical: { type: Boolean, default: false }, // 縦書き
 
 	// タイプ
 	largeTitle: { type: Boolean, default: false },
@@ -80,6 +82,7 @@ const classes = computed(() => {
 		_right: props.right,
 		_center: props.center,
 		_justify: props.justify,
+		_vertical: props.vertical,
 		_linebreak: props.linebreak,
 		_unselectable: props.unselectable,
 		_capHeightBaseline: props.capHeightBaseline,
@@ -98,17 +101,7 @@ const classes = computed(() => {
 
 	// グラデーションが設定されている場合は、カラーを処理しない
 	if (gradation === '') {
-		if (useNumber().isPureNumber(props.color)) {
-			const colorValue = 'text'
-			let tint = props.color
-			if (Number(tint) < 100) {
-				tint = Number(tint).toString().padStart(3, '0')
-			}
-			color = `_color-${colorValue}${tint}`
-		}
-		else {
-			color = `_color-${props.color}`
-		}
+		color = `_color-${props.color.replace('color-', '').replace('-', '')}`
 	}
 
 	obj[`${color}`] = true
@@ -155,25 +148,22 @@ watch(
 		() => props.footnote,
 		() => props.inherit,
 	],
-	(
-		[
-			largeTitle,
-			title1,
-			title2,
-			title3,
-			headline,
-			subheadline,
-			lead,
-			body,
-			caption1,
-			caption2,
-			caption3,
-			callout,
-			footnote,
-			inherit,
-		],
-		[],
-	) => {
+	([
+		largeTitle,
+		title1,
+		title2,
+		title3,
+		headline,
+		subheadline,
+		lead,
+		body,
+		caption1,
+		caption2,
+		caption3,
+		callout,
+		footnote,
+		inherit,
+	]) => {
 		// 優先度を文字列で type に設定する。
 		if (largeTitle) type.value = 'largeTitle'
 		if (title1) type.value = 'title1'
@@ -403,6 +393,11 @@ $cn: '.typography'; // コンポーネントセレクタ名
 			font-size: $fs-body;
 			font-weight: $fw-body;
 			line-height: $lh-body;
+
+			&._capHeightBaseline {
+				margin-top: $cpbtop-body;
+				margin-bottom: $cpbbottom-body;
+			}
 		}
 
 		&._caption1 {
@@ -536,6 +531,11 @@ $cn: '.typography'; // コンポーネントセレクタ名
 		&._normal {
 			font-family: var(--typography-font-family-normal);
 			font-weight: var(--typography-font-weight-normal);
+		}
+
+		// 縦書き
+		&._vertical {
+			writing-mode: vertical-rl;
 		}
 
 		// 改行文字での改行を可能にするのと、

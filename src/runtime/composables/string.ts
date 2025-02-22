@@ -58,7 +58,7 @@ const sanitize = (str: string): string => {
 /**
  * キャメルケースをハイフン形式に変換する関数
  * @param str
- * @returns
+ * @returns ハイフン形式の文字列
  */
 const camelToKebab = (str: string): string => {
 	return str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
@@ -67,7 +67,7 @@ const camelToKebab = (str: string): string => {
 /**
  * ハイフン形式をキャメルケースに変換する関数
  * @param str
- * @returns
+ * @returns キャメルケースの文字列
  */
 const kebabToCamel = (str: string): string => {
 	return str.replace(/-([a-z])/g, (match, letter) => letter.toUpperCase())

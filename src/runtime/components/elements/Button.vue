@@ -3,14 +3,12 @@
 	ボタンUIコンポーネント
 -->
 <template>
-	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h }">
+	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h, minW: w, minH: h }">
 		<template v-if="to">
 			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true }">
-				<Row class="button-inner-slot" justify="center" align="center">
-					<Typography v-bind="typography">
-						<slot />
-					</Typography>
-				</Row>
+				<Typography class="button-inner-slot" v-bind="typography">
+					<slot />
+				</Typography>
 				<template v-if="loading">
 					<div class="button-inner-loader" @click.stop="click">
 						<Spinner v-bind="spinner" />
@@ -20,11 +18,9 @@
 		</template>
 		<template v-else>
 			<button class="button-inner" :type="buttonType" @click="click">
-				<Row class="button-inner-slot" justify="center" align="center">
-					<Typography v-bind="typography">
-						<slot />
-					</Typography>
-				</Row>
+				<Typography class="button-inner-slot" v-bind="typography">
+					<slot />
+				</Typography>
 				<template v-if="loading">
 					<div class="button-inner-loader" @click.stop="click">
 						<Spinner v-bind="spinner" />
@@ -39,7 +35,6 @@
 import { computed } from 'vue'
 import { useButton } from '../../composables/elements/button'
 import Spinner from '../elements/Spinner.vue'
-import Row from '../layout/Row.vue'
 import Box from '../layout/Box.vue'
 import BasicLink from './BasicLink.vue'
 import Typography from './Typography.vue'
@@ -55,6 +50,7 @@ const props = defineProps({
 	tertiary: { type: Boolean, default: false },
 	quaternary: { type: Boolean, default: false },
 	info: { type: Boolean, default: false },
+	light: { type: Boolean, default: false },
 	dark: { type: Boolean, default: false },
 	link: { type: Boolean, default: false },
 	minimal: { type: Boolean, default: false },
@@ -109,6 +105,7 @@ const priority = computed(() => {
 	if (props.tertiary) return 'tertiary'
 	if (props.quaternary) return 'quaternary'
 	if (props.info) return 'info'
+	if (props.light) return 'light'
 	if (props.dark) return 'dark'
 	if (props.link) return 'link'
 	if (props.minimal) return 'minimal'
@@ -215,13 +212,9 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		background-color: var(--color-dark);
 		border-radius: var(--button-medium-radius);
 		padding: 0;
-		pointer-events: auto;
+		pointer-events: none;
 		cursor: pointer;
 		transition: all var.$transition-fast-duration var.$transition-base-timing-function;
-
-		.typography {
-			margin-top: calc(-1 * var(--button-medium-text-size) * 0.2);
-		}
 
 		// hoverスタイル
 		&:hover:not(._disabled) {
@@ -242,10 +235,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-xsmall-padding-h);
-
-				.typography {
-					margin-top: calc(-1 * var(--button-xsmall-text-size) * 0.2);
-				}
+				margin-top: var(--button-xsmall-text-adjust-top);
 			}
 		}
 
@@ -255,10 +245,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-small-padding-h);
-			}
-
-			.typography {
-				margin-top: calc(-1 * var(--button-small-text-size) * 0.2);
+				margin-top: var(--button-small-text-adjust-top);
 			}
 		}
 
@@ -269,10 +256,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 
 			#{$cn}-inner-slot {
 				padding: 0 var(--button-large-padding-h);
-			}
-
-			.typography {
-				margin-top: calc(-1 * var(--button-large-text-size) * 0.2);
+				margin-top: var(--button-large-text-adjust-top);
 			}
 		}
 
@@ -340,6 +324,40 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				inset: 0;
 				display: block;
 				border: var(--button-quaternary-border-width) solid var(--button-quaternary-border-color);
+				border-radius: inherit;
+				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
+			}
+		}
+
+		// light
+		&._light {
+			background-image: var(--button-light-background-color);
+			background-color: var(--button-light-background-color);
+			backdrop-filter: blur(var(--button-light-background-blur));
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: block;
+				border: var(--button-light-border-width) solid var(--button-light-border-color);
+				border-radius: inherit;
+				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
+			}
+		}
+
+		// dark
+		&._dark {
+			background-image: var(--button-dark-background-color);
+			background-color: var(--button-dark-background-color);
+			backdrop-filter: blur(var(--button-dark-background-blur));
+
+			&::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				display: block;
+				border: var(--button-light-border-width) solid var(--button-light-border-color);
 				border-radius: inherit;
 				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
 			}
@@ -415,13 +433,17 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		}
 
 		&._noPaddingH {
-			padding-left: 0;
-			padding-right: 0;
+			#{$cn}-inner-slot {
+				padding-left: 0;
+				padding-right: 0;
+			}
 		}
 
 		&._noPaddingV {
-			padding-top: 0;
-			padding-bottom: 0;
+			#{$cn}-inner-slot {
+				padding-top: 0;
+				padding-bottom: 0;
+			}
 		}
 
 		&-inner {
@@ -434,21 +456,36 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			// button スタイルの初期化 - end -------
 
 			display: flex;
+			flex-direction: column;
 			justify-content: center;
 			align-items: center;
 			width: 100%;
 			height: 100%;
 			padding: 0;
 			cursor: inherit;
+			pointer-events: auto;
+
+			&::before {
+				content: '';
+				display: block;
+				width: 100%;
+				height: 0;
+			}
 
 			&-slot {
 				// font - start -----
 				text-decoration: none;
 				// font - end -----
 
+				display: inline-flex;
+				flex-direction: row;
+				justify-content: center;
+				align-items: center;
+				gap: $btn-slot-gap;
 				width: 100%;
 				height: 100%;
 				padding: 0 var(--button-medium-padding-h);
+				margin-top: var(--button-medium-text-adjust-top);
 				pointer-events: none;
 				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
 
@@ -456,15 +493,6 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				&:focus:not(.focus-visible),
 				&:active:not(._disabled) {
 					outline: none;
-				}
-
-				.typography {
-					display: inline-flex;
-					flex-direction: row;
-					justify-content: center;
-					align-items: center;
-					gap: $btn-slot-gap;
-					margin-top: -0.16em;
 				}
 			}
 

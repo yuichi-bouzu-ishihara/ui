@@ -84,37 +84,34 @@ const select = async (accepts = ['image']): Promise<{ file: unknown, name: strin
 /**
  * 上記 select で選択したファイルをエンコード（base64化）する。
  * @note 例： useFile().encode(image as string) という形で使う。
- * @param {any} payload.file File to encode
+ * @param {string} fileUrl - エンコードするファイルのURL
  * @returns {Promise<string>} Base64 encoded string of the file
  */
 const encode = async (fileUrl: string): Promise<string> => {
-	return new Promise(async (resolve, reject) => {
-		try {
-			const response = await fetch(fileUrl)
-			const file = await response.blob()
-
-			const reader = new FileReader()
-			reader.onload = (e) => {
-				if (e.target && typeof e.target.result === 'string') {
-					resolve(e.target.result)
+	return new Promise((resolve, reject) => {
+		fetch(fileUrl)
+			.then(response => response.blob())
+			.then((file) => {
+				const reader = new FileReader()
+				reader.onload = (e) => {
+					if (e.target && typeof e.target.result === 'string') {
+						resolve(e.target.result)
+					}
+					else {
+						reject(new Error('Failed to read file as base64.'))
+					}
 				}
-				else {
-					reject(new Error('Failed to read file as base64.'))
-				}
-			}
-			reader.onerror = reject
-			reader.readAsDataURL(file)
-		}
-		catch (error) {
-			reject(error)
-		}
+				reader.onerror = reject
+				reader.readAsDataURL(file)
+			})
+			.catch(error => reject(error))
 	})
 }
 
 /**
  * 指定ファイルをダウンロード
  * @param {string} url ダウンロードするファイルのURL
- * @param {string} fileName ダウンロード時のファイル名
+ * @param {string} name ダウンロード時のファイル名
  */
 const download = (url: string, name: string) => {
 	// `<a>`要素を作成
@@ -209,7 +206,7 @@ const getExtension = async (fileUrl: string): Promise<string> => {
  * @returns {string} ファイルの拡張子
  */
 const getExtensionByBase64 = (base64Data: string): string => {
-	const mime = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]+).*,.*/)
+	const mime = base64Data.match(/data:([a-zA-Z0-9]+\/[a-zA-Z0-9-.+]).*,.*/)
 	if (!mime || mime.length < 2) {
 		throw new Error('Invalid Base64 data')
 	}

@@ -11,4 +11,5 @@ export type ColorConfig = {
 	text: string
 	control: string
 	indicator: string
+	accent: string
 }

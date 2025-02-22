@@ -1,6 +1,6 @@
 <template>
 	<component :is="tag" class="logo" :class="classes" :style="styles">
-		{{ name }}
+		{{ useLogo().alt }}
 	</component>
 </template>
 
@@ -8,6 +8,7 @@
 import { computed } from 'vue'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
+import { useLogo } from '../../composables/elements/logo'
 
 // Stores & Composables ---------------------------
 const { getSize } = useCss() // css に関する関数
@@ -16,16 +17,14 @@ const { isPureNumber } = useNumber()
 // Props の型定義
 const props = defineProps({
 	tag: { type: String, default: 'div' },
-	color: { type: [String, Number], default: 'text' },
+	color: { type: String, default: '' },
 	size: { type: [Number, String], default: 11 },
-	technologies: { type: Boolean, default: false },
 })
 
 // Computed ------------------
 const classes = computed(() => {
 	return {
-		_technologies: props.technologies,
-		[`_${props.color}`]: props.color,
+		[`_color-${color.value}`]: color.value,
 	}
 })
 const styles = computed(() => {
@@ -38,12 +37,12 @@ const styles = computed(() => {
 	}
 	return { fontSize }
 })
-const name = computed(() => {
-	let str = 'HONOO'
-	if (props.technologies) {
-		str = 'HONOO Technologies'
+const color = computed(() => {
+	let str = ''
+	if (props.color) {
+		str = props.color
 	}
-	return str
+	return str.replace('color-', '').replace('-', '')
 })
 </script>
 
@@ -57,10 +56,6 @@ $cn: '.logo'; // コンポーネントセレクタ名
 	@if $mode =='base' {
 		display: block;
 		color: transparent;
-		mask-image: url(../../assets/bouzu-ui/imgs/logo.svg);
-		mask-repeat: no-repeat;
-		mask-size: contain;
-		mask-position: center;
 		margin: 0;
 		transition-property: background-color;
 		transition-duration: 0.25s;
@@ -69,17 +64,28 @@ $cn: '.logo'; // コンポーネントセレクタ名
 
 		font-size: 1.0em;
 		line-height: 1;
+		width: calc(var(--logo-width) / var(--logo-height) * 1em);
 		height: 1em;
 		overflow: hidden;
 
-		&._technologies {
-			// mask-image: url(~/assets/img/logo-beta.svg);
+		&:not([class*="_color"]) {
+			background-image: var(--logo-src);
+			background-repeat: no-repeat;
+			background-size: contain;
+			background-position: center;
+		}
+
+		&[class*="_color"] {
+			mask-image: var(--logo-src);
+			mask-repeat: no-repeat;
+			mask-size: contain;
+			mask-position: center;
 		}
 
 		// Color
 		@each $priority in var.$color-priorities {
 			@each $tint in var.$color-tint {
-				&._#{$priority}#{$tint} {
+				&._color-#{$priority}#{$tint} {
 					@include mix.color-var($priority, $tint) using ($css-var) {
 						background-color: $css-var;
 					}

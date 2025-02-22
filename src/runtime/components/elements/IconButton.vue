@@ -1,14 +1,15 @@
 <template>
-	<Button class="iconButton" v-bind="$attrs" rounded @click="emit(EMIT_CLICK)"
-		@disabled-click="emit(EMIT_DISABLED_CLICK)" @loading-click="emit(EMIT_LOADING_CLICK)">
+	<Button class="iconButton" v-bind="$attrs" @click="emit('click')" @disabled-click="emit('disabled-click')"
+		@loading-click="emit('loading-click')">
 		<Icon class="iconButton-icon" v-bind="{ name, size, color, gradation }" />
 	</Button>
 </template>
 
 <script setup lang="ts">
+import { computed, useAttrs } from 'vue'
+import { useButton } from '../../composables/elements/button'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
-import { computed, useAttrs } from '#imports'
 
 // Props ---------------------------
 const props = defineProps({
@@ -22,10 +23,7 @@ const props = defineProps({
 })
 
 // Emits ---------------------------
-const EMIT_CLICK = 'click'
-const EMIT_DISABLED_CLICK = 'disabled-click'
-const EMIT_LOADING_CLICK = 'loading-click'
-const emit = defineEmits([EMIT_CLICK, EMIT_DISABLED_CLICK, EMIT_LOADING_CLICK])
+const emit = defineEmits(['click', 'disabled-click', 'loading-click'])
 
 // Computed ---------------------------
 const name = computed(() => props.icon.name)
@@ -96,24 +94,28 @@ const buttonSize = computed(() => {
 	}
 })
 const color = computed(() => {
-	let str = ''
+	let str = 'text'
 	switch (priority.value) {
 		case 'primary':
-			str = 'light'
+			str = useButton().primary?.textColor ?? str
 			break
 		case 'secondary':
-			str = 'background'
+			str = useButton().secondary?.textColor ?? str
 			break
 		case 'tertiary':
+			str = useButton().tertiary?.textColor ?? str
+			break
 		case 'quaternary':
+			str = useButton().quaternary?.textColor ?? str
+			break
 		case 'link':
-			str = 'text'
+			str = useButton().link?.textColor ?? str
 			break
 		case 'info':
-			str = ''
+			str = useButton().info?.textColor ?? str
 			break
 		case 'minimal':
-			str = 'text060'
+			str = useButton().minimal?.textColor ?? str
 			break
 	}
 	return str
@@ -134,42 +136,46 @@ const gradation = computed(() => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.iconButton'; // コンポーネントセレクタ名
 
-$large-size: 48;
-$medium-size: 44;
-$small-size: 36;
-$xsmall-size: 32;
+$large-size: 48px;
+$medium-size: 44px;
+$small-size: 36px;
+$xsmall-size: 32px;
 
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		position: relative;
 
 		&._xsmall {
-			width: func.get-size($xsmall-size);
-			height: func.get-size($xsmall-size);
+			width: $xsmall-size;
+			height: $xsmall-size;
+			min-width: $xsmall-size;
+			min-height: $xsmall-size;
 		}
 
 		&._small {
-			width: func.get-size($small-size);
-			height: func.get-size($small-size);
+			width: $small-size;
+			height: $small-size;
+			min-width: $small-size;
+			min-height: $small-size;
 		}
 
 		&._medium {
-			width: func.get-size($medium-size);
-			height: func.get-size($medium-size);
+			width: $medium-size;
+			height: $medium-size;
+			min-width: $medium-size;
+			min-height: $medium-size;
 		}
 
 		&._large {
-			width: func.get-size($large-size);
-			height: func.get-size($large-size);
+			width: $large-size;
+			height: $large-size;
+			min-width: $large-size;
+			min-height: $large-size;
 		}
 
-		.button-inner {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			width: 100%;
-			height: 100%;
+		.button-inner-slot {
 			padding: 0;
+			margin-top: 0 !important; // Button slot の上下の調整をキャンセル。
 		}
 	}
 

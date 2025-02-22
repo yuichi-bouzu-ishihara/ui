@@ -70,6 +70,7 @@ const noOnlySpace = /^\s*$/
 const noOnlySpacePattern = convertRegexToPattern(noOnlySpace)
 
 // 全角カナ -------------------------------------
+// eslint-disable-next-line regexp/no-obscure-range
 const zenkakuKana = /^[ァ-ヶー\u3000（）]+$/
 const zenkakuKanaPattern = convertRegexToPattern(zenkakuKana)
 

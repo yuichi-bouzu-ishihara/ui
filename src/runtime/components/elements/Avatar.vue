@@ -38,7 +38,7 @@ const props = defineProps({
 	size: { type: [Number, String], default: '16' }, // 表示サイズ。設定しやすいように、数値も文字列も両方受け付ける。
 	src: { type: String, default: '' }, // 画像パス
 	border: { type: [Number, String], default: 0 }, // 指定した数値の px で外枠に線をつける。
-	borderColor: { type: String, default: 'light' }, // 線の色
+	borderColor: { type: String, default: 'background' }, // 線の色
 })
 
 // Emit ---------------------------------------------------------

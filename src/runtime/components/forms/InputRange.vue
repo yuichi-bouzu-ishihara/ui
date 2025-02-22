@@ -92,10 +92,9 @@ const handleStyle = computed(() => {
 
 // Methods ---------------------
 const changePosition = () => {
+	const min = (handlePosition.value.x / width.value) * (Number(String(props.max)) - Number(String(props.min)))
 	// 値を更新
-	value.value
-		= (handlePosition.value.x / width.value) * (Number(String(props.max)) - Number(String(props.min)))
-		+ Number(String(props.min))
+	value.value = min + Number(String(props.min))
 	// 0 以上 width 以下に制限
 	handlePosition.value.x = Math.min(Math.max(handlePosition.value.x, 0), width.value)
 }
@@ -139,14 +138,14 @@ $bar-height: 4;
 			border-radius: var.$border-radius-full;
 			backdrop-filter: blur(40px);
 			overflow: hidden;
-			background-color: var(--color-dark-005);
+			background-color: var(--color-control-005);
 			flex-grow: 1;
 
 			&-bar {
 				width: 100%;
 				height: 100%;
 				transform-origin: left center;
-				background-color: var(--color-dark);
+				background-color: var(--color-indicator);
 			}
 		}
 
@@ -159,7 +158,7 @@ $bar-height: 4;
 				width: 100%;
 				height: 100%;
 				border-radius: var.$border-radius-full;
-				background-color: var(--color-dark);
+				background-color: var(--color-indicator);
 			}
 		}
 

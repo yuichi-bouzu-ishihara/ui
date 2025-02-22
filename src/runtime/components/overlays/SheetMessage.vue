@@ -7,6 +7,7 @@
 				</template>
 				<template v-if="content">
 					<Typography font-size="18" bold center>
+						<!-- eslint-disable-next-line vue/no-v-html -->
 						<span v-html="content" />
 					</Typography>
 				</template>

@@ -14,10 +14,10 @@
         <IconButton :icon="{ name: 'check' }" medium />
         <IconButton :icon="{ name: 'check' }" small />
         <IconButton :icon="{ name: 'check' }" xsmall />
-        <IconButton :icon="{ name: 'check' }" loading large />
-        <IconButton :icon="{ name: 'check' }" loading medium />
-        <IconButton :icon="{ name: 'check' }" loading small />
-        <IconButton :icon="{ name: 'check' }" loading xsmall />
+        <IconButton :icon="{ name: 'check' }" rounded loading large />
+        <IconButton :icon="{ name: 'check' }" rounded loading medium />
+        <IconButton :icon="{ name: 'check' }" rounded loading small />
+        <IconButton :icon="{ name: 'check' }" rounded loading xsmall />
         <IconButton :icon="{ name: 'check' }" disabled />
       </Row>
     </Container>

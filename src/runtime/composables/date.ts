@@ -40,7 +40,7 @@ const format = (date: string, format: string) => {
  * @param {string} dateString 変換する日付データ文字列。 ex) 2021-01-01T01:01:01.000000Z
  * @param {boolean} [showTime] 時間を表示するかどうか
  * @param {string} [local] 変換するローカル言語。 ex) ja-JP
- * @returns {string}
+ * @returns {string} ローカル言語でフォーマットされた日付データ文字列。 ex) 2021年1月1日
  */
 const localize = (dateString: string, showTime = false, local = 'ja-JP') => {
 	const date = new Date(dateString)

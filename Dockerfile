@@ -1,5 +1,5 @@
 # Node.jsのベースイメージを使用
-FROM node:18-slim
+FROM node:20.17.0-slim
 
 ENV TZ Asia/Tokyo
 
@@ -12,7 +12,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     vim
 
 # npmを特定のバージョンにアップグレード
-RUN npm install -g npm@10.6.0
+RUN npm install -g npm@11.1.0
 
 COPY . .
 RUN npm install

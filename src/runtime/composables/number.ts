@@ -24,7 +24,7 @@ const joinComma = (num: number): string => {
  * @param {string} input - 判定する文字列
  */
 const isPureNumber = (input: string | number): boolean => {
-	const pattern = /^-?\d+(\.\d+)?$/
+	const pattern = /^-?\d+(?:\.\d+)?$/
 	return pattern.test(String(input))
 }
 

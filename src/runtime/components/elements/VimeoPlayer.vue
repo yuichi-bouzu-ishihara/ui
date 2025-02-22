@@ -1,5 +1,8 @@
 <template>
 	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="vimeoPlayer" :class="classes" :style="styles">
+		<Box v-if="thumbnailUrl" class="vimeoPlayer-thumbnail">
+			<Image class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl" cover />
+		</Box>
 		<div ref="element" class="vimeoPlayer-main" :style="ratioStyles" />
 	</Box>
 </template>
@@ -9,13 +12,17 @@ import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 import Player from '@vimeo/player'
 import Box from '../layout/Box.vue'
 
+let vimeoPlayer: Player | null = null
+
 // Props --------------------------------------------------
 const props = defineProps({
 	videoId: { type: [String, Number], required: true },
 	background: { type: Boolean, default: false }, // Whether the player is in background mode, which hides the playback controls, enables autoplay, and loops the video.
+	thumbnailUrl: { type: String, default: '' }, // サムネイルURL
 })
 
-let vimeoPlayer: Player | null = null
+// Emits --------------------------------------------------
+const emit = defineEmits(['play', 'pause', 'ended', 'error', 'loaded', 'bufferend', 'bufferstart', 'playbackratechange', 'progress', 'seeked', 'timeupdate', 'volumechange'])
 
 // Data --------------------------------------------------
 const element = ref(null)
@@ -66,30 +73,37 @@ const ratioStyles = computed(() => {
 const onBufferEnd = async () => {
 	// console.log('Buffer end')
 	// state.value = 'bufferend'
+	emit('bufferend')
 }
 const onBufferStart = async () => {
 	// console.log('Buffer start')
 	// state.value = 'bufferstart'
+	emit('bufferstart')
 }
 const onEnded = async () => {
 	// console.log('Ended')
 	// state.value = 'ended'
+	emit('ended')
 }
 const onError = async () => {
 	// console.log('Error')
 	state.value = 'error'
+	emit('error')
 }
 const onLoaded = async () => {
 	// console.log('Loaded')
 	// state.value = 'loaded'
+	emit('loaded')
 }
 const onPause = async () => {
 	// console.log('Pause')
 	state.value = 'pause'
+	emit('pause')
 }
 const onPlay = async () => {
 	// console.log('Play')
 	state.value = 'play'
+	emit('play')
 	updateVideoSize()
 }
 const onPlayBackRateChange = async () => {
@@ -99,18 +113,22 @@ const onPlayBackRateChange = async () => {
 const onProgress = async () => {
 	// console.log('progress')
 	// state.value = 'progress'
+	emit('progress')
 }
 const onSeeked = async () => {
 	// console.log('Seeked')
 	// state.value = 'seeked'
+	emit('seeked')
 }
 const onTimeUpdate = async () => {
 	// console.log('Time update')
 	// state.value = 'timeupdate'
+	emit('timeupdate')
 }
 const onVolumeChange = async () => {
 	// console.log('Volume change')
 	// state.value = 'volumechange'
+	emit('volumechange')
 }
 // 動画の縦横サイズを取得する
 const getVideoSize = async () => {
@@ -122,7 +140,7 @@ const getVideoSize = async () => {
 		videoNativeHeight.value = height
 		videoRatioHeight.value = height / width
 	}
-	catch (error: any) {
+	catch (error: unknown) {
 		console.error('Vimeo video size error:', error)
 	}
 }
@@ -148,7 +166,29 @@ const updateVideoSize = () => {
 		}
 	}
 
-	if (minRatio === 'w') {
+	if (!props.background) {
+		if (minRatio === 'w') {
+			videoContainHeight.value = r.height
+			if (videoRatioHeight.value < 1) {
+				videoContainWidth.value = r.height / videoRatioHeight.value
+			}
+			else {
+				videoContainWidth.value = r.height * videoRatioHeight.value
+			}
+		}
+		else {
+			videoContainWidth.value = r.width
+			if (videoRatioHeight.value < 1) {
+				videoContainHeight.value = r.width / videoRatioHeight.value
+			}
+			else {
+				videoContainHeight.value = r.width * videoRatioHeight.value
+			}
+		}
+		videoCoverRatio.value = Math.max(r.width / videoContainWidth.value, r.height / videoContainHeight.value)
+	}
+	else {
+		const r = rect.value
 		videoContainHeight.value = r.height
 		if (videoRatioHeight.value < 1) {
 			videoContainWidth.value = r.height / videoRatioHeight.value
@@ -156,18 +196,9 @@ const updateVideoSize = () => {
 		else {
 			videoContainWidth.value = r.height * videoRatioHeight.value
 		}
-	}
-	else {
-		videoContainWidth.value = r.width
-		if (videoRatioHeight.value < 1) {
-			videoContainHeight.value = r.width / videoRatioHeight.value
-		}
-		else {
-			videoContainHeight.value = r.width * videoRatioHeight.value
-		}
-	}
 
-	videoCoverRatio.value = Math.max(r.width / videoContainWidth.value, r.height / videoContainHeight.value)
+		videoCoverRatio.value = Math.max(r.width / videoContainWidth.value, r.height / videoContainHeight.value)
+	}
 }
 
 // Watchers ------------------------------------------------
@@ -179,7 +210,7 @@ watch(
 			.then(() => {
 				// 動画のロードが成功した後の処理
 			})
-			.catch((error: any) => {
+			.catch((error: unknown) => {
 				console.error('Vimeo video loading error:', error)
 			})
 	},
@@ -197,6 +228,12 @@ watch(
 
 // Lifecycle Hooks ----------------------------------------
 onMounted(async () => {
+	// 情報取得
+	// const res = await useFetchClient().request(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${props.videoId}&width=1920&t=${Date.now()}`, { method: 'GET' })
+	// if ('thumbnail_url' in res) {
+	// 	thumbnailUrl.value = res.thumbnail_url
+	// }
+
 	vimeoPlayer = new Player(element.value, {
 		id: props.videoId,
 		background: props.background,
@@ -242,9 +279,20 @@ $cn: '.vimeoPlayer'; // コンポーネントセレクタ名
 
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
+		position: relative;
+		user-select: none;
+
+		&-thumbnail {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+		}
+
 		&-main {
 			position: relative;
 			width: 100%;
+			opacity: 0;
 			overflow: hidden;
 		}
 
@@ -255,7 +303,6 @@ $cn: '.vimeoPlayer'; // コンポーネントセレクタ名
 			#{$cn}-main {
 				width: 100%;
 				height: 100%;
-				opacity: 0;
 				transition: var.$transition-base;
 
 				iframe {

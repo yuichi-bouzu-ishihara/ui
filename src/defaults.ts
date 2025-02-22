@@ -23,11 +23,18 @@ const background = '#2D2E31' // 背景色
 const text = '#FFFFFF' // テキスト色
 const control = '#0C8CE9' // コントロール色。 e.g. checkbox background, switch UI background...
 const indicator = '#FFFFFF' // インジケーター色。 e.g. checkbox check Icon, switch UI handle...
+const accent = '#7FB74D'
 
 export const defaultOptions = {
 	themeColor: 'default',
 	dev: {
 		path: '/dev',
+	},
+	logo: {
+		src: '',
+		alt: '',
+		width: 0,
+		height: 0,
 	},
 	breakPoint: {
 		// ※ scss/_variables.scss と合わせる。
@@ -52,6 +59,7 @@ export const defaultOptions = {
 		text, // テキスト色 黒
 		control,
 		indicator,
+		accent,
 	},
 	gradation: {
 		// ※ scss/_variables.scss と合わせる。
@@ -314,6 +322,15 @@ export const defaultOptions = {
 	},
 	roundProgressBar: {
 		color: 'color-light',
+	},
+	tabs: {
+		typography: 'body', // テキストサイズ e.g. largeTitle, title, body, caption,,,
+		height: '28px', // 高さ e.g. 44px
+		barRadius: '0', // 角丸 e.g. 4px
+		barHeight: '1.5px', // バーの高さ e.g. 4px
+		barColor: 'color-text', // バーの色 e.g. color-light, color-dark
+		barBackgroundHeight: '0.5px', // バーの背景の高さ e.g. 44px
+		barBackgroundColor: 'color-text-020', // バーの背景色 e.g. color-light, color-dark
 	},
 	container: {
 		base: '560px', // 幅未設定時。iPhone Max に合わせる。

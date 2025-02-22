@@ -8,7 +8,7 @@ export class CustomError extends Error {
 		public override message: string, // エラーメッセージ
 		public title?: string, // エラータイトル
 		public button?: string, // ボタンラベル
-		public redirect?: string, // リダイレクト先 back で一つ前のページに戻る。それ以外は path　を指定する。
+		public redirect?: string, // リダイレクト先 back で一つ前のページに戻る。それ以外は path を指定する。
 	) {
 		super(message)
 		this.name = 'CustomError' // ここで name を設定
@@ -84,6 +84,7 @@ export class CustomError extends Error {
 	 * @param error 任意のエラーオブジェクト
 	 * @returns CustomErrorインスタンス
 	 */
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	static fromError(error: any): CustomError {
 		if (error instanceof CustomError) {
 			return error
