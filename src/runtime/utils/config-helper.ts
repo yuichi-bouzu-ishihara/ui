@@ -17,7 +17,7 @@ function getVersion() {
 }
 
 // runtimeConfig を生成する関数
-export function createRuntimeConfig() {
+export const createRuntimeConfig = () => {
 	const __filename = fileURLToPath(import.meta.url)
 	const __dirname = path.dirname(__filename)
 	dotenv.config({ path: path.resolve(__dirname, '../env/.env') })
@@ -25,14 +25,14 @@ export function createRuntimeConfig() {
 
 	const publicConfig = Object.entries(env).reduce((acc, [key, value]) => {
 		if (key.startsWith('PUBLIC_')) {
-			acc[key] = value
+			acc[key.replace('PUBLIC_', '')] = value
 		}
 		return acc
 	}, {} as Record<string, string | undefined>)
 
 	const privateConfig = Object.entries(env).reduce((acc, [key, value]) => {
 		if (key.startsWith('PRIVATE_')) {
-			acc[key] = value
+			acc[key.replace('PRIVATE_', '')] = value
 		}
 		return acc
 	}, {} as Record<string, string | undefined>)
