@@ -95,7 +95,7 @@ $cn: '.image'; // コンポーネントセレクタ名
 
 		// 背景を塗る
 		&._background {
-			background-color: var(--color-dark-005);
+			background-color: var(--color-text-005);
 		}
 
 		// ドラッグ禁止
@@ -139,12 +139,7 @@ $cn: '.image'; // コンポーネントセレクタ名
 		}
 	}
 
-	@if $mode =='darkmode' {
-
-		&._background {
-			background-color: var(--color-light-005);
-		}
-	}
+	@if $mode =='darkmode' {}
 
 	@if $mode =='auto' {}
 }
