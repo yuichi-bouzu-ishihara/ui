@@ -42,6 +42,8 @@ const props = defineProps({
 	center: { type: Boolean, default: false }, // 中央寄せ
 	justify: { type: Boolean, default: false }, // 均等割付
 
+	vertical: { type: Boolean, default: false }, // 縦書き
+
 	// タイプ
 	largeTitle: { type: Boolean, default: false },
 	title1: { type: Boolean, default: false },
@@ -80,6 +82,7 @@ const classes = computed(() => {
 		_right: props.right,
 		_center: props.center,
 		_justify: props.justify,
+		_vertical: props.vertical,
 		_linebreak: props.linebreak,
 		_unselectable: props.unselectable,
 		_capHeightBaseline: props.capHeightBaseline,
@@ -528,6 +531,11 @@ $cn: '.typography'; // コンポーネントセレクタ名
 		&._normal {
 			font-family: var(--typography-font-family-normal);
 			font-weight: var(--typography-font-weight-normal);
+		}
+
+		// 縦書き
+		&._vertical {
+			writing-mode: vertical-rl;
 		}
 
 		// 改行文字での改行を可能にするのと、
