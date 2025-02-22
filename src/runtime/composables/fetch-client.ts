@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 
 export interface FetchOptions {
-	method?: 'GET' | 'POST'
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
 	headers?: HeadersInit
 	body?: object
+	query?: string
 	csrf?: boolean
 	cache?: string | boolean | undefined
 }
@@ -17,15 +18,15 @@ export function useFetchClient() {
 	 * @param {string|boolean|undefined} cache - 日時文字列を指定してキャッシュをコントロールする。 false は現在のローカル日時指定。
 	 * @returns {{ cache?: string }} キャッシュコントロール文字列を含むオブジェクト
 	 */
-	const timestampCache = (cache: string | boolean | undefined): { cache?: string } => {
-		let obj = {}
+	const timestampCache = (cache: string | boolean | undefined): string => {
+		let str = ''
 		if (cache === false) {
-			obj = { cache: new Date().toISOString() }
+			str = new Date().toISOString()
 		}
 		else if (typeof cache === 'string') {
-			obj = { cache }
+			str = cache
 		}
-		return obj
+		return str
 	}
 
 	/**
@@ -33,10 +34,11 @@ export function useFetchClient() {
 	 * @param {any} obj query string 化するオブジェクト。ネストは不可。例：{page:1, limit:100,,,}
 	 * @returns ?page=1&limit=100 などの文字列。引数が空だった場合は、空の文字列が返る。
 	 */
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	const queryString = (obj: any) => {
+	const queryString = (obj: Record<string, string | number | boolean>) => {
 		// query string 化する
-		let str = new URLSearchParams(obj).toString()
+		let str = new URLSearchParams(
+			Object.entries(obj).map(([key, value]) => [key, String(value)]),
+		).toString()
 		// 文字列があれば、?をつける
 		if (str) str = `?${str}`
 		return str
@@ -47,23 +49,25 @@ export function useFetchClient() {
 		error.value = null
 
 		try {
-			if (options.method === 'GET') {
+			if (options.method === 'GET' || options.method === 'PUT' || options.method === 'DELETE') {
 				// URLの作成 クエリ + キャッシュ
-				url += queryString({ ...options.body, ...timestampCache(options.cache) })
+				if (options.query) {
+					url += `?${options.query}`
+					if (options.cache) {
+						url += `&${timestampCache(options.cache)}`
+					}
+				}
 
 				// キャッシュポリシーの設定
 				let cacheControl
 				if (options.cache === true) {
-					// キャッシュを強制的に有効にする
 					cacheControl = 'force-cache'
 				}
 				else if (options.cache === false) {
-					// キャッシュを無効にする
 					cacheControl = 'no-cache'
 				}
 				else if (typeof options.cache === 'string') {
-					// 文字列の場合は、キャッシュを有効にし、キャッシュはタイムスタンプ次第にする
-					cacheControl = 'public, max-age=31536000' // 例: 1年間キャッシュ
+					cacheControl = 'public, max-age=31536000'
 				}
 				if (cacheControl) {
 					options.headers = {
@@ -79,13 +83,27 @@ export function useFetchClient() {
 					'Content-Type': 'application/json',
 					...options.headers,
 				},
-				body: options.method !== 'GET' && options.body ? JSON.stringify(options.body) : null,
+				body: options.body ? JSON.stringify(options.body) : null,
 			})
 
-			// if (!response.ok) {
-			// throw await response.json()
-			// throw new Error(`HTTP error! status: ${response.status}`, await response.json())
-			// }
+			if (!response.ok) {
+				let errorMessage = `HTTP error! status: ${response.status}`
+
+				// サーバーからのエラーメッセージを取得
+				try {
+					const errorData = await response.json()
+					errorMessage = errorData.message || errorMessage
+				}
+				catch (parseError) {
+					// JSON パースに失敗した場合はデフォルトメッセージを使用
+					console.error('parseError', parseError)
+				}
+
+				const error = new Error(errorMessage)
+				error.name = response.status.toString()
+				throw error
+			}
+
 			const contentType = response.headers.get('content-type')
 			if (contentType?.includes('application/json')) {
 				return await response.json()
@@ -93,8 +111,17 @@ export function useFetchClient() {
 			return await response.text()
 		}
 		catch (err) {
-			error.value = err as Error
-			throw err
+			if (err instanceof TypeError) {
+				// ネットワークエラーやCORSエラー
+				console.error('Network error or CORS issue:', err.message)
+			}
+			else {
+				// 上記以外のエラー（HTTPエラーなど）
+				console.error('Fetch error:', err)
+			}
+			const finalError = err instanceof Error ? err : new Error('Unexpected error')
+			error.value = finalError
+			throw finalError
 		}
 		finally {
 			processing.value = false
