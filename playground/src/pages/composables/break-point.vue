@@ -1,7 +1,7 @@
 <template>
 	<Box>
 		<Typography center color="light">
-			<Mark><strong>{{ currentScreenSize.toUpperCase() }}</strong></Mark>
+			<mark><strong>{{ currentScreenSize.toUpperCase() }}</strong></mark>
 		</Typography>
 		<Typography center color="100">
 			base above ? {{ baseAbove() }}

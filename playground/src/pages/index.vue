@@ -103,7 +103,7 @@
 							This is a Title3 text.
 						</Typography>
 						<Typography large-title>
-							It's <Mark>Mark</Mark> text.
+							It's <mark>Mark</mark> text.
 						</Typography>
 					</Column>
 				</DevSection>
