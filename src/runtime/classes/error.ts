@@ -16,37 +16,37 @@ export class CustomError extends Error {
 		// message が空の場合でもデフォルトメッセージを設定
 		if (!message) {
 			if (code == CustomErrorCode.NetworkError) {
-				this.message = 'NetworkError error message'
+				this.message = 'Network Error'
 			}
 			else if (code == CustomErrorCode.ValidationError) {
-				this.message = 'ValidationError error message'
+				this.message = 'Validation Error'
 			}
 			else if (code == CustomErrorCode.UnknownError) {
-				this.message = 'UnknownError error message'
+				this.message = 'Unknown Error'
 			}
 			else if (code == CustomErrorCode.BadRequest) {
-				this.message = 'BadRequest error message'
+				this.message = 'Bad Request'
 			}
 			else if (code == CustomErrorCode.AuthorizationRequired) {
-				this.message = 'AuthorizationRequired error message'
+				this.message = 'Authorization Required'
 			}
 			else if (code == CustomErrorCode.Forbidden) {
-				this.message = 'Forbidden error message'
+				this.message = 'Forbidden'
 			}
 			else if (code == CustomErrorCode.NotFound) {
-				this.message = 'NotFound error message'
+				this.message = 'NotFound'
 			}
 			else if (code == CustomErrorCode.MethodNotAllowed) {
-				this.message = 'MethodNotAllowed error message'
+				this.message = 'Method Not Allowed'
 			}
 			else if (code == CustomErrorCode.TooManyRequests) {
-				this.message = 'TooManyRequests error message'
+				this.message = 'Too Many Requests'
 			}
 			else if (code == CustomErrorCode.ServerError) {
-				this.message = 'ServerError error message'
+				this.message = 'Internal Server Error'
 			}
 			else if (code == CustomErrorCode.Unknown) {
-				this.message = 'Unknown error message'
+				this.message = 'Unknown'
 			}
 			else {
 				this.message = 'Undefined error'
