@@ -34,7 +34,7 @@ export class CustomError extends Error {
 				this.message = 'Forbidden'
 			}
 			else if (code == CustomErrorCode.NotFound) {
-				this.message = 'NotFound'
+				this.message = 'Not Found'
 			}
 			else if (code == CustomErrorCode.MethodNotAllowed) {
 				this.message = 'Method Not Allowed'
@@ -56,34 +56,34 @@ export class CustomError extends Error {
 		// title が空の場合でもデフォルトタイトルを設定
 		if (!title) {
 			if (code == CustomErrorCode.NetworkError) {
-				this.title = 'NetworkError'
+				this.title = 'Network Error'
 			}
 			else if (code == CustomErrorCode.ValidationError) {
-				this.title = 'ValidationError'
+				this.title = 'Validation Error'
 			}
 			else if (code == CustomErrorCode.UnknownError) {
-				this.title = 'UnknownError'
+				this.title = 'Unknown Error'
 			}
 			else if (code == CustomErrorCode.BadRequest) {
-				this.title = 'BadRequest'
+				this.title = 'Bad Request'
 			}
 			else if (code == CustomErrorCode.AuthorizationRequired) {
-				this.title = 'AuthorizationRequired'
+				this.title = 'Authorization Required'
 			}
 			else if (code == CustomErrorCode.Forbidden) {
 				this.title = 'Forbidden'
 			}
 			else if (code == CustomErrorCode.NotFound) {
-				this.title = 'NotFound'
+				this.title = 'Not Found'
 			}
 			else if (code == CustomErrorCode.MethodNotAllowed) {
-				this.title = 'MethodNotAllowed'
+				this.title = 'Method Not Allowed'
 			}
 			else if (code == CustomErrorCode.TooManyRequests) {
-				this.title = 'TooManyRequests'
+				this.title = 'Too Many Requests'
 			}
 			else if (code == CustomErrorCode.ServerError) {
-				this.title = 'ServerError'
+				this.title = 'Internal Server Error'
 			}
 			else if (code == CustomErrorCode.Unknown) {
 				this.title = 'Unknown'
