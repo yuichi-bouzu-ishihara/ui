@@ -65,8 +65,6 @@ const maxWidth = computed(() => {
 $cn: '.slotHeader'; // コンポーネントセレクタ名
 
 $transition-base: var.$transition-base;
-$left-space: 8;
-$right-space: 8;
 
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
@@ -79,31 +77,18 @@ $right-space: 8;
 
 			&-left {
 				position: absolute;
-				left: func.get-size($left-space);
+				left: var(--container-min-side-space);
 			}
 
 			&-right {
 				position: absolute;
-				right: func.get-size($left-space);
+				right: var(--container-min-side-space);
 			}
 		}
 	}
 
 	@if $mode =='darkmode' {}
 
-	@if $mode =='auto' {
-		min-height: func.get-size(var.$header-height, false);
-		height: func.get-size(var.$header-height, false);
-
-		&-inner {
-			&-left {
-				left: func.get-size($left-space, false);
-			}
-
-			&-right {
-				right: func.get-size($left-space, false);
-			}
-		}
-	}
+	@if $mode =='auto' {}
 }
 </style>
