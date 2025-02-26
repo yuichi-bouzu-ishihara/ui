@@ -100,7 +100,7 @@ $cn: 'column'; // コンポーネントクラス名
 .#{$cn} {
 	display: flex;
 	flex-direction: column;
-	width: 100%;
+	width: auto;
 
 	&._reverse {
 		flex-direction: column-reverse;
