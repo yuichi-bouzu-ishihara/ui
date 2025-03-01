@@ -53,12 +53,12 @@ $cn: '.fieldFooter'; // コンポーネントセレクタ名
 		&-border {
 			width: 100%;
 			height: .5px;
-			background-color: var(--color-control-030);
+			background-color: var(--color-text-030);
 
 			&-inner {
 				width: 100%;
 				height: 100%;
-				background-color: var(--color-indicator);
+				background-color: var(--color-text);
 				opacity: 0;
 				transform-origin: center left;
 				transform: scaleX(0);

@@ -25,6 +25,7 @@ export const useDrawer = () => {
 	return {
 		open,
 		get,
+		close,
 		closeOne,
 		closeAll,
 		isOpen,
@@ -61,6 +62,22 @@ const get = (name: string) => {
 	const drawer = [...lefts.value, ...rights.value].find(drawer => drawer.name === name)
 	const index = drawer ? [...lefts.value, ...rights.value].indexOf(drawer) : -1
 	return { drawer, index }
+}
+
+/**
+ * 閉じる
+ * @param {string} [name] - 閉じる Drawer の名前。ない場合は最後に開かれた Drawer を閉じる。 all の場合はすべて閉じる。
+ */
+const close = (name: string = '') => {
+	if (!name) {
+		closeOne()
+	}
+	else if (name === 'all') {
+		closeAll()
+	}
+	else {
+		closeOne(name)
+	}
 }
 
 /**

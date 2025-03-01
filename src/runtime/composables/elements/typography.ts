@@ -5,11 +5,13 @@ import { useString } from '../string'
 import { useUI } from '../ui'
 import type { UIConfig } from '../../types'
 import type { TypographyConfig, FontFamily, FontWeight, TypeFace } from '../../types/typography'
-import { useAppConfig } from '#imports'
+import { useAppConfig, useState, readonly } from '#imports'
 
 const DATA_VALUE = 'typography'
 
 export const useTypography = () => {
+	const config = useState<TypographyConfig | null>('typographyConfig', () => null)
+
 	/**
 	 * 初期化
 	 */
@@ -19,17 +21,17 @@ export const useTypography = () => {
 			throw new Error('Typography の初期化に失敗しました。windowオブジェクトが存在しないか、window.getComputedStyleが利用できません。')
 		}
 
-		const config = useAppConfig().ui as UIConfig ?? {}
+		const appConfig = useAppConfig().ui as UIConfig ?? {}
 		// 設定がない場合は何もしない
-		if (!config.typography) return null
+		if (!appConfig.typography) return null
 
-		const typography: TypographyConfig = config.typography
+		config.value = appConfig.typography
 		const styleElement = document.createElement('style')
 		styleElement.setAttribute('type', 'text/css')
 		styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
 
 		let cssVariables = ':root {'
-		for (const [key, value] of Object.entries(typography)) {
+		for (const [key, value] of Object.entries(config.value)) {
 			// valueの型を明示的に指定
 			const typedValue = value as { family?: FontFamily, weight?: FontWeight } | TypeFace
 
@@ -85,5 +87,20 @@ export const useTypography = () => {
 	return {
 		init,
 		isTypeFace,
+		font: {
+			family: {
+				base: config.value ? readonly(config.value).font.family.base : '',
+				serif: config.value ? readonly(config.value).font.family.serif : '',
+				en: config.value ? readonly(config.value).font.family.en : '',
+				normal: config.value ? readonly(config.value).font.family.normal : '',
+				bold: config.value ? readonly(config.value).font.family.bold : '',
+				extrabold: config.value ? readonly(config.value).font.family.extrabold : '',
+			},
+			weight: {
+				normal: config.value ? readonly(config.value).font.weight.normal : '',
+				bold: config.value ? readonly(config.value).font.weight.bold : '',
+				extrabold: config.value ? readonly(config.value).font.weight.extrabold : '',
+			},
+		},
 	}
 }

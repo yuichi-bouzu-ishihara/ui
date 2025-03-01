@@ -1,5 +1,5 @@
 <template>
-	<div class="codeHighlighter">
+	<div class="codeHighlighter" :class="{ [`_${color}`]: color }">
 		<div v-if="title" class="codeHighlighter-ttl">
 			{{ title }}
 		</div>
@@ -18,6 +18,7 @@ const props = defineProps({
 	title: { type: String, default: '' },
 	lang: { type: String, default: 'javascript' },
 	code: { type: String, required: true },
+	color: { type: String, default: 'dark', validator: (value: string) => ['dark', 'light'].includes(value) },
 })
 
 // Computed property to determine the language class
@@ -53,86 +54,73 @@ const highlightedCode = computed(() => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.codeHighlighter'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		width: 100%;
-		background-color: var(--color-darkblack);
-		border-radius: func.get-size(5);
-		font-family: 'Courier New', Courier, monospace;
-		font-size: func.get-size(12);
-		line-height: 1.675;
-		color: var(--color-light);
+#{$cn} {
+	width: 100%;
+	background-color: var(--color-dark);
+	border-radius: 5px;
+	font-family: 'Courier New', Courier, monospace;
+	font-size: 12px;
+	line-height: 1.675;
+	color: var(--color-light);
+	/* 影を広げて背景を塗る */
+	box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.05);
 
-		&-ttl {
-			padding: func.get-size(10);
-			border-bottom: .5px solid var(--color-light20);
-			font-weight: bold;
-		}
-
-		&-pre {
-			display: flex;
-			margin: 0;
-			padding: func.get-size(10);
-			overflow-x: auto;
-
-			code {
-				display: block; // 追加: ブロック要素として表示
-				margin: 0; // 追加: codeタグのマージンをリセット
-				padding: 0; // 追加: codeタグのパディングをリセット
-			}
-
-			._key {
-				font-weight: bold;
-				color: #d73a49;
-			}
-
-			._string {
-				font-weight: bold;
-				color: green;
-			}
-
-			._number {
-				font-weight: bold;
-				color: green;
-			}
-
-			._boolean {
-				font-weight: bold;
-				color: #d73a49;
-			}
-
-			._null {
-				font-weight: bold;
-				color: #6a737d;
-			}
-
-			// 言語ごとのスタイル
-			&._javascript {}
-
-			&._json {}
-		}
-	}
-
-	@if $mode =='darkmode' {
-		background-color: var(--color-ultralight);
+	&._light {
+		background-color: var(--color-light);
 		color: var(--color-dark);
-
-		&-ttl {
-			border-bottom: .5px solid var(--color-dark20);
-		}
 	}
 
-	@if $mode =='auto' {
-		border-radius: func.get-size(5, false);
-		font-size: func.get-size(12, false);
+	&._light &-ttl {
+		border-bottom: 0.5px solid var(--color-dark-020);
+	}
 
-		&-ttl {
-			padding: func.get-size(10, false);
+	&-ttl {
+		padding: 10px;
+		border-bottom: 0.5px solid var(--color-light-020);
+		font-weight: bold;
+	}
+
+	&-pre {
+		display: flex;
+		margin: 0;
+		padding: 10px;
+		overflow-x: auto;
+
+		code {
+			display: block; // 追加: ブロック要素として表示
+			margin: 0; // 追加: codeタグのマージンをリセット
+			padding: 0; // 追加: codeタグのパディングをリセット
 		}
 
-		&-pre {
-			padding: func.get-size(10, false);
+		._key {
+			font-weight: bold;
+			color: #d73a49;
 		}
+
+		._string {
+			font-weight: bold;
+			color: green;
+		}
+
+		._number {
+			font-weight: bold;
+			color: green;
+		}
+
+		._boolean {
+			font-weight: bold;
+			color: #d73a49;
+		}
+
+		._null {
+			font-weight: bold;
+			color: #6a737d;
+		}
+
+		// 言語ごとのスタイル
+		&._javascript {}
+
+		&._json {}
 	}
 }
 </style>

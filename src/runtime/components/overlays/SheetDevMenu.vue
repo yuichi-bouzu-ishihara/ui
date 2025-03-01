@@ -125,8 +125,8 @@ $cn: '.sheetDevMenu'; // コンポーネントセレクタ名
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		&-list {
-			padding-left: 5px;
-			padding-right: 8px;
+			padding-left: 12px;
+			padding-right: 16px;
 			padding-bottom: 20px;
 		}
 	}

@@ -56,6 +56,7 @@ export const useColor = () => {
 	return {
 		init,
 		config: readonly(config),
+		priorities: config.value ? readonly(config.value) : null,
 		opacitySteps: readonly(OPACITY_STEPS),
 	}
 }

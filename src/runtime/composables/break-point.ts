@@ -144,7 +144,7 @@ export const useBreakPoint = () => {
 	}
 
 	const baseAbove = (): boolean => {
-		return above(config.value.base || 'm')
+		return above(config.value?.base || 'm')
 	}
 
 	return {

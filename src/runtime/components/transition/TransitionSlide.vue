@@ -29,12 +29,12 @@ const variables = computed(() => {
 	switch (from.value) {
 		case 'right':
 		case 'bottom':
-			fromPosition = '100%'
+			fromPosition = '100vw'
 			break
 		case 'left':
 		case 'top':
 		default:
-			fromPosition = '-100%'
+			fromPosition = '-100vh'
 	}
 	return {
 		[`--transitionSlide-${direction.value}`]: fromPosition,

@@ -4,6 +4,8 @@
 </template>
 
 <script setup>
+import { toRefs, ref, onMounted } from 'vue'
+
 /**
  * テキストを装飾します。
  * @description a / mark / strong ,,, などで囲います。
