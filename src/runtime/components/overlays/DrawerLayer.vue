@@ -11,7 +11,7 @@
 			</template>
 		</TransitionGroup>
 		<TransitionFade>
-			<Box v-if="lefts.length + rights.length > 0" fixed top="0" left="0" w="100%" h="100%" z-index="0">
+			<Box v-if="lefts.length + rights.length > 0" fixed top="0" left="0" w="100%" h="100%" z-index="-1">
 				<Backdrop soft @click="closeOne" />
 			</Box>
 		</TransitionFade>
