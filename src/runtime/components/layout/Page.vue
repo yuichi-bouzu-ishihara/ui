@@ -7,6 +7,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useViewport } from '../../composables/viewport'
+
 // Props ------------------------------------------------------
 const props = defineProps({
 	center: { type: Boolean, default: true }, // コンテンツを中央に配置するかどうか
