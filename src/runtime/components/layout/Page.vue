@@ -1,8 +1,12 @@
-<script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useViewport } from '../../composables/viewport'
-import Center from './Center.vue'
+<template>
+	<Box class="page" :class="{ _center: center }" :h="height" :pt="topSpace" :pb="bottomSpace">
+		<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height" class="page-inner">
+			<slot />
+		</Box>
+	</Box>
+</template>
 
+<script setup lang="ts">
 // Props ------------------------------------------------------
 const props = defineProps({
 	center: { type: Boolean, default: true }, // コンテンツを中央に配置するかどうか
@@ -24,12 +28,16 @@ const height = computed(() => {
 })
 </script>
 
-<template>
-	<Box class="page" :h="height" :pt="topSpace" :pb="bottomSpace">
-		<component :is="props.center ? Center : 'div'">
-			<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
-				<slot />
-			</Box>
-		</component>
-	</Box>
-</template>
+<style lang="scss">
+.page {
+	&._center {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	.page-inner {
+		width: 100%;
+	}
+}
+</style>
