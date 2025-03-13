@@ -18,7 +18,8 @@ const props = defineProps({
 	avatar: { type: Boolean, default: false }, // アバターかどうか
 	w: { type: [Number, String], default: 0 }, // 横幅 px
 	h: { type: [Number, String], default: 0 }, // 高さ px
-	delay: { type: [Number, String], default: 0 }, // アニメーション遅延 ms
+	delayIndex: { type: [Number, String], default: -1 }, // アニメーション遅延のインデックス。 delay は theme config で設定した値を使用する。
+	delay: { type: [Number, String], default: 0 }, // アニメーション遅延 ms。 delayIndex が -1 の場合はこの値を使用する。
 	animation: { type: Boolean, default: true }, // アニメーションを有効にするか
 })
 
@@ -30,8 +31,15 @@ const classes = computed(() => {
 	}
 })
 const styles = computed(() => {
-	return {
-		'animation-delay': `${props.delay}ms`,
+	if (props.delayIndex === -1) {
+		return {
+			'animation-delay': `${props.delay}ms`,
+		}
+	}
+	else {
+		return {
+			'animation-delay': `calc(var(--skeleton-shape-delay) * ${props.delayIndex})`,
+		}
 	}
 })
 const box = computed(() => {
@@ -71,7 +79,7 @@ $cn: '.skeletonShape'; // クラス名
 		}
 
 		&._animation {
-			animation: skeletonShape-animation 1.5s infinite;
+			animation: skeletonShape-animation var(--skeleton-shape-duration) infinite;
 
 			@keyframes skeletonShape-animation {
 				0% {
