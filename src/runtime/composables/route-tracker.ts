@@ -3,11 +3,12 @@
  * @description 前の route と現在の route を保持します。
  */
 
-import { computed, ref } from 'vue'
+import { computed, nextTick, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { RouteLocationNormalized } from 'vue-router'
 import { useScroll } from './scroll'
 import { useObject } from './object'
+import { useUtils } from './utils'
 
 const initFlag = ref(false) // 初期化済みフラグ
 const to = ref({}) // 現在の route
@@ -27,9 +28,15 @@ export const useRouteTracker = () => {
 /**
  * 初期化処理
  */
-const init = () => {
+const init = async () => {
 	// 既に初期化済みであれば何もしない
 	if (initFlag.value) return
+
+	if (!useRouter().beforeEach) {
+		await nextTick()
+		await useUtils().wait(100)
+		return init()
+	}
 
 	initFlag.value = true
 	useRouter().beforeEach((t, f, next) => {

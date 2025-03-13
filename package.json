@@ -44,7 +44,6 @@
     "test:types": "vue-tsc --noEmit && cd playground && vue-tsc --noEmit"
   },
   "dependencies": {
-    "@nuxt/kit": "^3.15.3",
     "@vimeo/player": "^2.22.0",
     "deepmerge-ts": "^7.1.4",
     "html2canvas": "^1.4.1",
@@ -54,13 +53,14 @@
   "devDependencies": {
     "@nuxt/devtools": "^1.7.0",
     "@nuxt/eslint-config": "^0.7.5",
+    "@nuxt/kit": "^3.16.0",
     "@nuxt/module-builder": "^0.8.4",
-    "@nuxt/schema": "^3.15.3",
+    "@nuxt/schema": "^3.16.0",
     "@nuxt/test-utils": "^3.15.4",
     "@types/node": "latest",
     "changelogen": "^0.5.7",
     "eslint": "^9.19.0",
-    "nuxt": "^3.15.3",
+    "nuxt": "^3.16.0",
     "sass": "^1.83.4",
     "typescript": "~5.7.3",
     "vitest": "^3.0.4",
