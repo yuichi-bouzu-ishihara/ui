@@ -3,7 +3,9 @@
     <Container>
       <Column gap="8">
         <Row justify="center" :gap="[8, 8]">
-          <Button>Primary</Button>
+          <Button @click="handleClick">
+            Primary
+          </Button>
           <Button secondary>
             Secondary
           </Button>
@@ -77,7 +79,10 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+const handleClick = () => {
+  console.log('clicked')
+}
 </script>
 
 <style lang="scss"></style>
