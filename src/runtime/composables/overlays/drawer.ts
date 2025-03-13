@@ -118,6 +118,10 @@ const closeOne = (name: string = '') => {
 		resolve.value(false)
 	}
 	resolve.value = null
+
+	if (lefts.value.length === 0 && rights.value.length === 0) {
+		isOpen.value = false
+	}
 }
 
 /**
@@ -131,4 +135,8 @@ const closeAll = () => {
 		resolve.value(false)
 	}
 	resolve.value = null
+
+	if (lefts.value.length === 0 && rights.value.length === 0) {
+		isOpen.value = false
+	}
 }
