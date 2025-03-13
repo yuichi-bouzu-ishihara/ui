@@ -46,7 +46,7 @@ const model = defineModel<{ id: number, value: string }[]>({ default: () => [] }
 
 // Props ----------------------
 const props = defineProps({
-	name: { type: String, default: 'tag', required: true },
+	name: { type: String, required: true },
 	label: { type: String, default: '' }, // ラベル
 	placeholder: { type: String, default: 'フリーテキストで追加' }, // 入力欄のプレースホルダー
 	max: { type: [Number, String], default: 0 }, // 最大タグ数。0は無制限

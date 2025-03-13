@@ -7,7 +7,7 @@
 		</div>
 		<Typography v-if="label" tag="label" :for="getId" class="textarea-label">
 			<span class="textarea-label-inner">{{ label
-				}}</span><span v-if="required" class="textarea-label-required">*</span>
+			}}</span><span v-if="required" class="textarea-label-required">*</span>
 		</Typography>
 	</div>
 </template>
@@ -22,12 +22,12 @@ const { noOnlySpace } = useRegex()
 
 // Props -------------------------------------------
 const props = defineProps({
-	name: { type: String, default: 'textarea', required: true },
+	name: { type: String, required: true },
 	type: { type: String, default: 'text' },
 	label: { type: String, default: '' }, // 通常時は Placeholder になり、focus 時は上に移動してラベルとなる
 	placeholder: { type: String, default: '' },
 	description: { type: String, default: '' },
-	modelValue: { type: String, default: '', required: true },
+	modelValue: { type: String, default: '' },
 	autocomplete: { type: Boolean, default: false }, // 自動補完
 	autoheight: { type: Boolean, default: true }, // 高さを自動調整
 
