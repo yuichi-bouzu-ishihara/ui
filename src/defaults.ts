@@ -314,6 +314,8 @@ export const defaultOptions = {
 		color: 'color-light-005',
 		animationTo: 'color-light-003',
 		blur: true,
+		delay: '150ms',
+		duration: '1500ms',
 	},
 	spinner: {
 		color: 'color-light',

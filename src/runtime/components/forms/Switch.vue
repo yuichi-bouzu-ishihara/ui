@@ -17,7 +17,7 @@ import Typography from '../elements/Typography.vue'
 
 // Props ------------------
 const props = defineProps({
-	name: { type: String, default: 'switch', required: true }, // ユニークな名前をつける
+	name: { type: String, required: true }, // ユニークな名前をつける
 	modelValue: { type: Boolean, default: false },
 	readonly: { type: Boolean, default: false },
 	disabled: { type: Boolean, default: false },

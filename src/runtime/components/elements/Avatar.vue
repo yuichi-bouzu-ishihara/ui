@@ -8,10 +8,11 @@
 		@intersect="isIntersect = true">
 		<div class="avatar-inner">
 			<template v-if="isIntersect">
-				<Image alt="" :src="path" cover @loaded="loaded" @error="error" />
+				<Image class="avatar-inner-img" :class="{ _show: isLoaded }" alt="" :src="path" cover @loaded="loaded"
+					@error="error" />
 			</template>
-			<template v-else>
-				<SkeletonShape avatar w="40" delay="150" animation />
+			<template v-if="!isIntersect || !isLoaded">
+				<SkeletonShape class="avatar-inner-loader" avatar w="100%" h="100%" :animation="isIntersect" />
 			</template>
 		</div>
 		<template v-if="border">
@@ -133,6 +134,19 @@ $avatar-mask-img: '../../assets/bouzu-ui/avatar/mask.svg';
 			align-items: center;
 			background-color: var(--color-dark-005);
 			user-select: none; // 選択できないようにする
+
+			&-img {
+				opacity: 0;
+
+				&._show {
+					opacity: 1;
+				}
+			}
+
+			&-loader {
+				position: absolute;
+				inset: 0;
+			}
 		}
 
 		&-border {

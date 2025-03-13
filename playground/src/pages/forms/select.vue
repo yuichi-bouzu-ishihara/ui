@@ -1,10 +1,12 @@
 <template>
 	<div class="pageFormsSelect">
-		<Row justify="center" gap="8">
-			<Typography caption1>
-				<Select v-model="value" name="selectTest" label="Label" v-bind="{ options }" />
-			</Typography>
-		</Row>
+		<Typography caption1 bold>
+			<Container narrow>
+				<Row justify="center" gap="8" fit-w>
+					<Select v-model="value" name="selectTest" label="Label" v-bind="{ options }" />
+				</Row>
+			</Container>
+		</Typography>
 	</div>
 </template>
 

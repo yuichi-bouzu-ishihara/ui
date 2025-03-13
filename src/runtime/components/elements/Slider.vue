@@ -1,7 +1,7 @@
 <template>
 	<Box v-resize="(rect: DOMRectReadOnly) => width = rect.width" class="slider"
-		:w="navigation ? `calc(100% - ${getSize(NAVI_UI_SIZE * 2)})` : '100%'" :ml="navigation ? NAVI_UI_SIZE : 0"
-		:mr="navigation ? NAVI_UI_SIZE : 0" relative>
+		:w="navigation ? `calc(100% - ${leftSpace} - ${rightSpace})` : '100%'" :ml="navigation ? leftSpace : 0"
+		:mr="navigation ? rightSpace : 0" relative>
 		<div ref="innerEl" class="slider-inner">
 			<Box v-resize="(rect: DOMRectReadOnly) => slotWidth = rect.width" :ml="centered ? 'auto' : ''"
 				:mr="centered ? 'auto' : ''">
@@ -12,16 +12,14 @@
 		</div>
 		<template v-if="navigation">
 			<template v-if="isShowPrev">
-				<div class="slider-prev">
-					<IconButton :style="{ left: getSize(-NAVI_UI_SIZE / 2) }" :icon="{ name: 'arrowLeft', size: 16 }"
-						:w="NAVI_UI_SIZE" :h="NAVI_UI_SIZE" rounded @click="prev" />
-				</div>
+				<Box class="slider-prev" @click="prev">
+					<slot name="prev" />
+				</Box>
 			</template>
 			<template v-if="isShowNext">
-				<div class="slider-next">
-					<IconButton :style="{ right: getSize(-NAVI_UI_SIZE / 2) }" :icon="{ name: 'arrowRight', size: 16 }"
-						:w="NAVI_UI_SIZE" :h="NAVI_UI_SIZE" rounded @click="next" />
-				</div>
+				<Box class="slider-next" @click="next">
+					<slot name="next" />
+				</Box>
 			</template>
 		</template>
 	</Box>
@@ -31,16 +29,11 @@
 import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
 import { useCss } from '../../composables/css'
 import Box from '../layout/Box.vue'
-import IconButton from './IconButton.vue'
-
-// Composables ---------------------------
-const { getSize } = useCss()
-
-// Constants ------------------
-const NAVI_UI_SIZE = 40
 
 // Props ------------------
 const props = defineProps({
+	leftSpace: { type: String, default: '0' }, // 左側にスペースを追加する
+	rightSpace: { type: String, default: '0' }, // 右側にスペースを追加する
 	beforeSpace: { type: [Number, String], default: 0 }, // 最初の要素の前にスペースを追加する
 	afterSpace: { type: [Number, String], default: 0 }, // 最後の要素の後にスペースを追加する
 	navigation: { type: Boolean, default: false }, // 左右のナビゲーションを表示する
@@ -153,47 +146,38 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss">
-@use '../../scss/_variables.scss' as var;
-@use '../../scss/_mixins.scss' as mix;
-@use '../../scss/_functions.scss' as func;
 $cn: '.slider'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		&-inner {
-			display: flex;
-			overflow-x: auto; // トラックパッドでどうも同様に動作させる。
-			scroll-snap-type: x mandatory;
-			scroll-behavior: smooth;
-			/* スクロールを滑らかにする */
-			-webkit-overflow-scrolling: touch;
+#{$cn} {
+	&-inner {
+		display: flex;
+		overflow-x: auto; // トラックパッドでどうも同様に動作させる。
+		scroll-snap-type: x mandatory;
+		scroll-behavior: smooth;
+		/* スクロールを滑らかにする */
+		-webkit-overflow-scrolling: touch;
 
-			// スクロールバー非表示
-			-ms-overflow-style: none;
-			scrollbar-width: none;
+		// スクロールバー非表示
+		-ms-overflow-style: none;
+		scrollbar-width: none;
 
-			&::-webkit-scrollbar {
-				display: none;
-			}
-		}
-
-		&-prev {
-			position: absolute;
-			top: 50%;
-			left: 0;
-			transform: translateY(calc(-50%));
-		}
-
-		&-next {
-			position: absolute;
-			top: 50%;
-			right: 0;
-			transform: translateY(-50%);
+		&::-webkit-scrollbar {
+			display: none;
 		}
 	}
 
-	@if $mode =='darkmode' {}
+	&-prev {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		transform: translateY(calc(-50%));
+	}
 
-	@if $mode =='auto' {}
+	&-next {
+		position: absolute;
+		top: 50%;
+		right: 0;
+		transform: translateY(-50%);
+	}
 }
 </style>

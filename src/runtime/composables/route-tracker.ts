@@ -3,8 +3,9 @@
  * @description 前の route と現在の route を保持します。
  */
 
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import type { RouteLocationNormalized } from 'vue-router'
 import { useScroll } from './scroll'
 import { useObject } from './object'
 
@@ -15,8 +16,8 @@ const scrollPositions = ref({} as Record<string, number>) // スクロール位�
 
 export const useRouteTracker = () => {
 	return {
-		to,
-		from,
+		to: computed(() => to.value) as unknown as RouteLocationNormalized,
+		from: computed(() => from.value) as unknown as RouteLocationNormalized,
 		init,
 		getScrollPosition,
 		isPrevRoute,

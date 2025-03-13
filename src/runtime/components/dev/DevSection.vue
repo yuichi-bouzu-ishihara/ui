@@ -1,6 +1,6 @@
 <template>
 	<Clickable class="devSection" :disabled="!to" @click="handleClick">
-		<Column fit gap="8">
+		<Column fit gap="6">
 			<Row v-if="title">
 				<div class="devSection-ttl">
 					{{ title }}
@@ -42,7 +42,7 @@ $cn: '.devSection'; // コンポーネントセレクタ名
 		/* 影を広げて背景を塗る */
 		box-shadow: inset 0 0 0 1000px rgba(0, 0, 0, 0.1);
 		border-radius: 5px;
-		padding: 8px;
+		padding: 6px 8px 8px;
 
 		&-ttl {
 			display: inline-flex;
@@ -52,9 +52,9 @@ $cn: '.devSection'; // コンポーネントセレクタ名
 			font-size: 10px;
 			line-height: 1.675;
 			color: var(--color-text-060);
-			padding: 0px 4px;
-			background-color: var(--color-background);
-			border-radius: 4px;
+			// padding: 0px 4px;
+			// background-color: var(--color-background);
+			// border-radius: 4px;
 			transition: all 0.2s ease-in-out;
 		}
 

@@ -1,17 +1,17 @@
 <template>
-  <div class="pageFormsInput">
-    <Container>
-      <Row justify="center" gap="8">
-        <Typography body bold>
-          <InputTag v-model="value" name="inputTagTest" placeholder="プレースホルダープレースホルダー" focus />
-        </Typography>
-      </Row>
-    </Container>
-  </div>
+	<div class="pageFormsInput">
+		<Container>
+			<Row justify="center" gap="8">
+				<Typography caption2 bold>
+					<InputTag v-model="value" name="inputTagTest" label="ラベル" placeholder="プレースホルダープレースホルダー" max="7" focus />
+				</Typography>
+			</Row>
+		</Container>
+	</div>
 </template>
 
 <script setup>
-const value = ref(['item1', 'item2', 'item3', 'item4', 'item5', 'item6', 'item7', 'item8', 'item9', 'item10'])
+const value = ref([{ id: 1, value: 'item1' }, { id: 2, value: 'item2' }, { id: 3, value: 'item3' }, { id: 4, value: 'item4' }, { id: 5, value: 'item5' }])
 </script>
 
 <style lang="scss"></style>

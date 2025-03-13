@@ -37,9 +37,14 @@ export const useSkeletonShape = () => {
 					--skeleton-shape-color: var(--${value});
 				`
 			}
-			if (key === 'animationTo') {
+			else if (key === 'animationTo') {
 				cssVariables += `
 					--skeleton-shape-animation-to: var(--${value});
+				`
+			}
+			else {
+				cssVariables += `
+					--skeleton-shape-${key}: ${value};
 				`
 			}
 		}

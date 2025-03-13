@@ -5,7 +5,7 @@
 				:style="{ borderWidth: `${getSize(Number(border))}`, inset: `-${getSize(Number(border))}` }" />
 		</template>
 		<div class="notice-number">
-			<Typography caption2 bold center baseline-height color="light">
+			<Typography caption3 bold center cap-height-baseline color="light">
 				{{ count }}
 			</Typography>
 		</div>
@@ -45,7 +45,7 @@ $min-width: 16;
 $height: 16;
 $padding-left: 4;
 $padding-right: 4;
-$padding-bottom: .2;
+$padding-bottom: 1;
 
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
