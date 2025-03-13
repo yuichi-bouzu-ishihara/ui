@@ -96,13 +96,13 @@
 					</DevSection>
 					<DevSection title="IconButton" :to="'/elements/icon-button'">
 						<Row justify="center" align="center" gap="8">
-							<IconButton primary small :icon="{ name: 'home' }" />
-							<IconButton secondary small :icon="{ name: 'home' }" />
-							<IconButton tertiary small :icon="{ name: 'home' }" />
+							<IconButton primary small :icon="{ name: 'arrowLeft' }" />
+							<IconButton secondary small :icon="{ name: 'arrowRight' }" />
+							<IconButton tertiary small :icon="{ name: 'arrowUp' }" />
 							<!-- <IconButton quaternary small :icon="{ name: 'home' }" /> -->
-							<IconButton info small :icon="{ name: 'home' }" />
-							<IconButton link small :icon="{ name: 'home' }" />
-							<IconButton minimal small :icon="{ name: 'home' }" />
+							<IconButton info small :icon="{ name: 'arrowDown' }" />
+							<IconButton link small :icon="{ name: 'arrowLeft' }" />
+							<IconButton minimal small :icon="{ name: 'arrowRight' }" />
 						</Row>
 					</DevSection>
 				</Row>
@@ -169,7 +169,7 @@
 </template>
 
 <script setup lang="ts">
-import iconList from '../../../src/runtime/assets/honoo-ui/icons/list.json'
+import iconList from '../../../src/runtime/assets/bouzu-ui/icons/list.json'
 
 const gap = 12
 const colors = ['primary', 'secondary', 'background', 'text', 'link']
