@@ -1,17 +1,13 @@
 <template>
 	<div class="app">
-		<template v-if="!pending">
-			<NuxtLayout>
-				<NuxtPage />
-			</NuxtLayout>
-		</template>
-		<template v-else>
-			<Box w="100vw" h="100vh">
-				<Center>
-					<Spinner />
-				</Center>
-			</Box>
-		</template>
+		<NuxtLayout :style="{ opacity: pending ? 0 : 1 }">
+			<NuxtPage />
+		</NuxtLayout>
+		<Box v-if="pending" w="100vw" h="100vh" absolute top="0" left="0" color="dark">
+			<Center>
+				<Spinner />
+			</Center>
+		</Box>
 		<div class="app-layers" style="z-index: 2">
 			<DrawerLayer style="z-index: 10">
 				<TheDrawerTest v-if="drawer('test')" />

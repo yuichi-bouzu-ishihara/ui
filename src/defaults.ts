@@ -30,6 +30,9 @@ export const defaultOptions = {
 	dev: {
 		path: '/dev',
 	},
+	routeTracker: {
+		disabled: true,
+	},
 	logo: {
 		src: '',
 		alt: '',
@@ -199,9 +202,9 @@ export const defaultOptions = {
 				extrabold: fontFamily,
 			},
 			weight: {
-				extrabold: fontWeightBold,
-				bold: fontWeightBold,
-				normal: fontWeightNormal,
+				extrabold: `${fontWeightBold}`,
+				bold: `${fontWeightBold}`,
+				normal: `${fontWeightNormal}`,
 			},
 		},
 		largeTitle: {

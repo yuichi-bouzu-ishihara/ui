@@ -35,8 +35,10 @@ export default defineNuxtConfig({
       },
     }],
   ],
+
   // myModule: {},
   devtools: { enabled: true },
+
   // 使用する SCSS ファイルを配列で指定
   css: [
     '../../src/runtime/scss/style.scss',
@@ -47,7 +49,8 @@ export default defineNuxtConfig({
   // コンポーネントなどソースコードの置き場所を変更
   srcDir: 'src/',
 
-  compatibilityDate: '2024-09-20',
+  compatibilityDate: '2025-03-13',
+
   vite: {
     server: {
       watch: {
@@ -62,6 +65,7 @@ export default defineNuxtConfig({
       },
     },
   },
+
   basicAuth: {
     enabled: env.PUBLIC_BASIC_AUTH_ENABLED === 'true',
     users: [{ username: env.BASIC_AUTH_USERNAME ?? '', password: env.BASIC_AUTH_PASSWORD ?? '' }],
