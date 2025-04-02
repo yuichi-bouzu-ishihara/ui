@@ -13,7 +13,7 @@
 				<Row gap="12" nowrap>
 					<SkeletonShape circle w="48" delay-index="0" />
 					<SkeletonShape avatar w="48" delay-index="1" />
-					<SkeletonShape w="200" h="120" delay-index="2" />
+					<SkeletonShape w="200" h="120" r="8" delay-index="2" />
 				</Row>
 			</Box>
 		</Column>
