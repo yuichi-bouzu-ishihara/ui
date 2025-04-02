@@ -5,7 +5,7 @@
 <template>
 	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h, minW: w, minH: h }">
 		<template v-if="to">
-			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true }">
+			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true, blank }">
 				<Typography class="button-inner-slot" v-bind="typography">
 					<slot />
 				</Typography>
@@ -72,6 +72,7 @@ const props = defineProps({
 
 	// 遷移先 url path。 click を emit する代わりに、<BasicLink to /> する。
 	to: { type: [String, Object], default: '' },
+	blank: { type: Boolean, default: false }, // 遷移先のページを開く方法を指定する。
 	replace: { type: Boolean, default: false },
 
 	// ボタンタイプ
