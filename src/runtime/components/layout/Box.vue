@@ -30,10 +30,12 @@ const props = defineProps({
 	maxH: { type: [Number, String], default: -1 }, // 最大高さ px
 
 	// Padding & Margin - パディングとマージン
+	p: { type: [Number, String], default: '' }, // padding
 	pt: { type: [Number, String], default: '' }, // padding top
 	pr: { type: [Number, String], default: '' }, // padding right
 	pb: { type: [Number, String], default: '' }, // padding bottom
 	pl: { type: [Number, String], default: '' }, // padding left
+	m: { type: [Number, String], default: '' }, // margin
 	mt: { type: [Number, String], default: '' }, // margin top
 	mr: { type: [Number, String], default: '' }, // margin right
 	mb: { type: [Number, String], default: '' }, // margin bottom
@@ -173,35 +175,49 @@ const padding = computed(() => {
 	let paddingRight: string = ''
 	let paddingBottom: string = ''
 	let paddingLeft: string = ''
-	if (isPureNumber(String(props.pt))) {
-		paddingTop = getSize(Number(props.pt))
+	if (props.p) {
+		if (isPureNumber(String(props.p))) {
+			return {
+				padding: getSize(Number(props.p)),
+			}
+		}
+		else {
+			return {
+				padding: props.p,
+			}
+		}
 	}
 	else {
-		paddingTop = String(props.pt)
-	}
-	if (isPureNumber(String(props.pr))) {
-		paddingRight = getSize(Number(props.pr))
-	}
-	else {
-		paddingRight = String(props.pr)
-	}
-	if (isPureNumber(String(props.pb))) {
-		paddingBottom = getSize(Number(props.pb))
-	}
-	else {
-		paddingBottom = String(props.pb)
-	}
-	if (isPureNumber(String(props.pl))) {
-		paddingLeft = getSize(Number(props.pl))
-	}
-	else {
-		paddingLeft = String(props.pl)
-	}
-	return {
-		...(paddingTop !== '' && { paddingTop }),
-		...(paddingRight !== '' && { paddingRight }),
-		...(paddingBottom !== '' && { paddingBottom }),
-		...(paddingLeft !== '' && { paddingLeft }),
+		if (isPureNumber(String(props.pt))) {
+			paddingTop = getSize(Number(props.pt))
+		}
+		else {
+			paddingTop = String(props.pt)
+		}
+		if (isPureNumber(String(props.pr))) {
+			paddingRight = getSize(Number(props.pr))
+		}
+		else {
+			paddingRight = String(props.pr)
+		}
+		if (isPureNumber(String(props.pb))) {
+			paddingBottom = getSize(Number(props.pb))
+		}
+		else {
+			paddingBottom = String(props.pb)
+		}
+		if (isPureNumber(String(props.pl))) {
+			paddingLeft = getSize(Number(props.pl))
+		}
+		else {
+			paddingLeft = String(props.pl)
+		}
+		return {
+			...(paddingTop !== '' && { paddingTop }),
+			...(paddingRight !== '' && { paddingRight }),
+			...(paddingBottom !== '' && { paddingBottom }),
+			...(paddingLeft !== '' && { paddingLeft }),
+		}
 	}
 })
 // マージン設定
@@ -210,35 +226,49 @@ const margin = computed(() => {
 	let marginRight: string = ''
 	let marginBottom: string = ''
 	let marginLeft: string = ''
-	if (isPureNumber(String(props.mt))) {
-		marginTop = getSize(Number(props.mt))
+	if (props.m) {
+		if (isPureNumber(String(props.m))) {
+			return {
+				margin: getSize(Number(props.m)),
+			}
+		}
+		else {
+			return {
+				margin: props.m,
+			}
+		}
 	}
 	else {
-		marginTop = String(props.mt)
-	}
-	if (isPureNumber(String(props.mr))) {
-		marginRight = getSize(Number(props.mr))
-	}
-	else {
-		marginRight = String(props.mr)
-	}
-	if (isPureNumber(String(props.mb))) {
-		marginBottom = getSize(Number(props.mb))
-	}
-	else {
-		marginBottom = String(props.mb)
-	}
-	if (isPureNumber(String(props.ml))) {
-		marginLeft = getSize(Number(props.ml))
-	}
-	else {
-		marginLeft = String(props.ml)
-	}
-	return {
-		...(marginTop !== '' && { marginTop }),
-		...(marginRight !== '' && { marginRight }),
-		...(marginBottom !== '' && { marginBottom }),
-		...(marginLeft !== '' && { marginLeft }),
+		if (isPureNumber(String(props.mt))) {
+			marginTop = getSize(Number(props.mt))
+		}
+		else {
+			marginTop = String(props.mt)
+		}
+		if (isPureNumber(String(props.mr))) {
+			marginRight = getSize(Number(props.mr))
+		}
+		else {
+			marginRight = String(props.mr)
+		}
+		if (isPureNumber(String(props.mb))) {
+			marginBottom = getSize(Number(props.mb))
+		}
+		else {
+			marginBottom = String(props.mb)
+		}
+		if (isPureNumber(String(props.ml))) {
+			marginLeft = getSize(Number(props.ml))
+		}
+		else {
+			marginLeft = String(props.ml)
+		}
+		return {
+			...(marginTop !== '' && { marginTop }),
+			...(marginRight !== '' && { marginRight }),
+			...(marginBottom !== '' && { marginBottom }),
+			...(marginLeft !== '' && { marginLeft }),
+		}
 	}
 })
 // 角丸

@@ -18,6 +18,7 @@ const props = defineProps({
 	avatar: { type: Boolean, default: false }, // アバターかどうか
 	w: { type: [Number, String], default: 0 }, // 横幅 px
 	h: { type: [Number, String], default: 0 }, // 高さ px
+	r: { type: [Number, String], default: 0 }, // 角丸 px
 	delayIndex: { type: [Number, String], default: -1 }, // アニメーション遅延のインデックス。 delay は theme config で設定した値を使用する。
 	delay: { type: [Number, String], default: 0 }, // アニメーション遅延 ms。 delayIndex が -1 の場合はこの値を使用する。
 	animation: { type: Boolean, default: true }, // アニメーションを有効にするか
@@ -55,6 +56,7 @@ const box = computed(() => {
 		return {
 			w: props.w,
 			h: props.h,
+			r: props.r,
 		}
 	}
 })
