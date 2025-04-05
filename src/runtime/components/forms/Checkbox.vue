@@ -107,7 +107,7 @@ $checkbox-rect-size-small: 16px;
 $checkbox-rect-size-medium: 24px;
 $checkbox-icon-size: 8px;
 $checkbox-icon-width: 2px;
-$checkbox-icon-color: var(--color-indicator);
+$checkbox-icon-color: var(--color-handle);
 $checkbox-bg-color-default: var(--color-control-000);
 $checkbox-bg-color-hover: var(--color-control-000);
 $checkbox-bg-color-focus: var(--color-control-000);
