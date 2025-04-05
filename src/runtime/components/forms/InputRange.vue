@@ -138,7 +138,7 @@ $bar-height: 4;
 			border-radius: var.$border-radius-full;
 			backdrop-filter: blur(40px);
 			overflow: hidden;
-			background-color: var(--color-control-005);
+			background-color: var(--color-indicator-010);
 			flex-grow: 1;
 
 			&-bar {
