@@ -278,6 +278,7 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 
 			&-inner {
 				font-size: inherit;
+				transition: color var.$transition-base-duration var.$transition-base-timing-function;
 				// opacity: 0.3;
 			}
 

@@ -231,6 +231,7 @@ $padding-bottom: 10;
 
 			&-inner {
 				font-size: inherit;
+				transition: opacity var.$transition-base-duration var.$transition-base-timing-function;
 				opacity: 0.3;
 			}
 
