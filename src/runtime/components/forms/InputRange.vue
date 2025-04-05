@@ -145,7 +145,7 @@ $bar-height: 4;
 				width: 100%;
 				height: 100%;
 				transform-origin: left center;
-				background-color: var(--color-indicator);
+				background-color: var(--color-handle);
 			}
 		}
 
@@ -158,7 +158,7 @@ $bar-height: 4;
 				width: 100%;
 				height: 100%;
 				border-radius: var.$border-radius-full;
-				background-color: var(--color-indicator);
+				background-color: var(--color-handle);
 			}
 		}
 

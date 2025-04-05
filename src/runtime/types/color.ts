@@ -9,7 +9,8 @@ export type ColorConfig = {
 	link: string
 	background: string
 	text: string
-	control: string
-	indicator: string
+	control: string // e.g. form / checked background
+	indicator: string // e.g. form / border
+	handle: string // e.g. form / checkbox icon, switch handle, input range handle & bar
 	accent: string
 }

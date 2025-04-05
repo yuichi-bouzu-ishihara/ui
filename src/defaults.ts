@@ -13,16 +13,17 @@ const descentOverride = 'normal'
 // Color
 const primary = '#0C8CE9'
 const dark = '#2D2E31'
-const darkblack = '#2D2E31'
+const darkblack = dark
 const light = '#FFFFFF'
-const ultralight = '#FFFFFF'
+const ultralight = light
 const danger = '#E90C41'
 const success = '#0C8CE9'
 const link = '#277BDB' // リンク色
-const background = '#2D2E31' // 背景色
-const text = '#FFFFFF' // テキスト色
-const control = '#0C8CE9' // コントロール色。 e.g. checkbox background, switch UI background...
-const indicator = '#FFFFFF' // インジケーター色。 e.g. checkbox check Icon, switch UI handle...
+const background = dark // 背景色
+const text = light // テキスト色
+const control = success // コントロール色。 e.g. checkbox background, switch UI background...
+const indicator = light // インジケーター色。 e.g. checkbox check Icon, switch UI handle...
+const handle = light // ハンドル色。 e.g. checkbox icon, switch handle, input range handle & bar...
 const accent = '#7FB74D'
 
 export const defaultOptions = {
@@ -62,6 +63,7 @@ export const defaultOptions = {
 		text, // テキスト色 黒
 		control,
 		indicator,
+		handle,
 		accent,
 	},
 	gradation: {
