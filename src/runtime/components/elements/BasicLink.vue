@@ -15,6 +15,7 @@ const props = defineProps({
 	to: { type: [String, Object], default: '' }, // 遷移先 url path。 disabled の場合は空文字を設定する。
 	replace: { type: Boolean, default: false }, // ページ遷移を replace にする
 	blank: { type: Boolean, default: false }, // 新規タブで開く
+	isExternalBlank: { type: Boolean, default: true }, // 外部リンクは新規タブで開く
 	noHoverStyle: { type: Boolean, default: false }, // hover スタイルを無効化する
 	highlight: { type: Boolean, default: false }, // タップ（アクティブ）時のハイライトスタイル設定
 	underline: { type: Boolean, default: false }, // 下線を引く
@@ -33,7 +34,19 @@ const isExternalLink = computed(() => {
 	return typeof props.to === 'string' && /^(?:https?:)?\/\//.test(props.to)
 })
 const target = computed(() => {
-	return props.blank ? '_blank' : '_self'
+	let str = '_self'
+	if (isExternalLink.value) {
+		if (props.isExternalBlank) {
+			str = '_blank'
+		}
+		else {
+			str = props.blank ? '_blank' : '_self'
+		}
+	}
+	else {
+		str = props.blank ? '_blank' : '_self'
+	}
+	return str
 })
 const href = computed(() => {
 	return props.to
