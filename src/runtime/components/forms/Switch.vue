@@ -63,7 +63,7 @@ $cn: '.switch'; // コンポーネントセレクタ名
 
 	// スイッチの背景色
 	$color: var(--color-indicator-020); // スイッチOFF時の背景色
-	$color-checked: var(--color-success); // スイッチON時の背景色
+	$color-checked: var(--color-control); // スイッチON時の背景色
 
 	@if $mode =='base' {
 		width: auto;
