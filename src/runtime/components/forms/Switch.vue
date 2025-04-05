@@ -107,7 +107,7 @@ $cn: '.switch'; // コンポーネントセレクタ名
 
 			&::before {
 				position: absolute;
-				background-color: var(--color-indicator);
+				background-color: var(--color-handle);
 				border-radius: 100%;
 				content: '';
 				width: $handle-size;
