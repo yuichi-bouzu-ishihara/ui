@@ -10,7 +10,7 @@
 		</select>
 		<Typography v-if="label" tag="label" :for="getId" class="select-label">
 			<span class="select-label-inner">{{ label
-				}}</span><span v-if="required" class="select-label-required">*</span>
+			}}</span><span v-if="required" class="select-label-required">*</span>
 		</Typography>
 		<Icon v-if="!disabled" class="select-icon" name="arrowDown" size="12" />
 	</div>
@@ -234,6 +234,7 @@ $cn: '.select'; // コンポーネントセレクタ名
 
 			&-inner {
 				font-size: inherit;
+				transition: opacity var.$transition-base-duration var.$transition-base-timing-function;
 				opacity: 0.3;
 			}
 
