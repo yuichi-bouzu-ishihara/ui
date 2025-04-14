@@ -292,8 +292,15 @@ $cn: '.vimeoPlayer'; // コンポーネントセレクタ名
 		&-main {
 			position: relative;
 			width: 100%;
-			opacity: 0;
+			// opacity: 0;
 			overflow: hidden;
+
+			iframe {
+				position: absolute;
+				inset: 0;
+				width: 100%;
+				height: 100%;
+			}
 		}
 
 		&._background {
