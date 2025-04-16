@@ -239,6 +239,7 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 				// プレースホルダーを非表示にする
 				&::placeholder {
 					color: var(--color-text-000);
+					transition: var.$transition-base;
 				}
 			}
 
@@ -298,7 +299,7 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 			}
 
 			&._noLabel {
-				#{$cn}-field {
+				#{$cn}-inner-field {
 
 					// プレースホルダー
 					&::placeholder {
@@ -312,7 +313,7 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 		&._noLabel {
 			padding-top: 0;
 
-			#{$cn}-field {
+			#{$cn}-inner-field {
 				&::placeholder {
 					color: var(--color-text-030);
 				}
@@ -320,7 +321,7 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 		}
 
 		&._focus {
-			#{$cn}-field {
+			#{$cn}-inner-field {
 
 				// プレースホルダーを表示する
 				&::placeholder {
