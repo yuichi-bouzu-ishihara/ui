@@ -15,6 +15,8 @@ export const useImage = () => {
 		elementCaptureBase64, // 指定エレメントを Base64 エンコードする
 		dimensions, // base64 画像の縦横幅を返す
 		download, // 指定urlの画像をダウンロードする
+		toWebP, // 画像データをWebP形式に変換する
+		blobToBase64, // BlobをBase64に変換する
 	}
 }
 
@@ -256,4 +258,65 @@ const download = async (imageUrl: string, fileName: string = '') => {
 	catch (error) {
 		console.error('There was a problem with the fetch operation:', error)
 	}
+}
+
+/**
+ * 画像データをWebP形式に変換する
+ * @param {string | Blob} imageData - 変換する画像データ Base64形式の文字列またはBlob
+ * @param {number} [quality] - 変換品質（0.0から1.0）
+ * @returns {Promise<Blob>} WebP形式の画像データ
+ */
+const toWebP = async (imageData: string | Blob, quality = 0.8): Promise<Blob> => {
+	// 画像データをBlobに変換
+	const blob = typeof imageData === 'string'
+		? await fetch(imageData).then(res => res.blob())
+		: imageData
+
+	// Canvasを作成
+	const canvas = document.createElement('canvas')
+	const ctx = canvas.getContext('2d')
+	if (!ctx) throw new Error('Canvas context could not be created')
+
+	// 画像を読み込む
+	const img = new Image()
+	await new Promise((resolve, reject) => {
+		img.onload = resolve
+		img.onerror = reject
+		img.src = URL.createObjectURL(blob)
+	})
+
+	// Canvasに画像を描画
+	canvas.width = img.width
+	canvas.height = img.height
+	ctx.drawImage(img, 0, 0)
+
+	// WebP形式に変換
+	return new Promise((resolve, reject) => {
+		canvas.toBlob(
+			(blob) => {
+				if (blob) {
+					resolve(blob)
+				}
+				else {
+					reject(new Error('Failed to convert to WebP'))
+				}
+			},
+			'image/webp',
+			quality,
+		)
+	})
+}
+
+/**
+ * BlobをBase64に変換する
+ * @param {Blob} blob - 変換するBlob
+ * @returns {Promise<string>} Base64形式の文字列
+ */
+const blobToBase64 = async (blob: Blob): Promise<string> => {
+	const reader = new FileReader()
+	reader.readAsDataURL(blob)
+	return new Promise((resolve, reject) => {
+		reader.onloadend = () => resolve(reader.result as string)
+		reader.onerror = reject
+	})
 }

@@ -7,14 +7,14 @@
 		<VueDraggable v-model="model" class="inputTag-items" :disabled="isDragDisabled" :animation="150"
 			:style="{ display: 'flex', flexWrap: 'wrap', gap: `${gap}px`, justifyContent: 'start', alignItems: 'stretch' }"
 			:draggable="'._draggable'" @start="handleMove(true);" @end="handleMove(false)">
-			<Box v-for="tag in model" :key="tag.id" class="inputTag-items-item _draggable" pt="3.2" pb="4.8" pl="8" pr="4"
-				r="2" color="text" relative inline-block @mouseover="handleDrag" @mouseleave="handleDrag(false)">
-				<Row gap="4" align="center">
+			<Box v-for="tag in model" :key="tag.id" class="inputTag-items-item _draggable" @mouseover="handleDrag"
+				@mouseleave="handleDrag(false)">
+				<Row gap="2" align="center" fit>
 					<Typography inherit lineclamp="1" color="background" cap-height-baseline>
 						{{ tag.value }}
 					</Typography>
 					<Button minimal xsmall w="20" h="20" @click="remove(tag.id)">
-						<Box pt="2" mr="-4">
+						<Box pt="0.4em" mr="-6">
 							<Icon name="cross" size="10" color="background" />
 						</Box>
 					</Button>
@@ -182,7 +182,7 @@ const validate = () => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.inputTag'; // コンポーネントセレクタ名
 
-$padding-top: 8;
+$padding-top: 10;
 $padding-bottom: 10;
 
 @include mix.component-styles($cn) using ($mode) {
@@ -195,6 +195,10 @@ $padding-bottom: 10;
 			padding-bottom: func.get-size($padding-bottom);
 
 			&-item {
+				position: relative;
+				padding: 0.2em 8px .36em 8px;
+				border-radius: 2px;
+				background-color: var(--color-text);
 				cursor: grab;
 			}
 

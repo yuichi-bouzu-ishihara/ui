@@ -31,22 +31,6 @@
 						</div>
 						<Column class="devHeader-menus-inner-mode" gap="8">
 							<slot name="footer" />
-							<Row justify="between" align="center" nowrap>
-								<Typography body bold>
-									Darkmode
-								</Typography>
-								<div>
-									<Switch v-model="isDarkmode" name="devDarkmode" />
-								</div>
-							</Row>
-							<Row justify="between" align="center" nowrap>
-								<Typography body bold>
-									SizeType Auto
-								</Typography>
-								<div>
-									<Switch v-model="isSizeAuto" name="devSizetype" />
-								</div>
-							</Row>
 						</Column>
 					</Column>
 				</div>
@@ -59,12 +43,10 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { useMode } from '../../composables/mode'
 import { useSheet } from '../../composables/overlays/sheet'
 import Icon from '../elements/Icon.vue'
 import Typography from '../elements/Typography.vue'
 import Backdrop from '../overlays/Backdrop.vue'
-import Switch from '../forms/Switch.vue'
 import Box from '../layout/Box.vue'
 import Row from '../layout/Row.vue'
 import Column from '../layout/Column.vue'
@@ -93,9 +75,7 @@ const emit = defineEmits<{
 }>()
 
 // Data ----------------------
-const isDarkmode = ref(useMode().darkmode.value)
-const isSizeAuto = ref((useMode().sizeType.value === 'auto'))
-const currentPageName = ref('Menu')
+const currentPageName = ref('/')
 const menus = ref<Menu[]>([])
 
 const handleShowMenu = () => {
@@ -104,9 +84,14 @@ const handleShowMenu = () => {
 
 // Watch --------------------
 watch(
-	() => route.name,
+	() => route.path,
 	(nv) => {
-		currentPageName.value = nv as string
+		if (nv === '/') {
+			currentPageName.value = 'Menu'
+		}
+		else {
+			currentPageName.value = nv as string
+		}
 	},
 	{ immediate: true },
 )
@@ -117,27 +102,6 @@ watch(
 		showMenu.value = false
 	},
 	{ immediate: true },
-)
-// ダークモードスイッチ監視
-watch(
-	() => isDarkmode.value,
-	(newVal: boolean) => {
-		useMode().setDarkmode(newVal)
-		emit('darkmode', newVal)
-	},
-)
-// サイズタイプスイッチ監視
-watch(
-	() => isSizeAuto.value,
-	(newVal: boolean) => {
-		if (newVal) {
-			useMode().setSizeType('auto')
-		}
-		else {
-			useMode().setSizeType('px')
-		}
-		emit('sizeAuto', newVal)
-	},
 )
 </script>
 

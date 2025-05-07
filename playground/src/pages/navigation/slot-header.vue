@@ -1,16 +1,18 @@
 <template>
-  <div class="pageNavigationMenu">
-    <Container>
-      <SlotHeader title="Title">
-        <template #left>
-          <Icon name="add" size="20" />
-        </template>
-        <template #right>
-          <Icon name="cross" size="20" />
-        </template>
-      </SlotHeader>
-    </Container>
-  </div>
+	<div class="pageNavigationMenu">
+		<Container>
+			<Column gap="40">
+				<SlotHeader title="Title">
+					<template #left>
+						<Icon name="add" size="20" />
+					</template>
+					<template #right>
+						<Icon name="cross" size="20" />
+					</template>
+				</SlotHeader>
+			</Column>
+		</Container>
+	</div>
 </template>
 
 <script setup>

@@ -266,7 +266,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._primary {
 			background-image: var(--button-primary-background-color);
 			background-color: var(--button-primary-background-color);
-			backdrop-filter: blur(var(--button-primary-background-blur));
+			// backdrop-filter: blur(var(--button-primary-background-blur));
 
 			&::after {
 				content: '';
@@ -283,7 +283,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._secondary {
 			background-image: var(--button-secondary-background-color);
 			background-color: var(--button-secondary-background-color);
-			backdrop-filter: blur(var(--button-secondary-background-blur));
+			// backdrop-filter: blur(var(--button-secondary-background-blur));
 
 			&::after {
 				content: '';
@@ -300,7 +300,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._tertiary {
 			background-image: var(--button-tertiary-background-color);
 			background-color: var(--button-tertiary-background-color);
-			backdrop-filter: blur(var(--button-tertiary-background-blur));
+			// backdrop-filter: blur(var(--button-tertiary-background-blur));
 
 			&::after {
 				content: '';
@@ -317,7 +317,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._quaternary {
 			background-image: var(--button-quaternary-background-color);
 			background-color: var(--button-quaternary-background-color);
-			backdrop-filter: blur(var(--button-quaternary-background-blur));
+			// backdrop-filter: blur(var(--button-quaternary-background-blur));
 
 			&::after {
 				content: '';
@@ -334,7 +334,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._light {
 			background-image: var(--button-light-background-color);
 			background-color: var(--button-light-background-color);
-			backdrop-filter: blur(var(--button-light-background-blur));
+			// backdrop-filter: blur(var(--button-light-background-blur));
 
 			&::after {
 				content: '';
@@ -351,7 +351,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._dark {
 			background-image: var(--button-dark-background-color);
 			background-color: var(--button-dark-background-color);
-			backdrop-filter: blur(var(--button-dark-background-blur));
+			// backdrop-filter: blur(var(--button-dark-background-blur));
 
 			&::after {
 				content: '';
@@ -368,7 +368,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._info {
 			background-image: var(--button-info-background-color);
 			background-color: var(--button-info-background-color);
-			backdrop-filter: blur(var(--button-info-background-blur));
+			// backdrop-filter: blur(var(--button-info-background-blur));
 
 			&::after {
 				content: '';
@@ -385,7 +385,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._link {
 			background-image: var(--button-link-background-color);
 			background-color: var(--button-link-background-color);
-			backdrop-filter: blur(var(--button-link-background-blur));
+			// backdrop-filter: blur(var(--button-link-background-blur));
 
 			&::after {
 				content: '';
@@ -402,7 +402,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 		&._minimal {
 			background-image: var(--button-minimal-background-color);
 			background-color: var(--button-minimal-background-color);
-			backdrop-filter: blur(var(--button-minimal-background-blur));
+			// backdrop-filter: blur(var(--button-minimal-background-blur));
 
 			&::after {
 				content: '';

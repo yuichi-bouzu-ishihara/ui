@@ -2,7 +2,7 @@
 	<Box class="drawer" absolute top="0" z-index="1" w="100%" disabled>
 		<Box animation :style="depthStyle">
 			<Box class="drawer-inner" :w="`calc(50% - ${baseAbove() ? useContainer().base ?? 0 : 0
-				} / 2)`" min-w="320" :h="height" v-bind="box" :color="darkmode ? 'dark' : 'light'" relative>
+				} / 2)`" min-w="320" :h="height" v-bind="box" color="background" relative>
 				<slot />
 			</Box>
 		</Box>
@@ -15,7 +15,6 @@ import { useDrawer } from '../../composables/overlays/drawer'
 import { useBreakPoint } from '../../composables/break-point'
 import { useCss } from '../../composables/css'
 import { useViewport } from '../../composables/viewport'
-import { useMode } from '../../composables/mode'
 import { useContainer } from '../../composables/layout/container'
 import Box from '../layout/Box.vue'
 
@@ -23,7 +22,6 @@ import Box from '../layout/Box.vue'
 const { baseAbove } = useBreakPoint()
 const { getSize } = useCss()
 const { height } = useViewport()
-const { darkmode } = useMode()
 const { get, lefts, rights } = useDrawer()
 
 // Props ----------------------------

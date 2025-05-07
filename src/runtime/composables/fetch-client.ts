@@ -7,6 +7,7 @@ export interface FetchOptions {
 	query?: string
 	csrf?: boolean
 	cache?: string | boolean | undefined
+	signal?: AbortSignal
 }
 
 export function useFetchClient() {
@@ -84,6 +85,7 @@ export function useFetchClient() {
 					...options.headers,
 				},
 				body: options.body ? JSON.stringify(options.body) : null,
+				signal: options.signal,
 			})
 
 			if (!response.ok) {

@@ -1,6 +1,7 @@
 <template>
 	<ClientOnly>
-		<Transition name="accordion" @before-enter="beforeEnter" @enter="enter" @before-leave="beforeLeave" @leave="leave">
+		<Transition name="accordion" @before-enter="beforeEnter" @enter="enter" @after-enter="afterEnter"
+			@before-leave="beforeLeave" @leave="leave" @after-leave="afterLeave">
 			<slot />
 		</Transition>
 	</ClientOnly>
@@ -13,11 +14,17 @@ const beforeEnter = (el: Element) => {
 const enter = (el: Element) => {
 	; (el as HTMLElement).style.height = el.scrollHeight + 'px'
 }
+const afterEnter = (el: Element) => {
+	; (el as HTMLElement).style.height = 'auto'
+}
 const beforeLeave = (el: Element) => {
 	; (el as HTMLElement).style.height = el.scrollHeight + 'px'
 }
 const leave = (el: Element) => {
 	; (el as HTMLElement).style.height = '0'
+}
+const afterLeave = (el: Element) => {
+	; (el as HTMLElement).style.height = 'auto'
 }
 </script>
 

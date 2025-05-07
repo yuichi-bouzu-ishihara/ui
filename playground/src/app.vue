@@ -13,11 +13,16 @@
 				<TheDrawerTest v-if="drawer('test')" />
 				<TheDrawerDepthTest v-if="drawer('depthTest')" />
 			</DrawerLayer>
-			<SheetLayer style="z-index: 10" />
+			<SheetLayer style="z-index: 10">
+				<Nest1Sheet v-if="sheet('nest1')" />
+				<Nest2Sheet v-if="sheet('nest2')" />
+				<Nest3Sheet v-if="sheet('nest3')" />
+			</SheetLayer>
 			<ModalLayer style="z-index: 15">
 				<TestModal v-if="modalName === 'test'" />
 			</ModalLayer>
 			<ProcessingLayer style="z-index: 20" />
+			<ToastLayer style="z-index: 25" />
 			<DialogLayer style="z-index: 30" />
 		</div>
 	</div>
@@ -27,12 +32,15 @@
 import TheDrawerTest from '@/components/drawer/TheDrawerTest.vue'
 import TheDrawerDepthTest from '@/components/drawer/TheDrawerDepthTest.vue'
 import TestModal from '@/components/modal/TestModal.vue'
+import Nest1Sheet from '@/components/sheet/Nest1Sheet.vue'
+import Nest2Sheet from '@/components/sheet/Nest2Sheet.vue'
+import Nest3Sheet from '@/components/sheet/Nest3Sheet.vue'
 
 const pending = ref(true)
 
-// const sheetName = computed(() => {
-// 	return useSheet().name.value
-// })
+const sheet = computed(() => (name) => {
+	return useSheet().list.value.some(item => item.name === name)
+})
 
 const modalName = computed(() => {
 	return useModal().name.value

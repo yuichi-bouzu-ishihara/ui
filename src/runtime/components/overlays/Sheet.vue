@@ -1,70 +1,141 @@
 <template>
-	<Container class="sheet" :class="classes" no-padding v-bind="container">
-		<Box class="sheet-inner" w="100%" ml="auto" mr="auto">
-			<template v-if="isHeader">
-				<Box sticky top="0" w="100%" z-index="1">
-					<Container no-padding full>
-						<SlotHeader class="sheet-inner-header" v-bind="{ title }" blur>
-							<template v-if="leftIcon" #left>
-								<IconMenu :icon="leftIcon" color="text" @click="emit('left-icon-click')" />
+	<div class="sheet-wrapper" :style="{ zIndex: index }">
+		<div class="sheet" :class="classes" :style="{ ...variables, ...depthStyle }">
+			<div class="sheet-inner">
+				<div class="sheet-inner-item">
+					<Container no-padding v-bind="container">
+						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto">
+							<template v-if="isHeader">
+								<Box sticky top="0" w="100%" z-index="1">
+									<Container no-padding full>
+										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title }" blur>
+											<template v-if="leftIcon" #left>
+												<IconMenu :icon="leftIcon" color="text" @click="emit('left-icon-click')" />
+											</template>
+											<template v-else #left>
+												<slot name="header-left" />
+											</template>
+											<template v-if="close" #right>
+												<IconMenu icon="cross" color="text" @click="emit('close')" />
+											</template>
+											<template #center>
+												<slot name="header-center" />
+											</template>
+										</SlotHeader>
+									</Container>
+								</Box>
 							</template>
-							<template v-if="close" #right>
-								<IconMenu icon="cross" color="text" @click="emit('close')" />
+							<Box w="100%" relative z-index="0" :h="contentHeight > 0 ? 'calc(100% - 72px)' : 'auto'">
+								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
+									fit-w :fit-h="center">
+									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
+										<slot />
+									</Box>
+								</Column>
+							</Box>
+							<template v-if="footnote">
+								<div class="sheet-inner-item-content-footnote">
+									<Center>
+										<Typography caption2 bold center color="text060">
+											{{ footnote }}
+										</Typography>
+									</Center>
+								</div>
 							</template>
-						</SlotHeader>
+						</Box>
 					</Container>
-				</Box>
-			</template>
-			<Box w="100%" relative z-index="0">
-				<slot />
-			</Box>
-			<template v-if="footnote">
-				<div class="sheet-inner-footnote">
-					<Center>
-						<Typography caption2 bold center color="text060">
-							{{ footnote }}
-						</Typography>
-					</Center>
 				</div>
-			</template>
-		</Box>
-	</Container>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Box from '../layout/Box.vue'
 import Center from '../layout/Center.vue'
+import Column from '../layout/Column.vue'
 import Container from '../layout/Container.vue'
 import SlotHeader from '../navigation/SlotHeader.vue'
 import IconMenu from '../navigation/IconMenu.vue'
+import { useSheet } from '../../composables/overlays/sheet'
 import { useBreakPoint } from '../../composables/break-point'
+import { useViewport } from '../../composables/viewport'
+
+// Composables -----------------------
+const { list } = useSheet()
 
 // Props -----------------------
 const props = defineProps({
+	name: { type: String, default: '' },
 	title: { type: String, default: '' },
 	leftIcon: { type: String, default: '' },
 	close: { type: Boolean, default: false },
+	full: { type: Boolean, default: false }, // 幅を狭くする ※breakpoint base 以上で有効、それ以下は無視される。
+	wide: { type: Boolean, default: false }, // 幅を広くする ※breakpoint base 以上で有効、それ以下は無視される。
 	narrow: { type: Boolean, default: false }, // 幅を狭くする ※breakpoint base 以上で有効、それ以下は無視される。
 	footnote: { type: String, default: '' }, // フッターに表示するテキスト
+	center: { type: Boolean, default: false }, // コンテンツを中央に配置する
 })
 
 // Emits -----------------------
 const emit = defineEmits(['close', 'left-icon-click'])
 
+// Data -----------------------------------------------
+const contentHeight = ref(0)
+
 // Computed -----------------------------------------------
 const classes = computed(() => {
 	return {
 		_scroll: isScroll.value,
+		_full: props.full,
+		_wide: props.wide,
+		_narrow: props.narrow,
+		_deep: depth.value !== 0,
 	}
 })
 const isHeader = computed(() => props.title || props.close)
 const isScroll = computed(() => /* useSheetsStore().scrollY > 0 */ false)
 const container = computed(() => ({
 	narrow: useBreakPoint().baseAbove() ? props.narrow : false,
-	full: useBreakPoint().baseAbove() ? false : true,
+	full: useBreakPoint().baseAbove() ? props.full : true,
+	wide: useBreakPoint().baseAbove() ? props.wide : false,
 }))
+const variables = computed(() => {
+	if (props.full && useViewport().height.value > contentHeight.value) {
+		return {
+			'--sheet-inner-height': '100vh',
+		}
+	}
+	else {
+		return {
+			'--sheet-inner-height': 'auto',
+		}
+	}
+})
+const index = computed(() => {
+	return list.value.findIndex(item => item.name === props.name)
+})
+const depth = computed(() => {
+	return list.value.length - (index.value + 1)
+})
+// 階層を深く見せるスタイル
+const depthStyle = computed(() => {
+	let scale = 1
+	let brightness = 0
+	let translateY = 0
+	if (list.value.length > 0) {
+		scale = 1 - depth.value * 0.04
+		brightness = 1 - depth.value * 0.25
+		translateY = depth.value * -10
+
+		return { 'transform': `translateY(${translateY}px) scale(${scale})`, 'transform-origin': 'center top', 'filter': `brightness(${brightness})` }
+	}
+	else {
+		return {}
+	}
+})
 </script>
 
 <style lang="scss">
@@ -75,69 +146,73 @@ $cn: '.sheet'; // コンポーネントセレクタ名
 
 $footnote-padding-vertical: 24;
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		&-inner {
-			background-color: var(--color-background);
-			border-radius: func.get-size(var.$border-radius-xlarge) func.get-size(var.$border-radius-xlarge) 0 0 !important;
-			padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
+#{$cn} {
+	width: 100%;
+	height: 100%;
+	overflow-y: scroll;
+	transition: var.$transition-base;
 
-			&-header {
-				padding-left: calc(var(--container-min-side-space) - 4px);
-				padding-right: calc(var(--container-min-side-space) - 4px);
-				border-radius: func.get-size(var.$border-radius-xlarge) func.get-size(var.$border-radius-xlarge) 0 0;
-			}
+	&-wrapper {
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: 1;
+		width: 100%;
+		height: 100%;
+	}
 
-			&-footnote {
-				padding: func.get-size($footnote-padding-vertical) var(--container-min-side-space);
-				border-radius: 0 0 func.get-size(var.$border-radius-xlarge) func.get-size(var.$border-radius-xlarge);
-			}
+	&-inner {
+		display: flex;
+		align-items: flex-end;
+		justify-content: center;
+		min-height: 100%;
+		height: auto;
+		padding-top: calc(#{var.$header-height}px / 2);
+		// padding-bottom: calc(#{var.$header-height}px / 2);
+		transform-style: preserve-3d; // 子要素に preserve-3d がある場合に表示がバグる不具合を回避する
 
-		}
+		&-item {
+			width: 100%;
 
-		// スクロールしたら、ヘッダー左右の角を四角くする。
-		// ヘッダー以下のコンテンツが左右に余白がなく、幅いっぱいだった場合に、
-		// スクロールした際に、ヘッダーの左右からコンテンツがはみ出して表示されるのを防ぐため。
-		&._scroll {
-			#{$cn}-inner-header {
-				border-radius: 0;
-			}
-		}
+			&-content {
+				background-color: var(--color-background);
+				padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
+				height: calc(var(--sheet-inner-height) - #{var.$header-height}px / 2);
+				border-radius: #{var.$border-radius-xlarge}px;
 
-		@include mix.breakpoint('base') {
-			&-inner {
-				border-radius: func.get-size(var.$border-radius-xlarge) !important;
+				&-header {
+					padding-left: calc(var(--container-min-side-space) - 4px);
+					padding-right: calc(var(--container-min-side-space) - 4px);
+					border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
+				}
+
+				&-main {
+					background-color: var(--color-background);
+					border-radius: #{var.$border-radius-xlarge}px !important;
+				}
+
+				&-footnote {
+					padding: func.get-size($footnote-padding-vertical) var(--container-min-side-space);
+					border-radius: 0 0 #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px;
+				}
 			}
 		}
 	}
 
-	@if $mode =='darkmode' {
-		&-inner {
-			border-radius: func.get-size(var.$border-radius-xlarge, false) func.get-size(var.$border-radius-xlarge, false) 0 0 !important;
-			padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
-
-			&-header {
-				padding-left: calc(var(--container-min-side-space) - 4px);
-				padding-right: calc(var(--container-min-side-space) - 4px);
-				border-radius: func.get-size(var.$border-radius-xlarge, false) func.get-size(var.$border-radius-xlarge, false) 0 0;
-			}
-
-			&-footnote {
-				padding: func.get-size($footnote-padding-vertical, false) var(--container-min-side-space);
-				border-radius: 0 0 func.get-size(var.$border-radius-xlarge, false) func.get-size(var.$border-radius-xlarge, false);
-			}
-		}
-
-		// スクロールしたら、ヘッダー左右の角を四角くする。
-		// ヘッダー以下のコンテンツが左右に余白がなく、幅いっぱいだった場合に、
-		// スクロールした際に、ヘッダーの左右からコンテンツがはみ出して表示されるのを防ぐため。
-		&._scroll {
-			#{$cn}-header {
-				border-radius: 0;
-			}
-		}
+	&._full &-inner,
+	&._wide &-inner {
+		padding-bottom: 0;
 	}
 
-	@if $mode =='auto' {}
+	&._deep {
+		border-radius: #{var.$border-radius-xlarge}px;
+		overflow: hidden;
+	}
+
+	@include mix.breakpoint('base') {
+		&-inner {
+			align-items: center;
+		}
+	}
 }
 </style>

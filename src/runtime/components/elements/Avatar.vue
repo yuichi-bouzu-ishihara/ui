@@ -25,14 +25,12 @@
 import { computed, ref } from 'vue'
 import Box from '../layout/Box.vue'
 import { useCss } from '../../composables/css'
-import { useMode } from '../../composables/mode'
 import SkeletonShape from '../elements/SkeletonShape.vue'
 import Image from './Image.vue'
 import { useRuntimeConfig } from '#imports'
 
 // Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
-const { darkmode } = useMode()
 
 // Props --------------------------------------------------------
 const props = defineProps({
@@ -88,10 +86,7 @@ const borderStyles = computed(() => {
 })
 // 線の色
 const color = computed(() => {
-	let str = props.borderColor
-	if (darkmode.value && str === 'light') {
-		str = 'darkblack'
-	}
+	const str = props.borderColor
 	return str
 })
 // スタイル生成
