@@ -48,7 +48,7 @@ const UI_SIZE = 64
 // Props --------------------------------------------------
 defineProps({
 	title: { type: String, default: '' },
-	background: { type: String, default: 'transparent' },
+	background: { type: String, default: 'background-090' },
 	blur: { type: Boolean, default: false },
 })
 

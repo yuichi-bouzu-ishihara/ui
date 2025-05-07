@@ -6,7 +6,7 @@
 				@click="tab.click && tab.click()">
 				<Row justify="center" align="start" gap="8" fit-h>
 					<template v-if="tab.icon">
-						<Icon :type="tab.icon.name" :size="tab.icon.size || 16" />
+						<Icon :name="tab.icon.name" :size="tab.icon.size || 16" />
 					</template>
 					<template v-else-if="tab.name">
 						<Typography v-bind="typography" bold center unselectable cap-height-baseline lineclamp="1">
@@ -41,7 +41,7 @@ export type TabsItem = {
 	click?: () => void // クリックイベント
 	path?: string // パス
 	icon?: Icon // アイコン
-	current: boolean // 現在選択されているか
+	current?: boolean // 現在選択されているか
 }
 
 // Props --------------
@@ -50,6 +50,9 @@ const props = defineProps({
 })
 const { list } = toRefs(props)
 
+// Setup ------------------------------------------------------------
+const route = useRoute()
+
 // Computed ------------------
 const itemWidth = computed(() => {
 	return `width: calc(100% / ${list.value.length});`
@@ -57,23 +60,24 @@ const itemWidth = computed(() => {
 const itemClasses = computed(() => (index: number) => {
 	return {
 		_icon: list.value[index].icon,
-		_current: list.value[index].current,
+		_current: list.value[index].current ?? (list.value[index].path ? activeIndex.value === index : false),
 		_disabled: !list.value[index].click && !list.value[index].path,
 	}
 })
 const activeIndex = computed(() => {
 	let index = -1
-	if (list.value.some(item => item.path)) {
-		const path = useRoute().path
-		index = list.value.findIndex(item => item.path === path)
-	}
-	else if (index === -1) {
-		index = list.value.findIndex(item => item.current)
+	if (route && route.path) {
+		if (list.value.some(item => item.path)) {
+			const path = route.path
+			index = list.value.findIndex(item => item.path === path)
+		}
+		else if (index === -1) {
+			index = list.value.findIndex(item => item.current)
+		}
 	}
 	return index
 })
 const typography = computed(() => {
-	console.log({ [`${useTabs().typography}`]: true })
 	return { [`${useTabs().typography}`]: true }
 })
 </script>

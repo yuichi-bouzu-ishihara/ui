@@ -11,7 +11,7 @@ import Box from '../layout/Box.vue'
 // Props --------------------------------------------------
 defineProps({
 	h: { type: [Number, String], default: 100 },
-	color: { type: String, default: 'dark' },
+	color: { type: String, default: 'text' },
 })
 </script>
 

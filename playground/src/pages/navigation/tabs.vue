@@ -1,7 +1,10 @@
 <template>
 	<div class="pageNavigationTabs">
 		<Container>
-			<Tabs :list="list" />
+			<Column gap="40">
+				<Tabs :list="list" />
+				<Tabs :list="iconList" />
+			</Column>
 		</Container>
 	</div>
 </template>
@@ -25,6 +28,39 @@ const list = ref([
 			list.value.forEach((item) => {
 				item.current = item.name === 'Menu2'
 			})
+		},
+	},
+])
+
+const iconList = ref([
+	{
+		icon: {
+			name: 'x',
+			size: 24,
+		},
+	},
+	{
+		icon: {
+			name: 'instagram',
+			size: 24,
+		},
+	},
+	{
+		icon: {
+			name: 'youtube',
+			size: 24,
+		},
+	},
+	{
+		icon: {
+			name: 'tiktok',
+			size: 24,
+		},
+	},
+	{
+		icon: {
+			name: 'threads',
+			size: 24,
 		},
 	},
 ])

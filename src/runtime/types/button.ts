@@ -17,7 +17,7 @@ export type ButtonConfig = {
 type ButtonPriority = {
 	textColor: string // テキスト色 e.g. color-light, gradation-horizontal
 	backgroundColor: string // 背景色 e.g. color-light, gradation-horizontal
-	backgroundBlur: string // 背景ブラー e.g. 40px
+	// backgroundBlur: string // 背景ブラー e.g. 40px
 	borderWidth: string // ボーダー幅 e.g. 1px - 0 はボーダーなし
 	borderColor: string // ボーダー色 e.g. color-light, color-dark
 }

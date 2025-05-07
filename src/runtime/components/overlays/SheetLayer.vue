@@ -1,41 +1,50 @@
 <template>
 	<div ref="element" :class="`sheetLayer${isOpen ? ' _open' : ''}`">
-		<TransitionSlide from="bottom" @hide-end="isOpen = false">
-			<div v-if="name !== ''" ref="innerEl" class="sheetLayer-inner">
-				<div class="sheetLayer-inner-item">
-					<SheetDevMenu v-if="name === 'devMenu'" />
-					<SheetMessage v-if="name === 'message'" />
+		<div class="sheetLayer-inner">
+			<TransitionGroup name="sheet" @after-leave="afterLeave">
+				<template v-if="list.length">
+					<SheetDevMenu v-if="list.some(item => item.name === 'devMenu')" />
+					<SheetMessage v-if="list.some(item => item.name === 'message')" />
 					<slot />
-				</div>
-			</div>
-		</TransitionSlide>
+				</template>
+			</TransitionGroup>
+		</div>
 		<TransitionFade>
-			<Backdrop v-if="name !== ''" class="sheetLayer-overlay" soft @click="close(false)" />
+			<Backdrop v-if="list.length" class="sheetLayer-overlay" v-bind="backdrop" />
 		</TransitionFade>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSheet } from '../../composables/overlays/sheet'
-import TransitionSlide from '../transition/TransitionSlide.vue'
 import TransitionFade from '../transition/TransitionFade.vue'
 import SheetMessage from './SheetMessage.vue'
 import SheetDevMenu from './SheetDevMenu.vue'
 import Backdrop from './Backdrop.vue'
 
 // Stores & Composables ---------------------------
-const { close, name, isOpen, scrollY } = useSheet()
+const { close, list, isOpen, setIsOpen } = useSheet()
 const route = useRoute()
 
 // Data ---------------------------
 const element = ref<HTMLDivElement | null>(null)
-const innerEl = ref<HTMLDivElement | null>(null)
+
+// Computed ---------------------------
+const backdrop = computed(() => {
+	return {
+		soft: list.value.length === 1,
+		medium: list.value.length === 2,
+		hard: list.value.length >= 3,
+	}
+})
 
 // Methods -------------------------
-const handleScroll = () => {
-	scrollY.value = element.value?.scrollTop || 0
+const afterLeave = () => {
+	if (list.value.length === 0) {
+		setIsOpen(false)
+	}
 }
 
 // Watchers -------------------------
@@ -44,19 +53,10 @@ watch(
 	(newPath, oldPath) => {
 		if (newPath != oldPath) {
 			// ページ遷移時に閉じる
-			close()
+			close('all')
 		}
 	},
 )
-
-// Lifecycle Hooks -------------------------
-onMounted(() => {
-	element.value?.addEventListener('scroll', handleScroll)
-})
-onBeforeUnmount(() => {
-	element.value?.removeEventListener('scroll', handleScroll)
-	scrollY.value = 0
-})
 </script>
 
 <style lang="scss">
@@ -65,61 +65,37 @@ onBeforeUnmount(() => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.sheetLayer'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: 100;
-		width: 100%;
-		overflow-y: scroll;
+#{$cn} {
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 100;
+	width: 100%;
+	// overflow-y: scroll;
 
-		&._open {
-			height: 100%;
-		}
-
-		&-inner {
-			display: flex;
-			align-items: flex-end;
-			justify-content: center;
-			min-height: 100%;
-			height: auto;
-			pointer-events: none;
-			padding-top: func.get-size(var.$header-height);
-
-			&-item {
-				width: 100%;
-
-				&>* {
-					pointer-events: auto;
-				}
-			}
-		}
-
-		&-overlay {
-			z-index: -1;
-		}
-
-		@include mix.breakpoint('base') {
-			&-inner {
-				align-items: center;
-				padding-bottom: func.get-size(var.$header-height);
-			}
-		}
+	&._open {
+		height: 100%;
 	}
 
-	@if $mode =='darkmode' {}
+	&-overlay {
+		z-index: -1;
+	}
 
-	@if $mode =='auto' {
+	@include mix.breakpoint('base') {
 		&-inner {
-			padding-top: func.get-size(var.$header-height, false);
-		}
-
-		@include mix.breakpoint('base') {
-			&-inner {
-				padding-bottom: func.get-size(var.$header-height, false);
-			}
+			align-items: center;
+			// padding-bottom: func.get-size(var.$header-height);
 		}
 	}
+}
+
+.sheet-enter-active,
+.sheet-leave-active {
+	transition: transform 0.25s ease;
+}
+
+.sheet-enter-from,
+.sheet-leave-to {
+	transform: translateY(100%);
 }
 </style>

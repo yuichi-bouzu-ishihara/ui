@@ -8,12 +8,10 @@
 import { computed } from 'vue'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
-import { useMode } from '../../composables/mode'
 
 // Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値 に関する関数
-const { darkmode } = useMode()
 
 // Props --------------------------------
 const props = defineProps({
@@ -75,19 +73,7 @@ const classes = computed(() => {
 
 	// グラデーションが設定されている場合は、カラーを処理しない
 	if (gradation === '') {
-		if (darkmode.value) {
-			let colorValue = props.color
-			if (colorValue.includes('dark') && !colorValue.includes('darkblack')) {
-				colorValue = colorValue.replace('dark', 'light')
-			}
-			else if (colorValue.includes('light') && !colorValue.includes('ultralight')) {
-				colorValue = colorValue.replace('light', 'dark')
-			}
-			color = colorValue
-		}
-		else {
-			color = props.color
-		}
+		color = props.color
 		color = `_color-${color.replace('color-', '').replace('-', '')}`
 	}
 

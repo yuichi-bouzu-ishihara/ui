@@ -3,7 +3,10 @@
  */
 import type { UIConfig } from '../types'
 import type { ColorConfig } from '../types/color'
+import { useUI } from './ui'
 import { useAppConfig, useState, readonly } from '#imports'
+
+const DATA_VALUE = 'color'
 
 /**
  * 透明度のステップ
@@ -28,9 +31,27 @@ export const useColor = () => {
 		// 設定がない場合は何もしない
 		if (!appConfig.color) return
 
-		config.value = appConfig.color
+		// 設定を更新
+		update(appConfig.color)
+
+		return true
+	}
+
+	/**
+	 * 設定を更新
+	 */
+	const update = (color: ColorConfig) => {
+		config.value = color
+
+		// 既存の color 変数用のstyle要素を探す
+		const existingStyle = document.querySelector(`style[data-${useUI().dataKey}="${DATA_VALUE}"]`)
+		if (existingStyle) {
+			existingStyle.remove()
+		}
+
 		const styleElement = document.createElement('style')
 		styleElement.setAttribute('type', 'text/css')
+		styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
 
 		let cssVariables = ':root {'
 		for (const [key, value] of Object.entries(config.value)) {
@@ -49,12 +70,11 @@ export const useColor = () => {
 
 		styleElement.innerHTML = cssVariables
 		document.head.appendChild(styleElement)
-
-		return true
 	}
 
 	return {
 		init,
+		update,
 		config: readonly(config),
 		priorities: config.value ? readonly(config.value) : null,
 		opacitySteps: readonly(OPACITY_STEPS),

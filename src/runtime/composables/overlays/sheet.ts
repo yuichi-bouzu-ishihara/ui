@@ -2,60 +2,73 @@
  * Sheet
  */
 
-import { ref } from 'vue'
+import { useState, readonly } from '#imports'
 
 // Types ---------------------
-export interface Payload {
+export type Payload = {
 	name: string // コンポーネント名
 	options?: { [key: string]: unknown } | null // オプション
 }
-
-// Data ---------------------
-const isOpen = ref(false) // シートが開かれているかどうか
-const resolve = ref<((value: unknown) => void) | null>(null) // シートの結果を保持する
-const payload = ref<Payload | null>(null) // シートのペイロードを保持する
-const scrollY = ref(0) // スクロール位置を保持する
-const name = ref('') // シートのコンポーネントパスを保持する
-const options = ref<unknown | null>(null) // シートのオプションを保持する
+type PayloadWithResolve = Payload & { resolve?: (value: unknown) => void }
 
 // シートを操作する関数を返す
 export const useSheet = () => {
+	const isOpen = useState<boolean>('isOpen', () => false) // シートが開かれているかどうか
+	const scrollY = useState<number>('scrollY', () => 0) // スクロール位置を保持する
+	const list = useState<PayloadWithResolve[]>('list', () => []) // シートのリストを保持する
+
 	return {
-		open,
-		close,
-		isOpen,
-		scrollY,
-		name,
-		options,
-	}
-}
+		/**
+		 * 指定したシートを表示する
+		 * @param {Payload} pl - ペイロード
+		 * @returns {Promise<unknown>} シートの結果
+		 */
+		open: (pl: Payload): Promise<unknown> => {
+			isOpen.value = true
+			return new Promise((rsv) => {
+				list.value.push({ ...pl, resolve: rsv as (value: unknown) => void })
+			})
+		},
 
-/**
- * 指定したシートを表示する
- * @param {Payload} pl - ペイロード
- * @returns {Promise<unknown>} シートの結果
- */
-const open = (pl: Payload): Promise<unknown> => {
-	payload.value = pl
-	isOpen.value = true
-	name.value = pl.name
-	options.value = pl.options
-	return new Promise((rsv) => {
-		resolve.value = rsv as (value: unknown) => void
-	})
-}
+		/**
+		 * シートを閉じる
+		 * @param {string | 'all'} name - シートの名前
+		 * @param {unknown} result - シートの結果
+		 */
+		close: async (name: string | 'all', result: unknown = true) => {
+			if (name === 'all') {
+				list.value = []
+			}
+			else {
+				const pl = list.value.find(item => item.name === name)
+				if (pl) {
+					if (pl.resolve) {
+						pl.resolve(result)
+					}
+					pl.resolve = undefined
+				}
+				list.value = list.value.filter(item => item.name !== name)
+			}
+		},
 
-/**
- * シートを閉じる
- * @param {unknown} result - シートの結果
- */
-const close = (result: unknown = true) => {
-	// isOpen.value = false // vue コンポーネントのトランジション終わりに更新する
-	payload.value = null
-	name.value = ''
-	options.value = null
-	if (resolve.value) {
-		resolve.value(result)
+		/**
+		 * name に一致するシートのオプションを取得する
+		 * @param {string} name - シートの名前
+		 * @returns {unknown | null} シートのオプション
+		 */
+		getOptions: (name: string) => {
+			return list.value.find(item => item.name === name)?.options
+		},
+
+		setIsOpen: (value: boolean) => {
+			isOpen.value = value
+		},
+		setScrollY: (y: number) => {
+			scrollY.value = y
+		},
+
+		isOpen: readonly(isOpen),
+		scrollY: readonly(scrollY),
+		list: readonly(list),
 	}
-	resolve.value = null
 }

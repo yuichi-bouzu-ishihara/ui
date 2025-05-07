@@ -62,7 +62,7 @@ $cn: '.basicLink'; // コンポーネントセレクタ名
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		color: var(--color-link);
-		transition: var.$transition-base;
+		transition: opacity var.$transition-base-duration var.$transition-base-timing-function;
 		@include mix.tap-highlight-transparent();
 
 		&:not(._noHoverStyle) {

@@ -1,32 +1,31 @@
 <template>
-	<Row class="switch" :class="classes" gap="8" align="start">
-		<input :id="getId" v-model="checked" type="checkbox" class="switch-input" v-bind="{ disabled, readonly, name }">
+	<Row class="switch" :class="classes" gap="10" align="start" nowrap>
+		<input :id="getId" v-model="checked" type="checkbox" class="switch-input" v-bind="{ name }"
+			:disabled="disabled || readonly">
 		<label :for="getId" class="switch-handle" />
-		<template v-if="hasSlot">
-			<Typography tag="label" :for="getId" class="switch-label" caption2 unselectable>
-				<slot />
-			</Typography>
-		</template>
+		<ControlLabel class="switch-label" :for-id="getId" v-bind="{ label, description }">
+			<slot />
+		</ControlLabel>
+		<input v-if="readonly" type="hidden" v-bind="{ name }" :value="checked">
 	</Row>
 </template>
 
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { computed } from 'vue'
 import Row from '../layout/Row.vue'
-import Typography from '../elements/Typography.vue'
+import ControlLabel from './ControlLabel.vue'
+
+// Models ------------------
+const checked = defineModel<boolean>({ required: true })
 
 // Props ------------------
 const props = defineProps({
 	name: { type: String, required: true }, // ユニークな名前をつける
-	modelValue: { type: Boolean, default: false },
+	label: { type: String, default: '' },
+	description: { type: String, default: '' },
 	readonly: { type: Boolean, default: false },
 	disabled: { type: Boolean, default: false },
 })
-
-// Emits ------------------
-const emit = defineEmits<{
-	(event: 'update:modelValue', checked: boolean): void
-}>()
 
 // Computed ---------------------------
 const classes = computed(() => {
@@ -37,16 +36,6 @@ const classes = computed(() => {
 	}
 })
 const getId = computed(() => `switch-${props.name}`)
-const checked = computed({
-	get: () => props.modelValue,
-	set: (value) => {
-		// 値に変更があると呼ばれるsetter
-		emit('update:modelValue', value)
-	},
-})
-const hasSlot = computed(() => {
-	return !!useSlots().default
-})
 </script>
 
 <style lang="scss">
@@ -54,7 +43,7 @@ const hasSlot = computed(() => {
 @use '../../scss/_mixins.scss' as mix;
 $cn: '.switch'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
+#{$cn} {
 	// サイズ
 	$width: 26px;
 	$height: 16px;
@@ -62,19 +51,17 @@ $cn: '.switch'; // コンポーネントセレクタ名
 	$padding: 2px;
 
 	// スイッチの背景色
-	$color: var(--color-indicator-020); // スイッチOFF時の背景色
-	$color-checked: var(--color-control); // スイッチON時の背景色
+	$color: var(--color-control-005); // スイッチOFF時の背景色
+	$color-checked: var(--color-success); // スイッチON時の背景色
 
-	@if $mode =='base' {
-		width: auto;
-		@include mix.tap-highlight-transparent();
+	width: auto;
+	@include mix.tap-highlight-transparent();
 
-		input {
-			/* チェックボックスは使わないので非表示 */
-			display: none;
-		}
+	&-input {
+		/* チェックボックスは使わないので非表示 */
+		display: none;
 
-		input:checked+label {
+		&:checked+#{$cn}-handle {
 			background-color: $color-checked;
 
 			&::before {
@@ -82,57 +69,52 @@ $cn: '.switch'; // コンポーネントセレクタ名
 				left: calc($width - $handle-size - $padding);
 			}
 		}
+	}
 
-		input:checked~&-label {
-			opacity: 1;
-		}
+	&-handle {
+		position: relative;
+		background-color: $color;
+		border-radius: var.$border-radius-full;
+		/* 角丸 */
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		font-size: 12px;
+		width: $width;
+		min-width: $width;
+		height: $height;
+		min-height: $height;
+		transition: 0.2s;
 
-		input:disabled~&-handle,
-		input:disabled~&-label {
-			cursor: default;
-		}
-
-		&-handle {
-			position: relative;
-			background-color: $color;
-			border-radius: var.$border-radius-full;
-			/* 角丸 */
-			cursor: pointer;
-			display: flex;
-			align-items: center;
-			font-size: 12px;
-			width: $width;
-			height: $height;
-			transition: 0.2s;
-
-			&::before {
-				position: absolute;
-				background-color: var(--color-handle);
-				border-radius: 100%;
-				content: '';
-				width: $handle-size;
-				height: $handle-size;
-				left: 2px;
-				transition: 0.2s ease-out;
-			}
-		}
-
-		&-label {
-			margin-top: -1.6px;
-			cursor: pointer;
-			opacity: 0.6;
-			transition: var.$transition-base;
-		}
-
-		&._disabled,
-		&._readonly {
-			opacity: 0.6;
-			pointer-events: none;
+		&::before {
+			position: absolute;
+			background-color: var(--color-indicator);
+			border-radius: 100%;
+			content: '';
+			width: $handle-size;
+			min-width: $handle-size;
+			height: $handle-size;
+			min-height: $handle-size;
+			left: 2px;
+			transition: 0.2s ease-out;
 		}
 	}
 
-	@if $mode =='darkmode' {}
+	&-label {
+		margin-top: 1.6px;
+	}
 
-	@if $mode =='auto' {}
+	&._disabled>&-handle,
+	&._disabled>&-label {
+		opacity: 0.6;
+		cursor: default;
+		pointer-events: none;
+	}
+
+	&._readonly>&-handle,
+	&._readonly>&-label {
+		cursor: default;
+		pointer-events: none;
+	}
 }
 </style>
