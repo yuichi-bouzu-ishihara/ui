@@ -35,11 +35,23 @@ export function useFetchClient() {
 	 * @param {any} obj query string 化するオブジェクト。ネストは不可。例：{page:1, limit:100,,,}
 	 * @returns ?page=1&limit=100 などの文字列。引数が空だった場合は、空の文字列が返る。
 	 */
-	const queryString = (obj: Record<string, string | number | boolean>) => {
+	const queryString = (obj: Record<string, string | number | boolean | (string | number | boolean)[]>) => {
 		// query string 化する
-		let str = new URLSearchParams(
-			Object.entries(obj).map(([key, value]) => [key, String(value)]),
-		).toString()
+		const params = new URLSearchParams()
+
+		Object.entries(obj).forEach(([key, value]) => {
+			if (Array.isArray(value)) {
+				// 配列の場合は、各要素を同じキーで追加
+				value.forEach((item) => {
+					params.append(key, String(item))
+				})
+			}
+			else {
+				params.append(key, String(value))
+			}
+		})
+
+		let str = params.toString()
 		// 文字列があれば、?をつける
 		if (str) str = `?${str}`
 		return str
