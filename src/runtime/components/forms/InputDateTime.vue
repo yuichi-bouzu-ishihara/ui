@@ -1,6 +1,12 @@
 <template>
 	<div class="inputDateTime" :class="classes">
-		<input :id="getId" ref="fieldEl" v-model="text" v-focus="focus" class="inputDateTime-field" type="datetime-local"
+		<!-- 値が空でフォーカスされていない場合はプレースホルダーテキストを表示 -->
+		<div v-if="!text && !isFocus" class="inputDateTime-placeholder" @click="focusInput">
+			{{ placeholder || '日時を選択してください' }}
+		</div>
+		<!-- 値がある場合またはフォーカス時はinput要素を表示 -->
+		<input v-else :id="getId" ref="fieldEl" v-model="text" v-focus="focus" class="inputDateTime-field"
+			type="datetime-local"
 			v-bind="{ name, placeholder, required, readonly, disabled, autocomplete, pattern, maxlength }"
 			:autocomplete="autocomplete ? 'on' : 'off'" :maxlength="limitlength" @input="handleInput" @keydown="handleKeydown"
 			@focus="handleFocus" @blur="handleBlur" @mouseover="isHover = true" @mouseleave="isHover = false">
@@ -14,6 +20,7 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { useRegex } from '../../composables/regex'
+import { useUtils } from '../../composables/utils'
 import Typography from '../elements/Typography.vue'
 
 // Composables -------------------------------------------
@@ -118,6 +125,13 @@ const handleBlur = () => {
 	}
 	isFocus.value = false
 	emit('blur')
+}
+const focusInput = async () => {
+	isFocus.value = true
+	emit('focus')
+	await nextTick()
+	await useUtils().wait(100)
+	fieldEl.value?.showPicker()
 }
 const validate = () => {
 	let message = ''
@@ -231,6 +245,36 @@ $cn: '.inputDateTime'; // コンポーネントセレクタ名
 		}
 	}
 
+	#{$cn}-placeholder {
+		// フォント関連スタイルをすべて継承する
+		font: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		font-weight: inherit;
+		font-style: inherit;
+		font-variant: inherit;
+		text-transform: inherit;
+		text-decoration: inherit;
+		letter-spacing: inherit;
+		word-spacing: inherit;
+		text-indent: inherit;
+		text-shadow: inherit;
+		text-align: inherit;
+
+		color: var(--color-text-030);
+		width: 100%;
+		padding-top: 0.2em;
+		padding-bottom: 0.36em;
+		padding-right: 40px;
+		cursor: pointer;
+		transition: var.$transition-base;
+		opacity: 0;
+
+		&:hover:not(._disabled):not(._readonly) {
+			color: var(--color-text-060);
+		}
+	}
+
 	#{$cn}-label {
 		// フォント関連スタイルをすべて継承する
 		font: inherit;
@@ -298,6 +342,10 @@ $cn: '.inputDateTime'; // コンポーネントセレクタ名
 				color: var(--color-text-030);
 			}
 		}
+
+		#{$cn}-placeholder {
+			opacity: 1;
+		}
 	}
 
 	&._focus {
@@ -361,7 +409,8 @@ $cn: '.inputDateTime'; // コンポーネントセレクタ名
 		cursor: default;
 
 		#{$cn}-field,
-		#{$cn}-label {
+		#{$cn}-label,
+		#{$cn}-placeholder {
 			opacity: 0.6;
 		}
 	}

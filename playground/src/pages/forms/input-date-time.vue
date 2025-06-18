@@ -2,7 +2,7 @@
 	<div class="pageFormsInput">
 		<Column justify="center" gap="40">
 			<Typography title1 color="100">
-				<InputDateTime v-model="value" name="inputTest" label="Label" placeholder="Placeholder" :focus="focus" />
+				<InputDateTime v-model="value" name="inputTest" label="Label" :focus="focus" />
 			</Typography>
 			<Switch v-model="focus">
 				Focus
