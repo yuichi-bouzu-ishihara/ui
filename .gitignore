@@ -56,5 +56,15 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# src
+# cert
 cert
+
+# packs
+packs/*
+
+# npmrc
+.npmrc
+
+# playground
+playground/package.json
+playground/package-lock.json
