@@ -64,7 +64,3 @@ packs/*
 
 # npmrc
 .npmrc
-
-# playground
-playground/package.json
-playground/package-lock.json
