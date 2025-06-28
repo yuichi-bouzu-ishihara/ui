@@ -16,6 +16,7 @@ import { useRoundProgressBar } from './elements/round-progress-bar'
 import { useTabs } from './navigation/tabs'
 import { useContainer } from './layout/container'
 import { useLogo } from './elements/logo'
+import { useAvatar } from './elements/avatar'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -54,5 +55,6 @@ const init = () => {
 	useTabs().init()
 	useContainer().init()
 	useLogo().init()
+	useAvatar().init()
 	useDev().init()
 }

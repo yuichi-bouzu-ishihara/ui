@@ -111,8 +111,6 @@ const error = () => {
 @use '../../scss/_mixins.scss' as mix;
 $cn: '.avatar'; // コンポーネントセレクタ名
 
-$avatar-mask-img: '../../assets/bouzu-ui/avatar/mask.svg';
-
 @include mix.component-styles($cn) using ($mode) {
 
 	@if $mode =='base' {
@@ -122,7 +120,7 @@ $avatar-mask-img: '../../assets/bouzu-ui/avatar/mask.svg';
 		&-inner {
 			width: 100%;
 			height: 100%;
-			mask-image: url($avatar-mask-img);
+			mask-image: var(--avatar-mask-src);
 			mask-size: 100%;
 			display: flex;
 			justify-content: center;
@@ -147,7 +145,7 @@ $avatar-mask-img: '../../assets/bouzu-ui/avatar/mask.svg';
 		&-border {
 			position: absolute;
 			z-index: -1;
-			mask-image: url($avatar-mask-img);
+			mask-image: var(--avatar-mask-src);
 			mask-size: 100%;
 
 			// Color
