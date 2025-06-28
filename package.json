@@ -28,7 +28,7 @@
   ],
   "scripts": {
     "version": "changelogen",
-    "prepublishOnly": "npm run copy-version-to-playground && npm run generate-icons && npm run prepack ",
+    "prepublishOnly": "npm run generate-icons && npm run prepack ",
     "pub:patch": "npm run lint && npm run test && npm version patch && npm publish && git push --follow-tags",
     "pub:minor": "npm run lint && npm run test && npm version minor && npm publish && git push --follow-tags",
     "pub:major": "npm run lint && npm run test && npm version major && npm publish && git push --follow-tags",
