@@ -10,7 +10,7 @@ import { useAppConfig, useState, readonly } from '#imports'
 const DATA_VALUE = 'typography'
 
 export const useTypography = () => {
-	const config = useState<TypographyConfig | null>('typographyConfig', () => null)
+	const config = useState<TypographyConfig | null>('ui-typography-config', () => null)
 
 	/**
 	 * 初期化

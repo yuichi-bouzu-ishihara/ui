@@ -2,7 +2,7 @@
 	<div class="pageFormsInput">
 		<Container>
 			<Row justify="center" gap="8">
-				<Typography subheadline bold>
+				<Typography caption2 bold>
 					<InputTag v-model="value" name="inputTagTest" label="ラベル" placeholder="プレースホルダー" max="7" focus />
 				</Typography>
 			</Row>

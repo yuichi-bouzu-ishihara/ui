@@ -1,6 +1,6 @@
 import path from 'node:path'
-import { defineNuxtConfig } from 'nuxt/config'
 import dotenv from 'dotenv'
+import { defineNuxtConfig } from 'nuxt/config'
 import { createRuntimeConfig } from '../src/runtime/utils/config-helper'
 
 // .env ファイルのパスを指定して読み込み

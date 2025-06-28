@@ -18,6 +18,9 @@
 											<template v-if="close" #right>
 												<IconMenu icon="cross" color="text" @click="emit('close')" />
 											</template>
+											<template v-else-if="rightIcon" #right>
+												<IconMenu :icon="rightIcon" color="text" @click="emit('right-icon-click')" />
+											</template>
 											<template #center>
 												<slot name="header-center" />
 											</template>
@@ -51,7 +54,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, useSlots } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Box from '../layout/Box.vue'
 import Center from '../layout/Center.vue'
@@ -65,12 +68,14 @@ import { useViewport } from '../../composables/viewport'
 
 // Composables -----------------------
 const { list } = useSheet()
+const slots = useSlots()
 
 // Props -----------------------
 const props = defineProps({
 	name: { type: String, default: '' },
 	title: { type: String, default: '' },
 	leftIcon: { type: String, default: '' },
+	rightIcon: { type: String, default: '' },
 	close: { type: Boolean, default: false },
 	full: { type: Boolean, default: false }, // 幅を狭くする ※breakpoint base 以上で有効、それ以下は無視される。
 	wide: { type: Boolean, default: false }, // 幅を広くする ※breakpoint base 以上で有効、それ以下は無視される。
@@ -80,7 +85,7 @@ const props = defineProps({
 })
 
 // Emits -----------------------
-const emit = defineEmits(['close', 'left-icon-click'])
+const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click'])
 
 // Data -----------------------------------------------
 const contentHeight = ref(0)
@@ -95,7 +100,7 @@ const classes = computed(() => {
 		_deep: depth.value !== 0,
 	}
 })
-const isHeader = computed(() => props.title || props.close)
+const isHeader = computed(() => props.title || props.close || props.leftIcon || props.rightIcon || !!slots['header-left'] || !!slots['header-center'])
 const isScroll = computed(() => /* useSheetsStore().scrollY > 0 */ false)
 const container = computed(() => ({
 	narrow: useBreakPoint().baseAbove() ? props.narrow : false,

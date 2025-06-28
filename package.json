@@ -27,6 +27,12 @@
     "src/runtime/assets"
   ],
   "scripts": {
+    "version": "changelogen",
+    "prepublishOnly": "npm run copy-version-to-playground && npm run generate-icons && npm run prepack ",
+    "pub:patch": "npm run lint && npm run test && npm version patch && npm publish && git push --follow-tags",
+    "pub:minor": "npm run lint && npm run test && npm version minor && npm publish && git push --follow-tags",
+    "pub:major": "npm run lint && npm run test && npm version major && npm publish && git push --follow-tags",
+    "pub:local": "npm run lint && npm run test && npm run prepublishOnly && && mv *.tgz ./packs/",
     "copy-version-to-playground": "node ./src/runtime/scripts/copy-version-to-playground.js",
     "generate-icons": "node ./src/runtime/scripts/generateIcon-list.js && node ./src/runtime/scripts/generateIcon-scss.js",
     "prepack": "nuxt-module-build build",
@@ -38,6 +44,8 @@
     "release:local": "npm run lint && npm run generate-icons && npm run copy-version-to-playground && npm pack && mv *.tgz ./packs/",
     "start": "npm --prefix playground run start",
     "docker-build": "npm run copy-version-to-playground && NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production nuxt build && npm --prefix playground run build",
+    "deploy:dev": "gcloud auth application-default login && gcloud config configurations activate honoo-development && gcloud auth application-default set-quota-project honoo-development && npm run docker-build && docker build -t asia-northeast1-docker.pkg.dev/honoo-development/ui/development:latest . --platform linux/amd64 && docker push asia-northeast1-docker.pkg.dev/honoo-development/ui/development:latest && gcloud run deploy --image asia-northeast1-docker.pkg.dev/honoo-development/ui/development:latest --project=honoo-development",
+    "deploy:prd": "gcloud auth application-default login && gcloud config configurations activate honoo-development && gcloud auth application-default set-quota-project honoo-development && npm run docker-build && docker build -t asia-northeast1-docker.pkg.dev/honoo-development/ui/production:latest . --platform linux/amd64 && docker push asia-northeast1-docker.pkg.dev/honoo-development/ui/production:latest && gcloud run deploy --image asia-northeast1-docker.pkg.dev/honoo-development/ui/production:latest --project=honoo-development",
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest watch",
@@ -48,6 +56,7 @@
     "deepmerge-ts": "^7.1.4",
     "html2canvas": "^1.4.1",
     "normalize.css": "^8.0.1",
+    "ts-debounce": "^4.0.0",
     "vue-draggable-plus": "^0.6.0"
   },
   "devDependencies": {

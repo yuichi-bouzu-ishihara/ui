@@ -18,10 +18,9 @@ const NAVIGATION_DISPLAY_DELAY = 1500 // ナビゲーション表示までの遅
 const PAGE_TRANSITION_CANCEL_DELAY = 1000 // ページ遷移後のキャンセル時間
 
 export const useDev = () => {
-	const initFlag = useState<boolean>('initFlag', () => false) // 初期化済みフラグ
-	const headerHeight = useState<number>('headerHeight', () => 0) // ヘッダーの高さ
-	const config = useState<DevConfig | null>('devConfig', () => null)
-
+	const initFlag = useState<boolean>('ui-dev-initFlag', () => false) // 初期化済みフラグ
+	const headerHeight = useState<number>('ui-dev-headerHeight', () => 0) // ヘッダーの高さ
+	const config = useState<DevConfig | null>('ui-dev-config', () => null)
 	/**
 	 * 開発ページへの遷移を行う
 	 */

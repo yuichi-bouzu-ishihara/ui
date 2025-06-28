@@ -9,7 +9,7 @@ import { useState, readonly, useAppConfig } from '#imports'
 const DATA_VALUE = 'gradation'
 
 export const useGradation = () => {
-	const config = useState<GradationConfig | null>('gradationConfig', () => null)
+	const config = useState<GradationConfig | null>('ui-gradation-config', () => null)
 
 	/**
 	 * 初期化

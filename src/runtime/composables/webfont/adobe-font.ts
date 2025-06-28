@@ -9,8 +9,8 @@ import { useState, readonly } from '#imports'
 const DATA_VALUE = 'webfont-adobe'
 
 export const useWebFontAdobeFont = () => {
-	const isLoaded = useState<boolean>('isLoaded', () => false)
-	const config = useState<WebfontConfig['adobeFont'] | null>('adobeFontConfig', () => null)
+	const isLoaded = useState<boolean>('ui-webfont-adobeFont-isLoaded', () => false)
+	const config = useState<WebfontConfig['adobeFont'] | null>('ui-webfont-adobeFont-config', () => null)
 
 	/**
 	 * 初期化

@@ -11,7 +11,7 @@ import { useState, useAppConfig, readonly } from '#imports'
 const DATA_VALUE = 'logo'
 
 export const useLogo = () => {
-	const config = useState<LogoConfig | null>('logoConfig', () => null)
+	const config = useState<LogoConfig | null>('ui-logo-config', () => null)
 
 	/**
 	 * 初期化

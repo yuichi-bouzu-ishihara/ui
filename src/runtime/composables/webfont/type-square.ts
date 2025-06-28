@@ -30,8 +30,8 @@ const JA_LOAD_CHARS_CHUNKS = () => {
 }
 
 export const useWebFontTypeSquare = () => {
-	const isLoaded = useState<boolean>('isLoaded', () => false)
-	const config = useState<WebfontConfig['typeSquare'] | null>('typeSquareConfig', () => null)
+	const isLoaded = useState<boolean>('ui-webfont-typeSquare-isLoaded', () => false)
+	const config = useState<WebfontConfig['typeSquare'] | null>('ui-webfont-typeSquare-typeSquareConfig', () => null)
 
 	/**
 	 * 初期化

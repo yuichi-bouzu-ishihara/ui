@@ -1,15 +1,13 @@
 <template>
-	<Box class="skeletonShape" :class="classes" :style="styles" :r="shape === 'circle' ? 'circle' : 0" max-w="100%"
-		:bg-blur="blur" v-bind="box" />
+	<Box class="skeletonShape" :class="classes" :r="shape === 'circle' ? 'circle' : 0" max-w="100%" :bg-blur="blur"
+		v-bind="box" />
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 import Box from '../layout/Box.vue'
 import { useSkeletonShape } from '../../composables/elements/skeleton-shape'
-
-// Composables ------------------
-const { blur } = useSkeletonShape()
+import { useUtils } from '../../composables/utils'
 
 // Props ------------------
 const props = defineProps({
@@ -22,25 +20,17 @@ const props = defineProps({
 	delayIndex: { type: [Number, String], default: -1 }, // アニメーション遅延のインデックス。 delay は theme config で設定した値を使用する。
 	delay: { type: [Number, String], default: 0 }, // アニメーション遅延 ms。 delayIndex が -1 の場合はこの値を使用する。
 	animation: { type: Boolean, default: true }, // アニメーションを有効にするか
+	blur: { type: Boolean, default: false }, // ブラーを有効にするか
 })
+
+// Data ------------------
+const isAnimating = ref(false)
 
 // Computed ------------------
 const classes = computed(() => {
 	return {
-		_animation: props.animation,
 		[`_${shape.value}`]: true,
-	}
-})
-const styles = computed(() => {
-	if (props.delayIndex === -1) {
-		return {
-			'animation-delay': `${props.delay}ms`,
-		}
-	}
-	else {
-		return {
-			'animation-delay': `calc(var(--skeleton-shape-delay) * ${props.delayIndex})`,
-		}
+		_to: props.animation && isAnimating.value,
 	}
 })
 const box = computed(() => {
@@ -63,6 +53,33 @@ const box = computed(() => {
 const shape = computed(() => {
 	return props.rect ? 'rect' : props.circle ? 'circle' : props.avatar ? 'avatar' : 'rect'
 })
+
+const duration = computed(() => {
+	return Number.parseFloat(useSkeletonShape().config.value?.duration ?? '0') / 2
+})
+
+const startDelay = computed(() => {
+	const index = props.delayIndex === -1 ? 0 : props.delayIndex
+	return Number.parseFloat(useSkeletonShape().config.value?.delay ?? '0') * Number.parseInt(String(index))
+})
+
+// Methods ------------------
+const animationLoop = async () => {
+	if (!props.animation) return
+	await useUtils().wait(duration.value)
+	isAnimating.value = !isAnimating.value
+	animationLoop()
+}
+
+// Lifecycle ------------------
+onMounted(async () => {
+	if (!props.animation) return
+	await useUtils().wait(startDelay.value)
+	animationLoop()
+})
+onUnmounted(() => {
+	isAnimating.value = false
+})
 </script>
 
 <style lang="scss">
@@ -71,32 +88,17 @@ const shape = computed(() => {
 
 $cn: '.skeletonShape'; // クラス名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		background-color: var(--skeleton-shape-color);
+#{$cn} {
+	background-color: var(--skeleton-shape-color);
+	transition: background-color calc(var(--skeleton-shape-duration) / 2) linear;
 
-		&._avatar {
-			mask-image: url(../../assets/bouzu-ui/avatar/mask.svg);
-			mask-size: 100%;
-		}
+	&._avatar {
+		mask-image: url(../../assets/bouzu-ui/avatar/mask.svg);
+		mask-size: 100%;
+	}
 
-		&._animation {
-			animation: skeletonShape-animation var(--skeleton-shape-duration) infinite;
-
-			@keyframes skeletonShape-animation {
-				0% {
-					background-color: var(--skeleton-shape-color);
-				}
-
-				50% {
-					background-color: var(--skeleton-shape-animation-to);
-				}
-
-				100% {
-					background-color: var(--skeleton-shape-color);
-				}
-			}
-		}
+	&._to {
+		background-color: var(--skeleton-shape-animation-to);
 	}
 }
 </style>

@@ -29,12 +29,12 @@ const variables = computed(() => {
 	switch (from.value) {
 		case 'right':
 		case 'bottom':
-			fromPosition = '100vw'
+			fromPosition = '100%'
 			break
 		case 'left':
 		case 'top':
 		default:
-			fromPosition = '-100vh'
+			fromPosition = '-100%'
 	}
 	return {
 		[`--transitionSlide-${direction.value}`]: fromPosition,
@@ -70,7 +70,7 @@ const afterLeave = () => {
 	transition-duration: var(--transitionSlide-duration);
 	transition-delay: var(--transitionSlide-delay);
 	transition-timing-function: ease-in-out;
-	transition: var.$transition-base;
+	// transition: var.$transition-base;
 }
 
 .transitionSlide-x-enter-from {

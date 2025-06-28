@@ -11,7 +11,7 @@ import { useAppConfig, useState, readonly } from '#imports'
 const DATA_VALUE = 'tabs'
 
 export const useTabs = () => {
-	const config = useState<TabsConfig | null>('tabsConfig', () => null)
+	const config = useState<TabsConfig | null>('ui-tabs-config', () => null)
 
 	/**
 	 * 初期化

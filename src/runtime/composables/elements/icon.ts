@@ -13,7 +13,7 @@ type IconReference = {
 }
 
 export const useIcon = () => {
-	const config = useState<IconConfig | null>('iconConfig', () => null)
+	const config = useState<IconConfig | null>('ui-icon-config', () => null)
 
 	/**
 	 * 初期化

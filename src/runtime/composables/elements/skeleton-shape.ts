@@ -10,7 +10,7 @@ import { useState, useAppConfig, readonly } from '#imports'
 const DATA_VALUE = 'skeletonShape'
 
 export const useSkeletonShape = () => {
-	const config = useState<SkeletonShapeConfig | null>('skeletonShapeConfig', () => null)
+	const config = useState<SkeletonShapeConfig | null>('ui-skeletonShape-config', () => null)
 
 	/**
 	 * 初期化

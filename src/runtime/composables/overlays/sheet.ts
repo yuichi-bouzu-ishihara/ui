@@ -13,9 +13,9 @@ type PayloadWithResolve = Payload & { resolve?: (value: unknown) => void }
 
 // シートを操作する関数を返す
 export const useSheet = () => {
-	const isOpen = useState<boolean>('isOpen', () => false) // シートが開かれているかどうか
-	const scrollY = useState<number>('scrollY', () => 0) // スクロール位置を保持する
-	const list = useState<PayloadWithResolve[]>('list', () => []) // シートのリストを保持する
+	const isOpen = useState<boolean>('ui-sheet-isOpen', () => false) // シートが開かれているかどうか
+	const scrollY = useState<number>('ui-sheet-scrollY', () => 0) // スクロール位置を保持する
+	const list = useState<PayloadWithResolve[]>('ui-sheet-list', () => []) // シートのリストを保持する
 
 	return {
 		/**

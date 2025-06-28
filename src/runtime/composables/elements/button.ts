@@ -11,7 +11,7 @@ import { useAppConfig, useState, readonly } from '#imports'
 const DATA_VALUE = 'button'
 
 export const useButton = () => {
-	const config = useState<ButtonConfig | null>('buttonConfig', () => null)
+	const config = useState<ButtonConfig | null>('ui-button-config', () => null)
 
 	/**
 	 * 初期化

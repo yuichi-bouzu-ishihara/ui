@@ -6,7 +6,7 @@ import type { UIConfig } from '../types'
 import type { BreakPointConfig } from '../types/break-point'
 import { useUI } from './ui'
 import { useString } from './string'
-import { ref, reactive, useState, useAppConfig, readonly, type Ref } from '#imports'
+import { reactive, useState, useAppConfig, readonly } from '#imports'
 
 // Constants ------------------------------------------------------------------------------------------------------------
 const DATA_VALUE = 'breakPoint'
@@ -15,15 +15,15 @@ const MEDIA_FEATURE_QUERY = 'min-width' // メディアクエリのキー。 サ
 
 export const useBreakPoint = () => {
 	// キャッシュを格納するための Map
-	const queryCache: Map<string, { matches: Ref<boolean>, mql: MediaQueryList }> = new Map()
+	const queryCache: Map<string, { matches: ReturnType<typeof useState<boolean>>, mql: MediaQueryList }> = new Map()
 
-	const results = reactive({} as Record<string, Ref<boolean>>)
-	const mqls = [] as { mql: MediaQueryList, matches: Ref<boolean>, screenSize: string }[]
+	const results = reactive({} as Record<string, ReturnType<typeof useState<boolean>>>)
+	const mqls = [] as { mql: MediaQueryList, matches: ReturnType<typeof useState<boolean>>, screenSize: string }[]
 
 	// useState
-	const config = useState<BreakPointConfig | null>('breakPointConfig', () => null)
-	const isInitialized = useState<boolean>('isInitialized', () => false)
-	const currentScreenSize = useState<string>('currentScreenSize', () => '')
+	const config = useState<BreakPointConfig | null>('ui-breakPoint-config', () => null)
+	const isInitialized = useState<boolean>('ui-breakPoint-isInitialized', () => false)
+	const currentScreenSize = useState<string>('ui-breakPoint-currentScreenSize', () => '')
 
 	/**
 	 * 初期化
@@ -58,7 +58,7 @@ export const useBreakPoint = () => {
 			let result = queryCache.get(query)
 			if (!result) {
 				const mql = window.matchMedia(query)
-				const matches = ref(mql.matches)
+				const matches = useState(`ui-breakPoint-matches-${query}`, () => mql.matches)
 				result = { matches, mql }
 				queryCache.set(query, result)
 			}
@@ -152,7 +152,7 @@ export const useBreakPoint = () => {
 		above,
 		below,
 		baseAbove,
-		currentScreenSize,
+		currentScreenSize: readonly(currentScreenSize),
 		config: readonly(config),
 	}
 }

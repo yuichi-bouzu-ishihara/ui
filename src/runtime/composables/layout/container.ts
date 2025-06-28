@@ -11,7 +11,7 @@ import { useAppConfig, useState, readonly } from '#imports'
 const DATA_VALUE = 'container'
 
 export const useContainer = () => {
-	const config = useState<ContainerConfig | null>('containerConfig', () => null)
+	const config = useState<ContainerConfig | null>('ui-container-config', () => null)
 
 	/**
 	 * 初期化

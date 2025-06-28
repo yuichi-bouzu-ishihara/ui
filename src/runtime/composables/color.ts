@@ -13,10 +13,10 @@ const DATA_VALUE = 'color'
  * _variables.scss で定義しているものと同じにすること。
  * @see ../scss/_variables.scss
  */
-const OPACITY_STEPS = [0.00, 0.03, 0.05, 0.07, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]
+const OPACITY_STEPS = [0.00, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09, 0.10, 0.15, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.00]
 
 export const useColor = () => {
-	const config = useState<ColorConfig | null>('colorConfig', () => null)
+	const config = useState<ColorConfig | null>('ui-color-config', () => null)
 
 	/**
 	 * 初期化

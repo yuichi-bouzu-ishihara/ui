@@ -14,8 +14,8 @@ export type ToastItem = PayloadToast & {
 }
 
 export const useToast = () => {
-	const list = useState<ToastItem[]>('toast', () => [])
-	const nextId = useState<number>('toast-next-id', () => 0)
+	const list = useState<ToastItem[]>('ui-toast-list', () => [])
+	const nextId = useState<number>('ui-toast-next-id', () => 0)
 
 	/**
 	 * Toastを表示する

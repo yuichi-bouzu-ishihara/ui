@@ -3,7 +3,9 @@
 		<Typography caption1 bold>
 			<Container narrow>
 				<Row justify="center" gap="8" fit-w>
-					<Select v-model="value" name="selectTest" label="Label" v-bind="{ options }" />
+					<Box w="100">
+						<Select v-model="value" name="selectTest" label="Label" placeholder="Placeholder" v-bind="{ options }" />
+					</Box>
 				</Row>
 			</Container>
 		</Typography>

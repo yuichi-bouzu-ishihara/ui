@@ -38,6 +38,18 @@
 							<Input v-model="inputValue" name="input" label="label" placeholder="Placeholder" />
 						</Typography>
 					</DevSection>
+					<DevSection title="InputSearch" :to="'/forms/input-search'">
+						<Typography headline>
+							<InputSearch v-model="inputSearchValue" name="inputSearch" placeholder="Input Keyword" />
+						</Typography>
+					</DevSection>
+					<DevSection title="InputTag" :to="'/forms/input-tag'">
+						<Typography headline>
+							<InputTag v-model="inputTagValue" name="inputTag" placeholder="Input Tag" />
+						</Typography>
+					</DevSection>
+				</Row>
+				<Row justify="stretch" align="stretch" split="2" v-bind="{ gap }">
 					<DevSection title="Textarea" :to="'/forms/textarea'">
 						<Typography headline>
 							<Textarea v-model="textareaValue" name="textareaTest" label="Textarea" placeholder="Placeholder" />
@@ -50,13 +62,24 @@
 					</DevSection>
 				</Row>
 				<Row justify="stretch" align="stretch" split="2" v-bind="{ gap }">
-					<DevSection title="Range" :to="'/forms/input-range'">
-						<Box w="100%" h="100%">
-							<Column align="center" fit>
-								<InputRange v-model="rangeValue" name="rangeTest" />
-							</Column>
-						</Box>
-					</DevSection>
+					<Row justify="stretch" align="stretch" split="2" v-bind="{ gap }">
+						<DevSection title="Range" :to="'/forms/input-range'">
+							<Box w="100%" h="100%">
+								<Column align="center" fit>
+									<InputRange v-model="rangeValue" name="rangeTest" />
+								</Column>
+							</Box>
+						</DevSection>
+						<DevSection title="RadioPanel" :to="'/forms/radio-panel'">
+							<Box w="100%" h="100%">
+								<Column align="center" fit>
+									<RadioPanel v-model="radioValue" name="radioPanelTest"
+										:options="[{ value: 1, label: 'Male' }, { value: 2, label: 'Female' }, { value: 3, label: 'Other' }]"
+										split="3" gap="8" />
+								</Column>
+							</Box>
+						</DevSection>
+					</Row>
 					<Row justify="stretch" align="stretch" split="2" v-bind="{ gap }">
 						<DevSection title="Switch" :to="'/forms/switch'">
 							<Typography headline>
@@ -70,7 +93,7 @@
 						</DevSection>
 					</Row>
 				</Row>
-				<Row justify="stretch" align="stretch" split="2" v-bind="{ gap }">
+				<Row justify="stretch" align="stretch" split="3" v-bind="{ gap }">
 					<DevSection title="Button" :to="'/elements/button'">
 						<Row justify="center" gap="8">
 							<Button primary small>
@@ -96,16 +119,41 @@
 					</DevSection>
 					<DevSection title="IconButton" :to="'/elements/icon-button'">
 						<Row justify="center" align="center" gap="8">
-							<IconButton primary small :icon="{ name: 'arrowLeft' }" />
-							<IconButton secondary small :icon="{ name: 'arrowRight' }" />
-							<IconButton tertiary small :icon="{ name: 'arrowUp' }" />
+							<IconButton primary small :icon="{ name: 'home' }" />
+							<IconButton secondary small :icon="{ name: 'home' }" />
+							<IconButton tertiary small :icon="{ name: 'home' }" />
 							<!-- <IconButton quaternary small :icon="{ name: 'home' }" /> -->
-							<IconButton info small :icon="{ name: 'arrowDown' }" />
-							<IconButton link small :icon="{ name: 'arrowLeft' }" />
-							<IconButton minimal small :icon="{ name: 'arrowRight' }" />
+							<IconButton info small :icon="{ name: 'home' }" />
+							<IconButton link small :icon="{ name: 'home' }" />
+							<IconButton minimal small :icon="{ name: 'home' }" />
+						</Row>
+					</DevSection>
+					<DevSection title="DropdownMenu" :to="'/overlays/dropdown-menu'">
+						<Row justify="center" align="center" gap="8">
+							<DropdownMenu :list="[{
+								icon: 'home',
+								name: 'Home',
+								to: '/',
+							}, {
+								icon: 'eraser',
+								name: 'Delete',
+								to: '/',
+							}]" />
 						</Row>
 					</DevSection>
 				</Row>
+				<DevSection title="Avatar" :to="'/elements/avatar'">
+					<Row align="center" split="3" gap="40">
+						<Avatar src="https://cdn.pixabay.com/photo/2023/06/13/17/16/ai-generated-8061458_1280.png" size="80"
+							border="2" />
+						<AvatarGroup
+							:list="['https://cdn.pixabay.com/photo/2023/06/13/17/16/ai-generated-8061458_1280.png', 'https://cdn.pixabay.com/photo/2023/09/03/10/28/ai-generated-8230431_1280.png', 'https://cdn.pixabay.com/photo/2024/06/23/07/55/face-8847631_1280.jpg']"
+							size="120" border="2" />
+						<AvatarStacks
+							:list="['https://cdn.pixabay.com/photo/2023/06/13/17/16/ai-generated-8061458_1280.png', 'https://cdn.pixabay.com/photo/2023/09/03/10/28/ai-generated-8230431_1280.png', 'https://cdn.pixabay.com/photo/2024/06/23/07/55/face-8847631_1280.jpg']"
+							size="40" border="2" />
+					</Row>
+				</DevSection>
 				<Row align="stretch" split="2" v-bind="{ gap }">
 					<DevSection title="Icon" :to="'/elements/icon'">
 						<Box w="100%" h="100%" overflow>
@@ -136,12 +184,8 @@
 								<SkeletonShape rect w="80" h="12" delay-index="2" animation />
 							</Column>
 						</DevSection>
-						<DevSection title="Avatar" :to="'/elements/avatar'">
-							<Typography headline>
-								<AvatarGroup
-									:list="['https://cdn.pixabay.com/photo/2023/06/13/17/16/ai-generated-8061458_1280.png', 'https://cdn.pixabay.com/photo/2023/09/03/10/28/ai-generated-8230431_1280.png', 'https://cdn.pixabay.com/photo/2024/06/23/07/55/face-8847631_1280.jpg']"
-									size="120" border="2" />
-							</Typography>
+						<DevSection title="IndicatorScroll" :to="'/elements/indicator-scroll'">
+							<IndicatorScroll />
 						</DevSection>
 					</Row>
 				</Row>
@@ -175,11 +219,14 @@ const gap = 12
 const colors = ['primary', 'secondary', 'background', 'text', 'link']
 
 const inputValue = ref('Input')
+const inputSearchValue = ref('')
 const textareaValue = ref('Textarea')
 const selectValue = ref('Select')
 const switchValue = ref(true)
 const checkboxValue = ref(true)
 const rangeValue = ref(33)
+const radioValue = ref(2)
+const inputTagValue = ref([{ id: 1, value: 'item1' }])
 </script>
 
 <style lang="scss"></style>
