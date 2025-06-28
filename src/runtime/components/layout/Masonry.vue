@@ -1,39 +1,42 @@
 <template>
 	<Row v-resize="(rect: DOMRectReadOnly) => width = rect.width" class="masonry" justify="center" fit-w
 		:split="columns.length" v-bind="{ gap }">
-		<Column v-for="(column, columnIndex) in columns" :key="columnIndex" v-bind="{ gap }">
-			<div v-for="(item, itemIndex) in column" :key="itemIndex" class="masonry-item">
-				<slot :item="item" :index="getItemIndex(columnIndex, itemIndex)" />
-			</div>
+		<Column v-for="(column, columnIndex) in columns" :key="`masonry-column-${columnIndex}-update-${updateCount}`"
+			v-bind="{ gap }">
+			<slot v-for="(item, itemIndex) in column" :key="`masonry-item-${itemIndex}`" :item="item"
+				:index="getItemIndex(columnIndex, itemIndex)" :split="columnCount" />
 		</Column>
 	</Row>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends { id: number }">
 import { ref, watch, nextTick, onMounted } from '#imports'
-
-// Types
-type Item = {
-	id: number
-	[key: string]: unknown
-}
 
 // Props ----------
 const props = defineProps({
-	items: { type: Array as () => Item[], required: true },
+	items: { type: Array as () => T[], required: true },
 	columnWidth: { type: Number, default: 300 },
 	gap: { type: Number, default: 1 },
 })
 
 // Data ----------
 const columnCount = ref(0)
-const columns = ref<Item[][]>([])
+const columns = ref<T[][]>([])
 const width = ref(0)
+const updateCount = ref(0)
 
 // Methods ----------
 const init = () => {
+	// 前回の列数を保存
+	const prevColumnCount = columnCount.value
+
 	// コンテナの幅に基づいて列数を計算
 	columnCount.value = Math.floor((width.value + props.gap) / (props.columnWidth + props.gap))
+
+	// 列数が変わった場合は更新カウントを増やす
+	if (prevColumnCount !== columnCount.value) {
+		updateCount.value++
+	}
 
 	// 列の配列を初期化
 	columns.value = Array(columnCount.value).fill(null).map(() => [])
@@ -56,7 +59,8 @@ const init = () => {
 
 		// console.log(index, '->', columnIndex, '(row:', row, 'col:', col, 'relativePos:', relativePos, ')')
 		if (columnIndex >= 0 && columnIndex < columnCount.value) {
-			columns.value[columnIndex].push(item)
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any
+			columns.value[columnIndex].push(item as any)
 		}
 	})
 }

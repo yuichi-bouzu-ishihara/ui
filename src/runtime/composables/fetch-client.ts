@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { useState, readonly } from '#imports'
 
 export interface FetchOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE'
@@ -11,8 +11,8 @@ export interface FetchOptions {
 }
 
 export function useFetchClient() {
-	const error = ref<Error | null>(null)
-	const processing = ref<boolean>(false)
+	const error = useState<Error | null>('ui-fetch-client-error', () => null)
+	const processing = useState<boolean>('ui-fetch-client-processing', () => false)
 
 	/**
 	 * タイムスタンプキャッシュ
@@ -35,23 +35,11 @@ export function useFetchClient() {
 	 * @param {any} obj query string 化するオブジェクト。ネストは不可。例：{page:1, limit:100,,,}
 	 * @returns ?page=1&limit=100 などの文字列。引数が空だった場合は、空の文字列が返る。
 	 */
-	const queryString = (obj: Record<string, string | number | boolean | (string | number | boolean)[]>) => {
+	const queryString = (obj: Record<string, string | number | boolean>) => {
 		// query string 化する
-		const params = new URLSearchParams()
-
-		Object.entries(obj).forEach(([key, value]) => {
-			if (Array.isArray(value)) {
-				// 配列の場合は、各要素を同じキーで追加
-				value.forEach((item) => {
-					params.append(key, String(item))
-				})
-			}
-			else {
-				params.append(key, String(value))
-			}
-		})
-
-		let str = params.toString()
+		let str = new URLSearchParams(
+			Object.entries(obj).map(([key, value]) => [key, String(value)]),
+		).toString()
 		// 文字列があれば、?をつける
 		if (str) str = `?${str}`
 		return str
@@ -143,8 +131,8 @@ export function useFetchClient() {
 	}
 
 	return {
-		error,
-		processing,
+		error: readonly(error),
+		processing: readonly(processing),
 		request,
 		queryString,
 		timestampCache,

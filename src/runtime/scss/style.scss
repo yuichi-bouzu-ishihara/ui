@@ -10,7 +10,7 @@ html {
 	margin: 0;
 	height: 100%;
 	// font-size: f.get-vw(10);
-	// scroll-behavior: smooth; // スムーズスクロール
+	scroll-behavior: smooth; // スムーズスクロール
 	background-color: var(--color-background);
 	// オーバースクロールで更新を停止する
 	// overscroll-behavior-y: none; // スクロール限界を超えた時のブラウザ挙動を制御、none はブラウザまで伝えない。

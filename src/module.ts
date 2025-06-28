@@ -112,14 +112,8 @@ export default defineNuxtModule<ModuleOptions>({
 		// addImportsDir(resolve(runtimeDir, 'composables', 'navigation'))
 		// addImportsDir(resolve(runtimeDir, 'composables', 'transition'))
 
-		// Class
-		nuxt.hook('nitro:config', async (nitroConfig) => {
-			nitroConfig.publicAssets ||= []
-			nitroConfig.publicAssets.push({
-				dir: resolve(runtimeDir, 'classes'),
-				maxAge: 60 * 60 * 24 * 365, // 1 year
-			})
-		})
+		// Classes
+		addImportsDir(resolve(runtimeDir, 'classes'))
 
 		// Scss
 		nuxt.hook('nitro:config', async (nitroConfig) => {

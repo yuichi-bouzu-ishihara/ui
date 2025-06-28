@@ -5,12 +5,12 @@
 import { useState, readonly } from '#imports'
 
 export const useViewport = () => {
-	const isInitialized = useState('isInitialized', () => false)
-	const width = useState('width', () => 0)
-	const height = useState('height', () => 0)
-	const initWidth = useState('initWidth', () => 0) // 初期の横幅
-	const initHeight = useState('initHeight', () => 0) // 初期の縦幅
-	const keyboardHeight = useState('keyboardHeight', () => 0) // ソフトウェアキーボードの高さ
+	const isInitialized = useState('ui-viewport-isInitialized', () => false)
+	const width = useState('ui-viewport-width', () => 0)
+	const height = useState('ui-viewport-height', () => 0)
+	const initWidth = useState('ui-viewport-initWidth', () => 0) // 初期の横幅
+	const initHeight = useState('ui-viewport-initHeight', () => 0) // 初期の縦幅
+	const keyboardHeight = useState('ui-viewport-keyboardHeight', () => 0) // ソフトウェアキーボードの高さ
 
 	/**
 	 * 初期化

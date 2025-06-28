@@ -5,7 +5,7 @@
 			}}</span><span v-if="required" class="inputTag-label-required">*</span>
 		</Typography>
 		<VueDraggable v-model="model" class="inputTag-items" :disabled="isDragDisabled" :animation="150"
-			:style="{ display: 'flex', flexWrap: 'wrap', gap: `${gap}px`, justifyContent: 'start', alignItems: 'stretch' }"
+			:style="{ display: 'flex', flexWrap: 'wrap', gap: '0.2em', justifyContent: 'start', alignItems: 'stretch' }"
 			:draggable="'._draggable'" @start="handleMove(true);" @end="handleMove(false)">
 			<Box v-for="tag in model" :key="tag.id" class="inputTag-items-item _draggable" @mouseover="handleDrag"
 				@mouseleave="handleDrag(false)">

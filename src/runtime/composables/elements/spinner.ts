@@ -6,7 +6,7 @@ import type { SpinnerConfig } from '../../types/spinner'
 import { useState, useAppConfig, readonly } from '#imports'
 
 export const useSpinner = () => {
-	const config = useState<SpinnerConfig | null>('spinnerConfig', () => null)
+	const config = useState<SpinnerConfig | null>('ui-spinner-config', () => null)
 
 	/**
 	 * 初期化

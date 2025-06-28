@@ -11,13 +11,15 @@
   },
   "dependencies": {
     "@kgierke/nuxt-basic-auth": "^1.7.0",
-    "nuxt": "^3.13.2"
+    "@nuxt/kit": "^3.17.3",
+    "@nuxt/schema": "^3.17.3",
+    "nuxt": "^3.17.3"
   },
   "devDependencies": {
     "sass": "^1.79.2",
     "sass-loader": "^16.0.1"
   },
-  "version": "3.2.0",
+  "version": "3.3.1",
   "volta": {
     "node": "20.17.0",
     "npm": "11.1.0"

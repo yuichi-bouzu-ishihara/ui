@@ -3,7 +3,7 @@
 		<select :id="getId" ref="field" v-model="value" class="select-field"
 			v-bind="{ name, placeholder, required, disabled, autocomplete }" @focus="onFocus" @blur="onBlur"
 			@mouseover="isHover = true" @mouseleave="isHover = false">
-			<option v-for="(item, index) in options" :key="`option-${getId}-${index}`" :value="item.value"
+			<option v-for="(item, index) in computedOptions" :key="`option-${getId}-${index}`" :value="item.value"
 				:disabled="!item.value || item.disabled">
 				{{ optionName(item.value, item.name) }}
 			</option>
@@ -12,7 +12,7 @@
 			<span class="select-label-inner">{{ label
 			}}</span><span v-if="required" class="select-label-required">*</span>
 		</Typography>
-		<Icon v-if="!disabled" class="select-icon" name="arrowDown" size="12" />
+		<Icon v-if="!disabled" class="select-icon" name="arrowDown" size="1em" />
 	</div>
 </template>
 
@@ -97,7 +97,23 @@ const classes = computed(() => {
 		_noLabel: !props.label, // ラベルがなければ
 		_disabled: props.disabled, // 無効化されていれば
 		_invalid: validation.value === false, // バリデーションが false なら、_invalidをつける。 required が true な時のみ動作する。
+		_selectPlaceholder: props.placeholder && !value.value, // プレースホルダーが表示されていれば
 	}
+})
+
+// placeholderが設定されている場合にoptionsの先頭に追加する
+const computedOptions = computed(() => {
+	if (props.placeholder) {
+		return [
+			{
+				value: '',
+				name: props.placeholder,
+				disabled: true,
+			},
+			...props.options,
+		]
+	}
+	return props.options
 })
 
 /**
@@ -154,194 +170,179 @@ const optionName = (value: string, name?: string) => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.select'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		position: relative;
+#{$cn} {
+	position: relative;
+	z-index: 0;
+	width: 100%;
+	padding-top: func.get-size(14);
+	cursor: pointer;
+
+	&-field {
+		// input スタイル初期化
+		appearance: none;
+		border: none;
+		outline: none;
+		background: none;
+		padding: 0;
+
+		// フォント関連スタイルをすべて継承する
+		font: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		font-weight: inherit;
+		font-style: inherit;
+		font-variant: inherit;
+		text-transform: inherit;
+		text-decoration: inherit;
+		letter-spacing: inherit;
+		word-spacing: inherit;
+		text-indent: inherit;
+		text-shadow: inherit;
+		text-align: inherit;
+
+		color: var(--color-text);
 		width: 100%;
-		padding-top: func.get-size(14);
+		padding-top: 0.2em;
+		padding-bottom: 0.36em;
 		cursor: pointer;
 
-		&-field {
-			// input スタイル初期化
-			appearance: none;
-			border: none;
-			outline: none;
-			background: none;
-			padding: 0;
+		&:-webkit-autofill,
+		&:-webkit-autofill:hover,
+		&:-webkit-autofill:focus,
+		&:-webkit-autofill:active,
+		&:-internal-autofill-selected {
+			-webkit-text-fill-color: var(--color-text) !important;
+			-webkit-box-shadow: 0 0 0px 1000px var(--color-background) inset !important;
+			background-color: transparent !important;
+		}
+	}
 
-			// フォント関連スタイルをすべて継承する
-			font: inherit;
+	&>&-label {
+		// フォント関連スタイルをすべて継承する
+		font: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		font-weight: inherit;
+		font-style: inherit;
+		font-variant: inherit;
+		text-transform: inherit;
+		text-decoration: inherit;
+		letter-spacing: inherit;
+		word-spacing: inherit;
+		text-indent: inherit;
+		text-shadow: inherit;
+		text-align: inherit;
+		color: var(--color-text);
+
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding-top: 0.4em;
+		transform: translate(0em, 0.8em);
+		transform-origin: top left;
+		transition: all 0.15s ease-out;
+		pointer-events: none;
+
+		&-inner {
 			font-size: inherit;
-			line-height: inherit;
-			font-weight: inherit;
-			font-style: inherit;
-			font-variant: inherit;
-			text-transform: inherit;
-			text-decoration: inherit;
-			letter-spacing: inherit;
-			word-spacing: inherit;
-			text-indent: inherit;
-			text-shadow: inherit;
-			text-align: inherit;
+			transition: opacity var.$transition-base-duration var.$transition-base-timing-function;
+			opacity: 0.3;
+		}
 
-			color: var(--color-text);
-			width: 100%;
-			padding-top: 0.2em;
-			padding-bottom: 0.36em;
-			cursor: pointer;
+		&-required {
+			line-height: 1;
+			color: var(--color-danger);
+			vertical-align: middle;
+			padding-left: 0.1em;
+		}
+	}
 
-			// プレースホルダーを非表示にする
-			&::placeholder {
-				color: var(--color-text-000);
-			}
+	// プレースホルダーオプションのスタイル
+	&._selectPlaceholder {
+		#{$cn}-field {
+			color: var(--color-text-030);
+		}
+	}
 
-			&:-webkit-autofill,
-			&:-webkit-autofill:hover,
-			&:-webkit-autofill:focus,
-			&:-webkit-autofill:active,
-			&:-internal-autofill-selected {
-				-webkit-text-fill-color: var(--color-text) !important;
-				-webkit-box-shadow: 0 0 0px 1000px var(--color-background) inset !important;
-				background-color: transparent !important;
+	&-icon {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		z-index: -1;
+		right: func.get-size(4);
+		margin: auto;
+		opacity: .3;
+	}
+
+	// ラベルがない時
+	&._noLabel {
+		padding-top: 0;
+	}
+
+	// ラベルがある時
+	&:not(._noLabel)._selectPlaceholder {
+		#{$cn}-field {
+			color: var(--color-text-000);
+		}
+	}
+
+	&:hover:not(._disabled) {
+
+		#{$cn}-label {
+			&-inner {
+				opacity: .6;
 			}
 		}
 
-		&-label {
-			// フォント関連スタイルをすべて継承する
-			font: inherit;
-			font-size: inherit;
-			line-height: inherit;
-			font-weight: inherit;
-			font-style: inherit;
-			font-variant: inherit;
-			text-transform: inherit;
-			text-decoration: inherit;
-			letter-spacing: inherit;
-			word-spacing: inherit;
-			text-indent: inherit;
-			text-shadow: inherit;
-			text-align: inherit;
-			color: var(--color-text);
+		#{$cn}-icon {
+			opacity: 1;
+		}
+	}
 
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			transform: translate(0em, 0.8em);
-			transform-origin: top left;
-			transition: all 0.15s ease-out;
-			pointer-events: none;
+	&._focus {
+		#{$cn}-label {
+			font-weight: bold;
+			font-size: func.get-size(10);
+			transform: translate(0em, 0em);
 
 			&-inner {
-				font-size: inherit;
-				transition: opacity var.$transition-base-duration var.$transition-base-timing-function;
-				opacity: 0.3;
-			}
-
-			&-required {
-				line-height: 1;
-				color: var(--color-danger);
-				vertical-align: middle;
-				padding-left: 0.1em;
-			}
-		}
-
-		&-icon {
-			position: absolute;
-			right: func.get-size(4);
-			bottom: .8em;
-			margin: auto;
-			opacity: .3;
-		}
-
-		// ラベルがない時は、 placeholder を表示する
-		&._noLabel {
-			padding-top: 0;
-
-			#{$cn}-field {
-				&::placeholder {
-					color: var(--color-text-030);
-				}
-			}
-		}
-
-		&:hover:not(._disabled) {
-
-			#{$cn}-field {
-
-				// プレースホルダーを表示する
-				&::placeholder {
-					color: var(--color-text-060);
-				}
-			}
-
-			#{$cn}-label {
-				&-inner {
-					opacity: .6;
-				}
-			}
-
-			#{$cn}-icon {
 				opacity: 1;
 			}
 		}
 
-		&._focus {
-			#{$cn}-field {
-
-				// プレースホルダーを表示する
-				&::placeholder {
-					color: var(--color-text-030);
-				}
-			}
-
-			#{$cn}-label {
-				font-weight: bold;
-				font-size: func.get-size(10);
-				transform: translate(0em, 0em);
-
-				&-inner {
-					opacity: 1;
-				}
-			}
-
-			#{$cn}-icon {
-				opacity: 1;
-			}
+		#{$cn}-icon {
+			opacity: 1;
 		}
+	}
 
-		&._input {
-			#{$cn}-label {
-				font-size: func.get-size(10);
-				transform: translate(0em, 0em);
+	&._input {
+		#{$cn}-label {
+			font-size: func.get-size(10);
+			transform: translate(0em, 0em);
 
-				&-inner {
-					opacity: 1 !important;
-				}
-			}
-		}
-
-		&._invalid {
-			#{$cn}-label {
-				color: var(--color-danger);
-			}
-		}
-
-		&._readonly,
-		&._disabled {
-			pointer-events: none;
-			cursor: default;
-
-			#{$cn}-field,
-			#{$cn}-label {
-				opacity: 0.6;
-				cursor: default;
+			&-inner {
+				opacity: 1 !important;
 			}
 		}
 	}
 
-	@if $mode =='darkmode' {}
+	&._invalid {
+		#{$cn}-label {
+			color: var(--color-danger);
+		}
+	}
 
-	@if $mode =='auto' {}
+	&._readonly,
+	&._disabled {
+		pointer-events: none;
+		cursor: default;
+
+		#{$cn}-field,
+		#{$cn}-label {
+			opacity: 0.6;
+			cursor: default;
+		}
+	}
 }
 </style>
