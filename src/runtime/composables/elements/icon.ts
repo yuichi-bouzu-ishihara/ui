@@ -19,7 +19,7 @@ export const useIcon = () => {
 	 * 初期化
 	 */
 	const init = () => {
-		const appConfig = useAppConfig().ui as UIConfig ?? {}
+		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
 		config.value = appConfig.icon ?? null
 	}
 

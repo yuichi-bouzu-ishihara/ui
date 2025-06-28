@@ -20,7 +20,7 @@ export const useGradation = () => {
 			throw new Error('Typography の初期化に失敗しました。windowオブジェクトが存在しないか、window.getComputedStyleが利用できません。')
 		}
 
-		const appConfig = useAppConfig().ui as UIConfig ?? {}
+		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
 		// 設定がない場合は何もしない
 		if (!appConfig.gradation) return
 

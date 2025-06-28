@@ -22,7 +22,7 @@ export const useMode = () => {
 		if (!document.body) return
 		if (!document.getElementById(NUXT_ROOT_ID)) return
 
-		const config = useAppConfig().ui as UIConfig ?? {}
+		const config = useAppConfig().ui as unknown as UIConfig ?? {}
 		setDarkmode(config.mode?.darkmode ?? false)
 		setSizeType(config.mode?.sizeType ?? 'px')
 	}
