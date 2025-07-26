@@ -32,6 +32,9 @@ export default defineNuxtConfig({
           width: 222,
           height: 38,
         },
+        avatar: {
+          maskSrc: '/assets/images/avatar-mask.svg',
+        },
       },
     }],
   ],

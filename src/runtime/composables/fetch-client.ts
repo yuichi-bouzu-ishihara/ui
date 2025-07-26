@@ -32,14 +32,27 @@ export function useFetchClient() {
 
 	/**
 	 * Object を query string 化する
-	 * @param {any} obj query string 化するオブジェクト。ネストは不可。例：{page:1, limit:100,,,}
-	 * @returns ?page=1&limit=100 などの文字列。引数が空だった場合は、空の文字列が返る。
+	 * @param {any} obj query string 化するオブジェクト。ネストは不可。配列は複数のクエリパラメータとして展開される。例：{page:1, limit:100, tags:['tag1','tag2']}
+	 * @returns ?page=1&limit=100&tags=tag1&tags=tag2 などの文字列。引数が空だった場合は、空の文字列が返る。
 	 */
-	const queryString = (obj: Record<string, string | number | boolean>) => {
+	const queryString = (obj: Record<string, string | number | boolean | (string | number | boolean)[]>) => {
 		// query string 化する
-		let str = new URLSearchParams(
-			Object.entries(obj).map(([key, value]) => [key, String(value)]),
-		).toString()
+		const params = new URLSearchParams()
+
+		Object.entries(obj).forEach(([key, value]) => {
+			if (Array.isArray(value)) {
+				// 配列の場合は複数のパラメータとして追加
+				value.forEach((item) => {
+					params.append(key, String(item))
+				})
+			}
+			else {
+				// 単一の値の場合は通常通り追加
+				params.append(key, String(value))
+			}
+		})
+
+		let str = params.toString()
 		// 文字列があれば、?をつける
 		if (str) str = `?${str}`
 		return str
