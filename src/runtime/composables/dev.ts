@@ -29,7 +29,7 @@ export const useDev = () => {
 		if (initFlag.value) return
 		initFlag.value = true
 
-		const appConfig = useAppConfig().ui as UIConfig ?? {}
+		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
 		// 設定がない場合は何もしない
 		if (!appConfig.dev) return
 

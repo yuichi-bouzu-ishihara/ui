@@ -13,6 +13,8 @@ import type { RoundProgressBarConfig } from './round-progress-bar'
 import type { WebfontConfig } from './webfont'
 import type { ContainerConfig } from './container'
 import type { AvatarConfig } from './avatar'
+import type { LogoConfig } from './logo'
+import type { TabsConfig } from './tabs'
 
 // AppConfigの型定義
 export type UIConfig = {
@@ -32,4 +34,6 @@ export type UIConfig = {
 	webfont?: WebfontConfig
 	container?: ContainerConfig
 	avatar?: AvatarConfig
+	logo?: LogoConfig
+	tags?: TabsConfig
 }

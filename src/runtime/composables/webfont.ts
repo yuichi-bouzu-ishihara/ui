@@ -18,7 +18,7 @@ export const useWebFont = () => {
 const init = () => {
 	if (typeof window === 'undefined' || !window.getComputedStyle) return null
 
-	const appConfig = useAppConfig().ui as UIConfig ?? {}
+	const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
 	const config = appConfig.webfont ?? null
 
 	// 設定がない場合は何もしない
