@@ -17,14 +17,14 @@ export type ButtonConfig = {
 export type ButtonPriority = {
 	textColor: string // テキスト色 e.g. color-light, gradation-horizontal
 	backgroundColor: string // 背景色 e.g. color-light, gradation-horizontal
-	// backgroundBlur: string // 背景ブラー e.g. 40px
+	backgroundBlur?: string // 背景ブラー e.g. 40px (オプショナル)
 	borderWidth: string // ボーダー幅 e.g. 1px - 0 はボーダーなし
 	borderColor: string // ボーダー色 e.g. color-light, color-dark
 }
 
 export type ButtonSize = {
 	textSize: string // テキストサイズ e.g. 14px
-	textAdjustTop: string // テキストの上下位置調整 e.g. -2px
+	textAdjustTop?: string // テキストの上下位置調整 e.g. -2px (オプショナル)
 	paddingH: string // テキストの水平パディング e.g. 14px
 	height: string
 	radius: string // 角丸 e.g. 4px

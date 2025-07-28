@@ -43,6 +43,6 @@ export type UIConfig = {
 	storage?: StorageConfig
 	avatar?: AvatarConfig
 	logo?: LogoConfig
-	tags?: TabsConfig
+	tabs?: TabsConfig
 	forms?: FormsConfig
 }
