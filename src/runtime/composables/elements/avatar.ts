@@ -3,8 +3,7 @@
  */
 import type { UIConfig } from '../../types'
 import type { AvatarConfig } from '../../types/avatar'
-import { useUI } from '../ui'
-import { useString } from '../string'
+import { useCss } from '../css'
 import { useState, useAppConfig, readonly } from '#imports'
 
 // Constants -----------------------------------------
@@ -21,34 +20,24 @@ export const useAvatar = () => {
 		// 設定がない場合は何もしない
 		if (!appConfig.avatar) return null
 
+		// 設定を更新
 		config.value = appConfig.avatar
-		const styleElement = document.createElement('style')
-		styleElement.setAttribute('type', 'text/css')
-		styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
-
-		let cssVariables = ':root {'
-		for (const [key, value] of Object.entries(config.value)) {
-			if (key === 'maskSrc') {
-				cssVariables += `
-					--avatar-mask-src: url(${value});
-				`
-			}
-			else {
-				cssVariables += `
-					--avatar-${useString().camelToKebab(key)}: ${value};
-				`
-			}
-		}
-		cssVariables += '}'
-
-		styleElement.innerHTML = cssVariables
-		document.head.appendChild(styleElement)
+		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
 
 		return true
 	}
 
+	/**
+	 * 設定を更新
+	 */
+	const update = (conf: AvatarConfig) => {
+		config.value = conf
+		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
+	}
+
 	return {
 		init,
+		update,
 		maskSrc: config.value ? readonly(config.value).maskSrc : '',
 	}
 }
