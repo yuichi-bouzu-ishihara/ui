@@ -14,7 +14,7 @@ export type ButtonConfig = {
 	xsmall: ButtonSize
 }
 
-type ButtonPriority = {
+export type ButtonPriority = {
 	textColor: string // テキスト色 e.g. color-light, gradation-horizontal
 	backgroundColor: string // 背景色 e.g. color-light, gradation-horizontal
 	// backgroundBlur: string // 背景ブラー e.g. 40px
@@ -22,7 +22,7 @@ type ButtonPriority = {
 	borderColor: string // ボーダー色 e.g. color-light, color-dark
 }
 
-type ButtonSize = {
+export type ButtonSize = {
 	textSize: string // テキストサイズ e.g. 14px
 	textAdjustTop: string // テキストの上下位置調整 e.g. -2px
 	paddingH: string // テキストの水平パディング e.g. 14px
