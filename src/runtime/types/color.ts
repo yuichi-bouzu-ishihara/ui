@@ -13,4 +13,5 @@ export type ColorConfig = {
 	indicator: string // e.g. form / border
 	handle: string // e.g. form / checkbox icon, switch handle, input range handle & bar
 	accent: string
+	[key: string]: string | Record<string, string | Record<string, string>> // 自由な入力を許可
 }

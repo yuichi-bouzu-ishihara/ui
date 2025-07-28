@@ -20,6 +20,9 @@
         <IconButton :icon="{ name: 'check' }" rounded loading xsmall />
         <IconButton :icon="{ name: 'check' }" disabled />
       </Row>
+      <Row justify="center" :gap="[8, 8]">
+        <IconButton :icon="{ name: 'check' }" :color="{ background: '#0000ff', text: '#ff0000' }" rounded />
+      </Row>
     </Container>
   </div>
 </template>

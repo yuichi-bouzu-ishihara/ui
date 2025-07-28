@@ -11,6 +11,9 @@ import { useButton } from '../../composables/elements/button'
 import Button from './Button.vue'
 import Icon from './Icon.vue'
 
+// Composables ---------------------------
+const attrs = useAttrs()
+
 // Props ---------------------------
 const props = defineProps({
 	icon: {
@@ -94,29 +97,32 @@ const buttonSize = computed(() => {
 	}
 })
 const color = computed(() => {
-	let str = 'text'
-	switch (priority.value) {
-		case 'primary':
-			str = useButton().primary?.textColor ?? str
-			break
-		case 'secondary':
-			str = useButton().secondary?.textColor ?? str
-			break
-		case 'tertiary':
-			str = useButton().tertiary?.textColor ?? str
-			break
-		case 'quaternary':
-			str = useButton().quaternary?.textColor ?? str
-			break
-		case 'link':
-			str = useButton().link?.textColor ?? str
-			break
-		case 'info':
-			str = useButton().info?.textColor ?? str
-			break
-		case 'minimal':
-			str = useButton().minimal?.textColor ?? str
-			break
+	let str = useButton().primary?.textColor ?? 'text'
+	if (attrs && 'color' in attrs) {
+		const color = attrs.color as { background: string, text: string }
+		return color.text
+	}
+	else {
+		switch (priority.value) {
+			case 'secondary':
+				str = useButton().secondary?.textColor ?? str
+				break
+			case 'tertiary':
+				str = useButton().tertiary?.textColor ?? str
+				break
+			case 'quaternary':
+				str = useButton().quaternary?.textColor ?? str
+				break
+			case 'link':
+				str = useButton().link?.textColor ?? str
+				break
+			case 'info':
+				str = useButton().info?.textColor ?? str
+				break
+			case 'minimal':
+				str = useButton().minimal?.textColor ?? str
+				break
+		}
 	}
 	return str
 })

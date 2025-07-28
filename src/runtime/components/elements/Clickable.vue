@@ -19,29 +19,24 @@ const emit = defineEmits(['click'])
 @use '../../scss/_mixins.scss' as mix;
 $cn: '.clickable'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		&:not(._disabled) {
-			cursor: pointer;
-			transition: var.$transition-base;
+#{$cn} {
+	&:not(._disabled) {
+		cursor: pointer;
+		transition: var.$transition-base;
+		pointer-events: auto;
 
-			&:hover {
-				opacity: 0.9;
-			}
-
-			&:active {
-				transform: scale(0.98);
-				opacity: 0.8;
-			}
+		&:hover {
+			opacity: 0.9;
 		}
 
-		&._disabled {
-			pointer-events: none;
+		&:active {
+			transform: scale(0.98);
+			opacity: 0.8;
 		}
 	}
 
-	@if $mode =='darkmode' {}
-
-	@if $mode =='auto' {}
+	&._disabled {
+		pointer-events: none;
+	}
 }
 </style>

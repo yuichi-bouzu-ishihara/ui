@@ -12,15 +12,17 @@
 import { computed, watch, ref } from 'vue'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
+import { useRegex } from '../../composables/regex'
 
 // Stores & Composables --------------------------------
 const { getSize } = useCss()
 const { isPureNumber } = useNumber()
+const { isColorHexOrRgbOrRgba } = useRegex()
 
 // Props --------------------------------
 const props = defineProps({
 	tag: { type: String, default: 'div' },
-	color: { type: String, default: 'text' },
+	color: { type: String, default: 'text' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
 	gradation: { type: String, default: '' }, // グラデーションの設定
 
 	bold: { type: Boolean, default: false }, // 太字強制
@@ -101,7 +103,10 @@ const classes = computed(() => {
 
 	// グラデーションが設定されている場合は、カラーを処理しない
 	if (gradation === '') {
-		color = `_color-${props.color.replace('color-', '').replace('-', '')}`
+		// モジュールに設定されたカラーが設定されている場合は、カラーを設定する
+		if (props.color !== '' && !isColorHexOrRgbOrRgba(props.color)) {
+			color = `_color-${props.color.replace('color-', '').replace('-', '')}`
+		}
 	}
 
 	obj[`${color}`] = true
@@ -126,6 +131,12 @@ const styles = computed(() => {
 	if (props.letterSpacing.length) {
 		styles = { ...styles, letterSpacing: props.letterSpacing }
 	}
+
+	// hex や rgb のカラーが設定されている場合は、color を設定する
+	if (props.color !== '' && isColorHexOrRgbOrRgba(props.color)) {
+		styles = { ...styles, color: props.color }
+	}
+
 	return styles
 })
 

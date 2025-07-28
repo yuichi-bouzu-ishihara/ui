@@ -8,7 +8,7 @@
 					</Typography>
 				</Box>
 				<Box color="light010">
-					<Typography callout cap-height-baseline>
+					<Typography callout cap-height-baseline color="rgb(255, 255, 0)">
 						Callout : Becoming a hero を夢見る A young man.
 					</Typography>
 				</Box>

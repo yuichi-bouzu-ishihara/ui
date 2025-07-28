@@ -345,4 +345,13 @@ export const defaultOptions = {
 		narrow: `${360 + 16 * 2}px`, // 幅狭い設定時。 Android の小さい幅、iPhone SE に合わせる。
 		minSideSpace: '16px',
 	},
+	sheet: {
+		color: {
+			background: 'color-background',
+			text: 'color-text',
+		},
+	},
+	storage: {
+		prefix: 'ui-',
+	},
 }

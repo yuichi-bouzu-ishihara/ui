@@ -1,10 +1,13 @@
 <template>
 	<div class="pageFormsSelect">
-		<Typography caption1 bold>
-			<Container narrow>
-				<Row justify="center" gap="8" fit-w>
-					<Box w="100">
+		<Typography title1 bold>
+			<Container wide>
+				<Row justify="center" gap="40" fit-w nowrap>
+					<Box w="240">
 						<Select v-model="value" name="selectTest" label="Label" placeholder="Placeholder" v-bind="{ options }" />
+					</Box>
+					<Box w="300">
+						<Input v-model="value" name="selectTest" label="Label" placeholder="Placeholder" v-bind="{ options }" />
 					</Box>
 				</Row>
 			</Container>

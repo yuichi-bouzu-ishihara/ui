@@ -1,8 +1,7 @@
 /**
  * Button に関する関数をまとめたファイル
  */
-import { useUI } from '../ui'
-import { useString } from '../string'
+import { useCss } from '../css'
 import type { UIConfig } from '../../types'
 import type { ButtonConfig } from '../../types/button'
 import { useAppConfig, useState, readonly } from '#imports'
@@ -17,42 +16,28 @@ export const useButton = () => {
 	 * 初期化
 	 */
 	const init = () => {
-		// window object がない場合は何もしない
-		if (typeof window === 'undefined' || !window.getComputedStyle) {
-			throw new Error('Button の初期化に失敗しました。windowオブジェクトが存在しないか、window.getComputedStyleが利用できません。')
-		}
-		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
+		const appConfig = useAppConfig().ui as UIConfig ?? {}
 		// 設定がない場合は何もしない
 		if (!appConfig.button) return null
 
+		// 設定を更新
 		config.value = appConfig.button
-		const styleElement = document.createElement('style')
-		styleElement.setAttribute('type', 'text/css')
-		styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
-
-		let cssVariables = ':root {'
-		for (const [key, value] of Object.entries(config.value)) {
-			for (const [prop, propValue] of Object.entries(value)) {
-				let cssValue = propValue
-				// 'color' 'gradation' が含まれている場合、var(--)で囲む
-				if (typeof propValue === 'string' && (propValue.includes('color') || propValue.includes('gradation'))) {
-					cssValue = `var(--${propValue})`
-				}
-				cssVariables += `
-					--${DATA_VALUE}-${key}-${useString().camelToKebab(prop)}: ${cssValue};
-				`
-			}
-		}
-		cssVariables += '}'
-
-		styleElement.innerHTML = cssVariables
-		document.head.appendChild(styleElement)
+		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
 
 		return true
 	}
 
+	/**
+	 * 設定を更新
+	 */
+	const update = (conf: ButtonConfig) => {
+		config.value = conf
+		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
+	}
+
 	return {
 		init,
+		update,
 		config: readonly(config),
 		primary: config.value ? readonly(config.value).primary : null,
 		secondary: config.value ? readonly(config.value).secondary : null,

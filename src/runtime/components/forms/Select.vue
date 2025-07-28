@@ -12,7 +12,7 @@
 			<span class="select-label-inner">{{ label
 			}}</span><span v-if="required" class="select-label-required">*</span>
 		</Typography>
-		<Icon v-if="!disabled" class="select-icon" name="arrowDown" size="1em" />
+		<Icon v-if="!disabled" class="select-icon" name="arrowDown" size="min(1em, 16px)" />
 	</div>
 </template>
 
@@ -170,11 +170,15 @@ const optionName = (value: string, name?: string) => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.select'; // コンポーネントセレクタ名
 
+$padding-top: 14px;
+$field-padding-top: 0.2em;
+$field-padding-bottom: 0.36em;
+
 #{$cn} {
 	position: relative;
 	z-index: 0;
 	width: 100%;
-	padding-top: func.get-size(14);
+	padding-top: $padding-top;
 	cursor: pointer;
 
 	&-field {
@@ -202,8 +206,8 @@ $cn: '.select'; // コンポーネントセレクタ名
 
 		color: var(--color-text);
 		width: 100%;
-		padding-top: 0.2em;
-		padding-bottom: 0.36em;
+		padding-top: $field-padding-top;
+		padding-bottom: $field-padding-bottom;
 		cursor: pointer;
 
 		&:-webkit-autofill,
@@ -238,16 +242,17 @@ $cn: '.select'; // コンポーネントセレクタ名
 		position: absolute;
 		top: 0;
 		left: 0;
-		padding-top: 0.4em;
-		transform: translate(0em, 0.8em);
+		padding-top: $field-padding-top;
+		padding-bottom: $field-padding-bottom;
+		transform: translate(0em, $padding-top);
 		transform-origin: top left;
 		transition: all 0.15s ease-out;
 		pointer-events: none;
 
-		&-inner {
+		#{$cn}-label-inner {
 			font-size: inherit;
 			transition: opacity var.$transition-base-duration var.$transition-base-timing-function;
-			opacity: 0.3;
+			opacity: 0.4;
 		}
 
 		&-required {
@@ -267,10 +272,10 @@ $cn: '.select'; // コンポーネントセレクタ名
 
 	&-icon {
 		position: absolute;
-		top: 0;
+		top: calc($padding-top - 0.2em);
 		bottom: 0;
 		z-index: -1;
-		right: func.get-size(4);
+		right: 4px;
 		margin: auto;
 		opacity: .3;
 	}
@@ -291,7 +296,7 @@ $cn: '.select'; // コンポーネントセレクタ名
 
 		#{$cn}-label {
 			&-inner {
-				opacity: .6;
+				opacity: 1;
 			}
 		}
 
@@ -301,12 +306,12 @@ $cn: '.select'; // コンポーネントセレクタ名
 	}
 
 	&._focus {
-		#{$cn}-label {
+		&>#{$cn}-label {
 			font-weight: bold;
 			font-size: func.get-size(10);
-			transform: translate(0em, 0em);
+			transform: translate(0em, -#{$field-padding-top});
 
-			&-inner {
+			#{$cn}-label-inner {
 				opacity: 1;
 			}
 		}
@@ -317,13 +322,9 @@ $cn: '.select'; // コンポーネントセレクタ名
 	}
 
 	&._input {
-		#{$cn}-label {
+		&>#{$cn}-label {
 			font-size: func.get-size(10);
-			transform: translate(0em, 0em);
-
-			&-inner {
-				opacity: 1 !important;
-			}
+			transform: translate(0em, -#{$field-padding-top});
 		}
 	}
 
@@ -333,7 +334,11 @@ $cn: '.select'; // コンポーネントセレクタ名
 		}
 	}
 
-	&._readonly,
+	&._readonly {
+		pointer-events: none;
+		cursor: default;
+	}
+
 	&._disabled {
 		pointer-events: none;
 		cursor: default;

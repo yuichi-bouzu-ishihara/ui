@@ -14,6 +14,7 @@
 
 <script setup lang="ts">
 import { useRoundProgressBar } from '../../composables/elements/round-progress-bar'
+import { useRegex } from '../../composables/regex'
 import { computed } from '#imports'
 
 // Props ------------------
@@ -21,8 +22,11 @@ const props = defineProps({
 	percent: { type: Number, default: 0 }, // 進捗率 (0-100)
 	size: { type: [String, Number], default: 100 }, // SVGのサイズ
 	stroke: { type: [String, Number], default: 2.8 }, // ボーダーの太さ。 ※4以上にするとボーダーが見切れる
-	color: { type: String, default: '' }, // ボーダーの色
+	color: { type: String, default: '' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
 })
+
+// Stores & Composables ------------------
+const { isColorHexOrRgbOrRgba } = useRegex()
 
 // Computed ------------------
 
@@ -34,18 +38,28 @@ const classes = computed(() => {
 
 const color = computed(() => {
 	let str = ''
-	if (props.color) {
+	if (props.color === '') {
+		str = useRoundProgressBar().color
+	}
+	else if (!isColorHexOrRgbOrRgba(props.color)) {
 		str = props.color
 	}
 	else {
-		str = useRoundProgressBar().color
+		return ''
 	}
 	return str.replace('color-', '').replace('-', '')
 })
 const styles = computed(() => {
-	return {
+	let styles: { 'stroke-width': string | number, 'stroke'?: string } = {
 		'stroke-width': props.stroke,
 	}
+
+	// hex、rgb、rgba のカラーが設定されている場合は、stroke を設定する
+	if (!color.value && isColorHexOrRgbOrRgba(props.color)) {
+		styles = { ...styles, stroke: props.color }
+	}
+
+	return styles
 })
 </script>
 
@@ -61,6 +75,7 @@ $cn: '.roundProgressBar'; // コンポーネントセレクタ名
 
 			&-bg {
 				fill: none;
+				opacity: 0.1;
 			}
 
 			&-stroke {
@@ -84,7 +99,6 @@ $cn: '.roundProgressBar'; // コンポーネントセレクタ名
 					@include mix.color-var($priority, $tint) using ($css-var) {
 						#{$cn}-chart-bg {
 							stroke: $css-var;
-							opacity: 0.1;
 						}
 
 						#{$cn}-chart-stroke {

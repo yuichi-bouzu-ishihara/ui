@@ -5,7 +5,7 @@
 <template>
 	<Box class="spinner" v-bind="box">
 		<svg class="spinner-circular" :class="classes" viewBox="25 25 50 50">
-			<circle class="spinner-circular-path" cx="50" cy="50" r="20" fill="none" :stroke-width="stroke"
+			<circle class="spinner-circular-path" cx="50" cy="50" r="20" fill="none" :stroke-width="stroke" :style="styles"
 				stroke-miterlimit="0" />
 		</svg>
 	</Box>
@@ -14,14 +14,18 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useSpinner } from '../../composables/elements/spinner'
+import { useRegex } from '../../composables/regex'
 import Box from '../layout/Box.vue'
 
 // Props の型定義
 const props = defineProps({
-	color: { type: String, default: '' },
+	color: { type: String, default: '' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
 	size: { type: [Number, String], default: 0 }, // 0 の場合は useSpinner().config の値を使用
 	stroke: { type: [Number, String], default: 0 }, // 0 の場合は useSpinner().config の値を使用
 })
+
+// Stores & Composables ------------------
+const { isColorHexOrRgbOrRgba } = useRegex()
 
 const classes = computed(() => {
 	return {
@@ -31,17 +35,31 @@ const classes = computed(() => {
 
 const color = computed(() => {
 	let str = ''
-	if (props.color) {
+	if (props.color === '') {
+		str = useSpinner().color
+	}
+	else if (!isColorHexOrRgbOrRgba(props.color)) {
 		str = props.color
 	}
 	else {
-		str = useSpinner().color
+		return ''
 	}
 	return str.replace('color-', '').replace('-', '')
 })
 
 const stroke = computed(() => {
 	return props.stroke === 0 ? useSpinner().stroke : props.stroke
+})
+
+const styles = computed(() => {
+	let styles: { stroke?: string } = {}
+
+	// hex、rgb、rgba のカラーが設定されている場合は、stroke を設定する
+	if (!color.value && isColorHexOrRgbOrRgba(props.color)) {
+		styles = { ...styles, stroke: props.color }
+	}
+
+	return styles
 })
 
 const box = computed(() => {

@@ -4,22 +4,23 @@
 			<div class="sheet-inner">
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
-						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto">
+						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box sticky top="0" w="100%" z-index="1">
 									<Container no-padding full>
-										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title }" blur>
+										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title }" blur
+											:background="backgroundColor" :color="textColor">
 											<template v-if="leftIcon" #left>
-												<IconMenu :icon="leftIcon" color="text" @click="emit('left-icon-click')" />
+												<IconMenu :icon="leftIcon" :color="textColor" @click="emit('left-icon-click')" />
 											</template>
 											<template v-else #left>
 												<slot name="header-left" />
 											</template>
 											<template v-if="close" #right>
-												<IconMenu icon="cross" color="text" @click="emit('close')" />
+												<IconMenu icon="cross" :color="textColor" @click="emit('close')" />
 											</template>
 											<template v-else-if="rightIcon" #right>
-												<IconMenu :icon="rightIcon" color="text" @click="emit('right-icon-click')" />
+												<IconMenu :icon="rightIcon" :color="textColor" @click="emit('right-icon-click')" />
 											</template>
 											<template #center>
 												<slot name="header-center" />
@@ -50,6 +51,7 @@
 				</div>
 			</div>
 		</div>
+		<slot name="floating" />
 	</div>
 </template>
 
@@ -67,7 +69,8 @@ import { useBreakPoint } from '../../composables/break-point'
 import { useViewport } from '../../composables/viewport'
 
 // Composables -----------------------
-const { list } = useSheet()
+const sheet = useSheet()
+const { list } = sheet
 const slots = useSlots()
 
 // Props -----------------------
@@ -82,6 +85,7 @@ const props = defineProps({
 	narrow: { type: Boolean, default: false }, // 幅を狭くする ※breakpoint base 以上で有効、それ以下は無視される。
 	footnote: { type: String, default: '' }, // フッターに表示するテキスト
 	center: { type: Boolean, default: false }, // コンテンツを中央に配置する
+	color: { type: Object, default: () => ({ background: '', text: '' }) }, // シートの背景色
 })
 
 // Emits -----------------------
@@ -99,6 +103,27 @@ const classes = computed(() => {
 		_narrow: props.narrow,
 		_deep: depth.value !== 0,
 	}
+})
+
+const backgroundColor = computed(() => {
+	let str = ''
+	if (props.color.background === '') {
+		str = sheet.color.background
+	}
+	else {
+		str = props.color.background
+	}
+	return str.replace('color-', '').replace('-', '')
+})
+const textColor = computed(() => {
+	let str = ''
+	if (props.color.text === '') {
+		str = sheet.color.text
+	}
+	else {
+		str = props.color.text
+	}
+	return str.replace('color-', '').replace('-', '')
 })
 const isHeader = computed(() => props.title || props.close || props.leftIcon || props.rightIcon || !!slots['header-left'] || !!slots['header-center'])
 const isScroll = computed(() => /* useSheetsStore().scrollY > 0 */ false)
@@ -152,6 +177,7 @@ $cn: '.sheet'; // コンポーネントセレクタ名
 $footnote-padding-vertical: 24;
 
 #{$cn} {
+	position: relative;
 	width: 100%;
 	height: 100%;
 	overflow-y: scroll;
@@ -180,7 +206,6 @@ $footnote-padding-vertical: 24;
 			width: 100%;
 
 			&-content {
-				background-color: var(--color-background);
 				padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
 				height: calc(var(--sheet-inner-height) - #{var.$header-height}px / 2);
 				border-radius: #{var.$border-radius-xlarge}px;
@@ -192,7 +217,6 @@ $footnote-padding-vertical: 24;
 				}
 
 				&-main {
-					background-color: var(--color-background);
 					border-radius: #{var.$border-radius-xlarge}px !important;
 				}
 

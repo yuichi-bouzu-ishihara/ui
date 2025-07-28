@@ -15,6 +15,11 @@ import type { ContainerConfig } from './container'
 import type { AvatarConfig } from './avatar'
 import type { LogoConfig } from './logo'
 import type { TabsConfig } from './tabs'
+import type { SheetConfig } from './sheet'
+import type { StorageConfig } from './storage'
+
+// VimeoPlayer types
+export type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from './vimeo-player'
 
 // AppConfigの型定義
 export type UIConfig = {
@@ -33,6 +38,8 @@ export type UIConfig = {
 	roundProgressBar?: RoundProgressBarConfig
 	webfont?: WebfontConfig
 	container?: ContainerConfig
+	sheet?: SheetConfig
+	storage?: StorageConfig
 	avatar?: AvatarConfig
 	logo?: LogoConfig
 	tags?: TabsConfig

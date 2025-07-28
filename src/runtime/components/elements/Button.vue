@@ -3,7 +3,7 @@
 	ボタンUIコンポーネント
 -->
 <template>
-	<Box class="button" :class="[classes, $attrs.class]" v-bind="{ w, h, minW: w, minH: h }">
+	<Box class="button" :class="[classes, $attrs.class]" :style="customColorStyle" v-bind="{ w, h, minW: w, minH: h }">
 		<template v-if="to">
 			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true, blank }">
 				<Typography class="button-inner-slot" v-bind="typography">
@@ -82,6 +82,8 @@ const props = defineProps({
 	h: { type: [String, Number], default: '' }, // 縦幅 ※指定すると padding-top, padding-bottom : 0 になる。
 
 	noPadding: { type: Boolean, default: false },
+
+	color: { type: Object, default: () => ({ background: '', text: '' }) }, // ボタンの色を直接指定
 })
 
 // Emits ---------------------------
@@ -132,7 +134,12 @@ const buttonType = computed(() => {
 const typography = computed(() => {
 	let color = 'text'
 	let gradation = ''
-	if (config.value && config.value[priority.value] && config.value[priority.value].textColor) {
+
+	// カスタム色が指定されている場合は、それを使用
+	if (props.color && props.color.text) {
+		color = props.color.text
+	}
+	else if (config.value && config.value[priority.value] && config.value[priority.value].textColor) {
 		if (config.value[priority.value].textColor.includes('gradation')) {
 			color = ''
 			gradation = config.value[priority.value].textColor.replace('gradation-', '')
@@ -158,7 +165,11 @@ const typography = computed(() => {
 })
 const spinner = computed(() => {
 	let color = 'text'
-	if (config.value && config.value[priority.value] && config.value[priority.value].textColor) {
+	// カスタム色が指定されている場合は、それを使用
+	if (props.color && props.color.text) {
+		color = props.color.text
+	}
+	else if (config.value && config.value[priority.value] && config.value[priority.value].textColor) {
 		if (config.value[priority.value].textColor.includes('gradation')) {
 			color = 'primary'
 		}
@@ -170,6 +181,25 @@ const spinner = computed(() => {
 		size: '44%',
 		color,
 	}
+})
+
+// color プロパティによる直接指定のスタイル
+const customColorStyle = computed(() => {
+	if (!props.color || (!props.color.background && !props.color.text)) {
+		return {}
+	}
+
+	const style: Record<string, string> = {}
+
+	if (props.color.background) {
+		style['--custom-background-color'] = props.color.background
+	}
+
+	if (props.color.text) {
+		style['--custom-text-color'] = props.color.text
+	}
+
+	return style
 })
 
 // Methods ---------------------------
@@ -410,6 +440,16 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				inset: 0;
 				display: block;
 			}
+		}
+
+		// カスタム色の適用
+		&[style*="--custom-background-color"] {
+			background-color: var(--custom-background-color) !important;
+			background-image: none !important;
+		}
+
+		&[style*="--custom-text-color"] &-inner-slot {
+			color: var(--custom-text-color) !important;
 		}
 
 		// rounded のスタイル
