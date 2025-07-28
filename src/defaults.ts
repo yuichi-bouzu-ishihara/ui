@@ -318,9 +318,9 @@ export const defaultOptions = {
 	skeletonShape: {
 		color: 'color-light-005',
 		animationTo: 'color-light-003',
-		blur: true,
 		delay: '150ms',
 		duration: '1500ms',
+		avatarSvgSrc: '',
 	},
 	spinner: {
 		color: 'color-light',
@@ -353,5 +353,49 @@ export const defaultOptions = {
 	},
 	storage: {
 		prefix: 'ui-',
+	},
+	forms: {
+		checkbox: {
+			rectSize: '16px',
+			backgroundColor: 'color-text-000',
+			iconColor: 'color-text',
+			border: {
+				width: '0.5px',
+				color: 'color-text-030',
+				radius: '2px',
+			},
+			checked: {
+				backgroundColor: 'color-success',
+				iconColor: 'color-light',
+				border: {
+					width: '0',
+					color: 'color-success',
+				},
+			},
+			hover: {
+				backgroundColor: 'color-text-000',
+				iconColor: 'color-text',
+				border: {
+					width: '2px',
+					color: 'color-text-030',
+				},
+			},
+			focus: {
+				backgroundColor: 'color-text-000',
+				iconColor: 'color-text',
+				border: {
+					width: '2px',
+					color: 'color-text-030',
+				},
+			},
+			invalid: {
+				backgroundColor: 'color-danger',
+				iconColor: 'color-light',
+				border: {
+					color: 'color-danger',
+				},
+			},
+			iconSvgSrc: 'url(/assets/icons/check.svg)',
+		},
 	},
 }

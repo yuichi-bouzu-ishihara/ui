@@ -158,7 +158,7 @@
 					<DevSection title="Icon" :to="'/elements/icon'">
 						<Box w="100%" h="100%" overflow>
 							<Row gap="8">
-								<Icon v-for="icon in iconList" :key="icon" :name="icon" size="20" color="text" />
+								<!-- <Icon v-for="icon in iconList" :key="icon" :name="icon" size="20" color="text" /> -->
 							</Row>
 						</Box>
 					</DevSection>
@@ -213,8 +213,6 @@
 </template>
 
 <script setup lang="ts">
-import iconList from '../../../src/runtime/assets/bouzu-ui/icons/list.json'
-
 const gap = 12
 const colors = ['primary', 'secondary', 'background', 'text', 'link']
 

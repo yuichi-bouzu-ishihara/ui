@@ -9,6 +9,9 @@ import Box from '../layout/Box.vue'
 import { useSkeletonShape } from '../../composables/elements/skeleton-shape'
 import { useUtils } from '../../composables/utils'
 
+// Composables ------------------
+const { config } = useSkeletonShape()
+
 // Props ------------------
 const props = defineProps({
 	rect: { type: Boolean, default: false }, // 矩形かどうか
@@ -51,7 +54,16 @@ const box = computed(() => {
 	}
 })
 const shape = computed(() => {
-	return props.rect ? 'rect' : props.circle ? 'circle' : props.avatar ? 'avatar' : 'rect'
+	let shape = props.rect ? 'rect' : props.circle ? 'circle' : 'rect'
+	if (props.avatar) {
+		if (config.value?.avatarSvgSrc) {
+			shape = 'avatar'
+		}
+		else {
+			shape = 'circle'
+		}
+	}
+	return shape
 })
 
 const duration = computed(() => {
@@ -93,7 +105,7 @@ $cn: '.skeletonShape'; // クラス名
 	transition: background-color calc(var(--skeleton-shape-duration) / 2) linear;
 
 	&._avatar {
-		mask-image: url(../../assets/bouzu-ui/avatar/mask.svg);
+		mask-image: var(--skeleton-shape-avatar-svg-src);
 		mask-size: 100%;
 	}
 

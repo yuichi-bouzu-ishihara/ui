@@ -49,36 +49,34 @@ const classes = computed(() => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.checkbox'; // コンポーネントクラス名
 
-$border-default-width: 0.5px;
+$border-default-width: var(--forms-checkbox-border-width);
 $border-readonly: none;
-$border-radius: 2px;
-$border-default: $border-default-width solid var(--color-indicator-030);
-$border-hover: $border-default-width solid var(--color-indicator-080);
-$border-focus: $border-default-width solid var(--color-indicator-060);
-$border-danger: $border-default-width solid var(--color-danger);
+$border-radius: var(--forms-checkbox-border-radius);
+$border-default: $border-default-width solid var(--forms-checkbox-border-color);
+$border-hover: $border-default-width solid var(--forms-checkbox-hover-border-color);
+$border-focus: $border-default-width solid var(--forms-checkbox-focus-border-color);
+$border-danger: $border-default-width solid var(--forms-checkbox-invalid-border-color);
 
-$checkbox-rect-size: 16px;
-$checkbox-icon-size: 8px;
-$checkbox-icon-width: 2px;
-$checkbox-icon-color: var(--color-indicator);
-$checkbox-bg-color-default: var(--color-control-000);
-$checkbox-bg-color-hover: var(--color-control-000);
-$checkbox-bg-color-focus: var(--color-control-000);
-$checkbox-bg-color-danger: var(--color-control-000);
-$checkbox-bg-color-checked: var(--color-success);
+$checkbox-rect-size: var(--forms-checkbox-rect-size);
+$checkbox-icon-color: var(--forms-checkbox-icon-color);
+$checkbox-bg-color-default: var(--forms-checkbox-background-color);
+$checkbox-bg-color-hover: var(--forms-checkbox-hover-background-color);
+$checkbox-bg-color-focus: var(--forms-checkbox-focus-background-color);
+$checkbox-bg-color-danger: var(--forms-checkbox-invalid-background-color);
+$checkbox-bg-color-checked: var(--forms-checkbox-checked-background-color);
 $checkbox-border-default: $border-default;
 $checkbox-border-hover: $border-hover;
 $checkbox-border-focus: $border-focus;
 $checkbox-border-danger: $border-danger;
-$checkbox-border-checked: 1px solid var(--color-success);
-$checkbox-box-shadow-default: 0 0 0 0 var(--color-indicator-000);
-$checkbox-box-shadow-hover: 0 0 0 2px var(--color-indicator-000);
-$checkbox-box-shadow-focus: 0 0 0 3px var(--color-indicator-000);
-$checkbox-box-shadow-danger: 0 0 0 3px var(--color-danger);
-$checkbox-box-shadow-readonly: 0 0 0 0 var(--color-indicator-000);
+$checkbox-border-checked: 1px solid var(--forms-checkbox-checked-border-color);
+$checkbox-box-shadow-default: 0 0 0 0 var(--forms-checkbox-border-color);
+$checkbox-box-shadow-hover: 0 0 0 var(--forms-checkbox-hover-border-width) var(--forms-checkbox-hover-border-color);
+$checkbox-box-shadow-focus: 0 0 0 var(--forms-checkbox-focus-border-width) var(--forms-checkbox-focus-border-color);
+$checkbox-box-shadow-danger: 0 0 0 var(--forms-checkbox-invalid-border-width) var(--forms-checkbox-invalid-border-color);
+$checkbox-box-shadow-readonly: 0 0 0 0 var(--forms-checkbox-border-color);
 $checkbox-border-radius: $border-radius;
 
-$icon-check-img: '../../assets/bouzu-ui/icons/check.svg';
+$icon-check-img: var(--forms-checkbox-icon-svg-src);
 
 #{$cn} {
 	width: auto;
@@ -162,7 +160,7 @@ $icon-check-img: '../../assets/bouzu-ui/icons/check.svg';
 			height: $checkbox-rect-size;
 			min-height: $checkbox-rect-size;
 			display: block;
-			mask-image: url($icon-check-img);
+			mask-image: $icon-check-img;
 			mask-size: 64%;
 			mask-repeat: no-repeat;
 			mask-position: center;

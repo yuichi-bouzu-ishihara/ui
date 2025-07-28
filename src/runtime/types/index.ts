@@ -17,6 +17,7 @@ import type { LogoConfig } from './logo'
 import type { TabsConfig } from './tabs'
 import type { SheetConfig } from './sheet'
 import type { StorageConfig } from './storage'
+import type { FormsConfig } from './forms'
 
 // VimeoPlayer types
 export type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from './vimeo-player'
@@ -43,4 +44,5 @@ export type UIConfig = {
 	avatar?: AvatarConfig
 	logo?: LogoConfig
 	tags?: TabsConfig
+	forms?: FormsConfig
 }

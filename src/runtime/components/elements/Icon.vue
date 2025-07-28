@@ -46,7 +46,6 @@ const classes = computed(() => {
 	return {
 		_original: props.originalColor,
 		[`${color}`]: true,
-		[`${nameClass.value}`]: true,
 	}
 })
 const styles = computed(() => {
@@ -87,17 +86,13 @@ const styles = computed(() => {
 	return { width: value, height: value, ...img }
 })
 const image = computed(() => {
-	return useIcon().reference(props.name).path
-})
-const nameClass = computed(() => {
-	return useIcon().reference(props.name).class
+	return useIcon().reference(props.name)
 })
 </script>
 
 <style lang="scss">
 @use '../../scss/_variables.scss' as var;
 @use '../../scss/_mixins.scss' as mix;
-@use '../../assets/bouzu-ui/icons/_names.scss' as names;
 
 @mixin icon-base() {
 	display: inline-block;
@@ -125,18 +120,6 @@ const nameClass = computed(() => {
 @mixin icon-all {
 	@include icon-base();
 	@include icon-color(var(--color-dark));
-
-	// icon is-name is-primary のように、 名前とカラーを設定する
-	@each $nameStr in names.$str {
-		&:not(._original)._#{$nameStr} {
-			mask-image: url(../../assets/bouzu-ui/icons/#{$nameStr}.svg);
-		}
-
-		// svg のオリジナルカラーを使用する場合
-		&._original._#{$nameStr} {
-			background-image: url(../../assets/bouzu-ui/icons/#{$nameStr}.svg);
-		}
-	}
 
 	// Color
 	@each $priority in var.$color-priorities {

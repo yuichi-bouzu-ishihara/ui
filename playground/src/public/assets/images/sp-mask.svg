@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="180px" height="180px" viewBox="0 0 180 180" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>face image</title>
+    <g id="Symbol:Components" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="face/type-hole" fill="#FFFFFF">
+            <path d="M90,180 C164.374695,180 180,139.70625 180,90 C180,40.29375 163.476562,0 90,0 C16.5234375,0 0,40.29375 0,90 C0,139.70625 15.6253052,180 90,180 Z" id="face-image"></path>
+        </g>
+    </g>
+</svg>
