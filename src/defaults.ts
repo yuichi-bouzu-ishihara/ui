@@ -318,9 +318,9 @@ export const defaultOptions = {
 	skeletonShape: {
 		color: 'color-light-005',
 		animationTo: 'color-light-003',
-		blur: true,
 		delay: '150ms',
 		duration: '1500ms',
+		avatarSvgSrc: '',
 	},
 	spinner: {
 		color: 'color-light',

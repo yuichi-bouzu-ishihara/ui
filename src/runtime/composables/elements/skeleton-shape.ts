@@ -39,6 +39,5 @@ export const useSkeletonShape = () => {
 		init,
 		update,
 		config: readonly(config),
-		blur: config.value ? readonly(config.value).blur : false,
 	}
 }

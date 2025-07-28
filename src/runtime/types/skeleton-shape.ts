@@ -3,4 +3,5 @@ export type SkeletonShapeConfig = {
 	animationTo: string // animation keyframe 50% の色
 	delay: string // 遅延時間
 	duration: string // アニメーションの持続時間
+	avatarSvgSrc?: string // アバターのSVG画像のURL
 }
