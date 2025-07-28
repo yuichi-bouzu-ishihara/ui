@@ -19,6 +19,7 @@ import { useContainer } from './layout/container'
 import { useSheet } from './overlays/sheet'
 import { useLogo } from './elements/logo'
 import { useAvatar } from './elements/avatar'
+import { useForms } from './forms'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -60,5 +61,6 @@ const init = () => {
 	useSheet().init()
 	useLogo().init()
 	useAvatar().init()
+	useForms().init()
 	useDev().init()
 }
