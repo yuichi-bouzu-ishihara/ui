@@ -4,17 +4,17 @@
 			<component :is="item.to ? 'BasicLink' : 'div'" :to="item.to" class="dropdownMenu-item" no-hover-style>
 				<Row class="dropdownMenu-item-inner" align="start" gap="10" nowrap>
 					<template v-if="item.icon">
-						<Icon :name="item.icon" :color="`text${item.disabled ? '-060' : ''}`" size="14" />
+						<Icon :name="item.icon" :color="`light${item.disabled ? '-060' : ''}`" size="14" />
 					</template>
 					<Column gap="8">
 						<Box mt="-3.2">
 							<Typography caption2 bold nowrap caption-baseline-height unselectable
-								:color="`text${item.disabled ? '-060' : ''}`">
+								:color="`light${item.disabled ? '-060' : ''}`">
 								{{ item.name }}
 							</Typography>
 						</Box>
 						<template v-if="item.caption">
-							<Typography footnote nowrap unselectable :color="`text${item.disabled ? '-060' : ''}`">
+							<Typography footnote nowrap unselectable :color="`light${item.disabled ? '-060' : ''}`">
 								<!-- eslint-disable-next-line -->
 								<span v-html="item.caption" />
 							</Typography>

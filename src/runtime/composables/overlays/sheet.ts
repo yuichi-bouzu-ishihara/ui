@@ -1,8 +1,11 @@
 /**
  * Sheet
  */
-
-import { useState, readonly } from '#imports'
+import { useUI } from '../ui'
+import { useCss } from '../css'
+import type { UIConfig } from '../../types'
+import type { SheetConfig } from '../../types/sheet'
+import { useState, useAppConfig, readonly } from '#imports'
 
 // Types ---------------------
 export type Payload = {
@@ -11,13 +14,45 @@ export type Payload = {
 }
 type PayloadWithResolve = Payload & { resolve?: (value: unknown) => void }
 
+// Constants -----------------------------------------
+const DATA_VALUE = 'sheet'
+
 // シートを操作する関数を返す
 export const useSheet = () => {
 	const isOpen = useState<boolean>('ui-sheet-isOpen', () => false) // シートが開かれているかどうか
 	const scrollY = useState<number>('ui-sheet-scrollY', () => 0) // スクロール位置を保持する
 	const list = useState<PayloadWithResolve[]>('ui-sheet-list', () => []) // シートのリストを保持する
+	const config = useState<SheetConfig | null>('ui-sheet-config', () => null)
 
 	return {
+		/**
+		 * 初期化
+		 */
+		init: () => {
+			// window object がない場合は何もしない
+			if (typeof window === 'undefined' || !window.getComputedStyle) {
+				throw new Error('SkeletonShape の初期化に失敗しました。windowオブジェクトが存在しないか、window.getComputedStyleが利用できません。')
+			}
+
+			const appConfig = useAppConfig().ui as UIConfig ?? {}
+			// 設定がない場合は何もしない
+			if (!appConfig.sheet) return null
+
+			config.value = appConfig.sheet
+			const styleElement = document.createElement('style')
+			styleElement.setAttribute('type', 'text/css')
+			styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
+
+			let cssVariables = ':root {'
+			cssVariables += useCss().objectToCssVariables(DATA_VALUE, config.value, '')
+			cssVariables += '}'
+
+			styleElement.innerHTML = cssVariables
+			document.head.appendChild(styleElement)
+
+			return true
+		},
+
 		/**
 		 * 指定したシートを表示する
 		 * @param {Payload} pl - ペイロード
@@ -70,5 +105,6 @@ export const useSheet = () => {
 		isOpen: readonly(isOpen),
 		scrollY: readonly(scrollY),
 		list: readonly(list),
+		color: config.value ? readonly(config.value).color : { background: '', text: '' },
 	}
 }

@@ -1,5 +1,7 @@
 <template>
-	<Box class="slotHeader" :color="background" :bg-blur="blur">
+	<Box class="slotHeader" relative>
+		<Box v-if="blur" class="slotHeader-blur" :bg-blur="blur" absolute top="0" left="0" w="100%" h="100%" />
+		<Box class="slotHeader-bg" :color="background" :bg-blur="blur" absolute top="0" left="0" w="100%" h="100%" />
 		<Row class="slotHeader-inner" justify="center" align="center" :gap="GAP" nowrap fit>
 			<div class="slotHeader-inner-left">
 				<Box :h="UI_SIZE">
@@ -11,7 +13,7 @@
 			<Box class="slotHeader-inner-center" :max-w="maxWidth" h="100%">
 				<Center>
 					<template v-if="title">
-						<Typography body bold center>
+						<Typography body bold center :color="color">
 							{{ title }}
 						</Typography>
 					</template>
@@ -48,7 +50,8 @@ const UI_SIZE = 64
 // Props --------------------------------------------------
 defineProps({
 	title: { type: String, default: '' },
-	background: { type: String, default: 'background-090' },
+	background: { type: String, default: 'background' },
+	color: { type: String, default: 'text' },
 	blur: { type: Boolean, default: false },
 })
 
@@ -66,29 +69,32 @@ $cn: '.slotHeader'; // コンポーネントセレクタ名
 
 $transition-base: var.$transition-base;
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		min-height: func.get-size(var.$header-height);
-		height: func.get-size(var.$header-height);
-		transition: var.$transition-base;
+#{$cn} {
+	min-height: func.get-size(var.$header-height);
+	height: func.get-size(var.$header-height);
+	transition: var.$transition-base;
 
-		&-inner {
-			position: relative;
-
-			&-left {
-				position: absolute;
-				left: var(--container-min-side-space);
-			}
-
-			&-right {
-				position: absolute;
-				right: var(--container-min-side-space);
-			}
-		}
+	&-blur {
+		border-radius: inherit;
 	}
 
-	@if $mode =='darkmode' {}
+	&-bg {
+		border-radius: inherit;
+		opacity: 0.9;
+	}
 
-	@if $mode =='auto' {}
+	&-inner {
+		position: relative;
+
+		&-left {
+			position: absolute;
+			left: var(--container-min-side-space);
+		}
+
+		&-right {
+			position: absolute;
+			right: var(--container-min-side-space);
+		}
+	}
 }
 </style>

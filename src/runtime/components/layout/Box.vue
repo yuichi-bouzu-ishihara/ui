@@ -8,16 +8,18 @@
 import { computed } from 'vue'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
+import { useRegex } from '../../composables/regex'
 
 // Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値 に関する関数
+const { isColorHexOrRgbOrRgba } = useRegex()
 
 // Props --------------------------------
 const props = defineProps({
 	tag: { type: String, default: 'div' },
 	disabled: { type: Boolean, default: false }, // 無効化
-	color: { type: String, default: 'transparent' }, // 背景色の設定
+	color: { type: String, default: '' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
 	gradation: { type: String, default: '' }, // グラデーションの設定
 	// Size - 大きさ
 	w: { type: [Number, String], default: '' }, // 横幅 px
@@ -73,8 +75,11 @@ const classes = computed(() => {
 
 	// グラデーションが設定されている場合は、カラーを処理しない
 	if (gradation === '') {
-		color = props.color
-		color = `_color-${color.replace('color-', '').replace('-', '')}`
+		// モジュールに設定されたカラーが設定されている場合は、カラーを設定する
+		if (props.color !== '' && !isColorHexOrRgbOrRgba(props.color)) {
+			color = props.color
+			color = `_color-${color.replace('color-', '').replace('-', '')}`
+		}
 	}
 
 	let position = ''
@@ -316,7 +321,7 @@ const transform = computed(() => {
 })
 
 const styles = computed(() => {
-	return {
+	const baseStyles = {
 		...size.value,
 		...padding.value,
 		...margin.value,
@@ -328,6 +333,13 @@ const styles = computed(() => {
 		...(inset.value('left') !== '' && { left: inset.value('left') }),
 		...(props.zIndex !== '' && { zIndex: props.zIndex }),
 	}
+
+	// hex、rgb、rgba のカラーが設定されている場合は、background-color を設定する
+	if (props.color !== '' && isColorHexOrRgbOrRgba(props.color)) {
+		return { ...baseStyles, backgroundColor: props.color }
+	}
+
+	return baseStyles
 })
 </script>
 

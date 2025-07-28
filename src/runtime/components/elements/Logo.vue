@@ -9,25 +9,38 @@ import { computed } from 'vue'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
 import { useLogo } from '../../composables/elements/logo'
+import { useRegex } from '../../composables/regex'
 
 // Stores & Composables ---------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber()
+const { isColorHexOrRgbOrRgba } = useRegex()
 
 // Props の型定義
 const props = defineProps({
 	tag: { type: String, default: 'div' },
-	color: { type: String, default: '' },
+	color: { type: String, default: '' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
 	size: { type: [Number, String], default: 11 },
 })
 
 // Computed ------------------
 const classes = computed(() => {
-	return {
-		[`_color-${color.value}`]: color.value,
+	// モジュールに設定されたカラーが設定されている場合は、カラーを設定する
+	if (props.color !== '' && !isColorHexOrRgbOrRgba(props.color)) {
+		return {
+			[`_color-${color.value}`]: color.value,
+		}
 	}
+	else if (isColorHexOrRgbOrRgba(props.color)) {
+		return {
+			['_color-hex-rgb-rgba']: true,
+		}
+	}
+	return {}
 })
 const styles = computed(() => {
+	let styles = {}
+
 	let fontSize = ''
 	if (isPureNumber(String(props.size))) {
 		fontSize = getSize(Number(props.size))
@@ -35,7 +48,14 @@ const styles = computed(() => {
 	else {
 		fontSize = String(props.size)
 	}
-	return { fontSize }
+	styles = { ...styles, fontSize }
+
+	// hex や rgb のカラーが設定されている場合は、background-color を設定する
+	if (props.color !== '' && isColorHexOrRgbOrRgba(props.color)) {
+		styles = { ...styles, backgroundColor: props.color }
+	}
+
+	return styles
 })
 const color = computed(() => {
 	let str = ''

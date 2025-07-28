@@ -31,6 +31,7 @@ export const useRegex = () => {
 		instagramProfileUrlPattern,
 		tiktokProfileUrl,
 		tiktokProfileUrlPattern,
+		isColorHexOrRgbOrRgba,
 	}
 }
 
@@ -97,3 +98,15 @@ const instagramProfileUrlPattern = convertRegexToPattern(instagramProfileUrl)
 // Tiktok プロフィール URL
 const tiktokProfileUrl = /^https:\/\/www\.tiktok\.com\/@[\w.]+$/
 const tiktokProfileUrlPattern = convertRegexToPattern(tiktokProfileUrl)
+
+/**
+ * カラーがhex、rgb、またはrgba形式かどうかを判定する
+ * @param color 判定するカラー文字列
+ * @returns {boolean} hex、rgb、またはrgba形式の場合true
+ */
+const isColorHexOrRgbOrRgba = (color: string): boolean => {
+	const hex = /^#(?:[0-9A-F]{3}|[0-9A-F]{6})$/i
+	const rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i
+	const rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/i
+	return hex.test(color) || rgb.test(color) || rgba.test(color)
+}

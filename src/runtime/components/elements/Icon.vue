@@ -13,14 +13,16 @@ import { useIcon } from '../../composables/elements/icon'
 import { useCss } from '../../composables/css'
 import { useGradation } from '../../composables/gradation'
 import { useNumber } from '../../composables/number'
+import { useRegex } from '../../composables/regex'
 
 // Stores & Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値に関する関数
+const { isColorHexOrRgbOrRgba } = useRegex()
 
 // Props -------------------------------------
 const props = defineProps({
-	color: { type: String, default: 'text' }, // カラーの設定
+	color: { type: String, default: 'text' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
 	gradation: { type: String, default: '' }, // グラデーションの設定
 	originalColor: { type: Boolean, default: false }, // カラーを svg のオリジナルカラーにするかどうか
 	name: { type: String, default: '' },
@@ -29,7 +31,12 @@ const props = defineProps({
 
 // Computed -------------------------------------
 const classes = computed(() => {
-	let color = `_color-${props.color.replace('color-', '').replace('-', '')}`
+	let color = ''
+
+	// モジュールに設定されたカラーが設定されている場合は、カラーを設定する
+	if (props.color !== '' && !isColorHexOrRgbOrRgba(props.color)) {
+		color = `_color-${props.color.replace('color-', '').replace('-', '')}`
+	}
 
 	// グラデーションが設定されている場合は、カラーを空にする
 	if (props.gradation !== '') {
@@ -69,6 +76,12 @@ const styles = computed(() => {
 		img = {
 			...img,
 			backgroundImage: `${useGradation().variables(props.gradation)}`,
+		}
+	}
+	else if (props.color !== '' && isColorHexOrRgbOrRgba(props.color)) {
+		img = {
+			...img,
+			backgroundColor: props.color,
 		}
 	}
 	return { width: value, height: value, ...img }

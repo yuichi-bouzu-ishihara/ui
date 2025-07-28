@@ -1,28 +1,30 @@
 <template>
-	<Column class="fieldFooter" :class="classes" gap="8">
+	<div class="fieldFooter" :class="classes">
 		<div class="fieldFooter-border">
 			<div class="fieldFooter-border-inner" />
 		</div>
-		<Box v-if="message || description" w="100%">
-			<template v-if="message">
-				<Typography caption3 color="danger">
-					{{ message }}
-				</Typography>
-			</template>
-			<template v-else-if="description">
-				<Typography caption3 color="text-060">
-					<!-- eslint-disable-next-line vue/no-v-html -->
-					<span v-html="description" />
-				</Typography>
-			</template>
-		</Box>
-	</Column>
+		<TransitionAcordion>
+			<Box v-if="message || description" w="100%">
+				<Box h="8" />
+				<template v-if="message">
+					<Typography caption3 color="danger">
+						{{ message }}
+					</Typography>
+				</template>
+				<template v-else-if="description">
+					<Typography caption3 color="text-060">
+						<!-- eslint-disable-next-line vue/no-v-html -->
+						<span v-html="description" />
+					</Typography>
+				</template>
+			</Box>
+		</TransitionAcordion>
+	</div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import Box from '../layout/Box.vue'
-import Column from '../layout/Column.vue'
 import Typography from '../elements/Typography.vue'
 
 // Props -------------------------------------------

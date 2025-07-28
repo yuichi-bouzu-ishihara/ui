@@ -8,6 +8,8 @@
         <Spinner size="24" stroke="4" color="text" />
         <Spinner size="24" stroke="4.8" color="primary-060" />
         <Spinner size="24" stroke="5.6" color="primary" />
+        <Spinner size="24" stroke="5.6" color="#00ff00" />
+        <Spinner size="24" stroke="5.6" color="rgba(0, 255, 0, 0.2)" />
       </Column>
     </Center>
   </Container>

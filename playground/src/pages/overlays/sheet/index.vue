@@ -22,6 +22,16 @@
 						Nest Test
 					</Button>
 				</Row>
+				<Row justify="center" :gap="[8, 8]">
+					<Button
+						@click="open('color', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' })">
+						ColorSheet
+					</Button>
+					<Button
+						@click="open('floating', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' })">
+						FloatingSheet
+					</Button>
+				</Row>
 			</Column>
 		</Container>
 	</div>

@@ -41,7 +41,7 @@ body {
 
 	::selection {
 		background: var(--color-primary);
-		color: var(--color-background);
+		color: var(--color-text);
 	}
 	img::selection {
 		background: transparent;
@@ -83,7 +83,7 @@ mark {
 	padding-bottom: 0.16em; // 欧文の 「g」 の下が見切れる現象の対策。
 
 	&::selection {
-		color: var(--color-background);
+		color: var(--color-text);
 		background: var(--color-primary);
 		background-clip: initial;
 		-webkit-text-fill-color: initial;

@@ -357,7 +357,11 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 			}
 		}
 
-		&._readonly,
+		&._readonly {
+			pointer-events: none;
+			cursor: default;
+		}
+
 		&._disabled {
 			pointer-events: none;
 			cursor: default;

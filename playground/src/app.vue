@@ -17,6 +17,8 @@
 				<Nest1Sheet v-if="sheet('nest1')" />
 				<Nest2Sheet v-if="sheet('nest2')" />
 				<Nest3Sheet v-if="sheet('nest3')" />
+				<ColorSheet v-if="sheet('color')" />
+				<FloatingSheet v-if="sheet('floating')" />
 			</SheetLayer>
 			<ModalLayer style="z-index: 15">
 				<TestModal v-if="modalName === 'test'" />
@@ -35,6 +37,8 @@ import TestModal from '@/components/modal/TestModal.vue'
 import Nest1Sheet from '@/components/sheet/Nest1Sheet.vue'
 import Nest2Sheet from '@/components/sheet/Nest2Sheet.vue'
 import Nest3Sheet from '@/components/sheet/Nest3Sheet.vue'
+import ColorSheet from '@/components/sheet/ColorSheet.vue'
+import FloatingSheet from '@/components/sheet/FloatingSheet.vue'
 
 const pending = ref(true)
 
