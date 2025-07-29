@@ -9,7 +9,7 @@
   "license": "MIT",
   "type": "module",
   "publishConfig": {
-    "access": "private",
+    "access": "public",
     "registry": "https://npm.pkg.github.com/",
     "provenance": false
   },
