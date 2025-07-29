@@ -14,7 +14,7 @@ import { useRegex } from '../../composables/regex'
 // Stores & Composables ---------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber()
-const { isColorHexOrRgbOrRgba } = useRegex()
+const { isCssColor } = useRegex()
 
 // Props の型定義
 const props = defineProps({
@@ -26,12 +26,12 @@ const props = defineProps({
 // Computed ------------------
 const classes = computed(() => {
 	// モジュールに設定されたカラーが設定されている場合は、カラーを設定する
-	if (props.color !== '' && !isColorHexOrRgbOrRgba(props.color)) {
+	if (props.color !== '' && !isCssColor(props.color)) {
 		return {
 			[`_color-${color.value}`]: color.value,
 		}
 	}
-	else if (isColorHexOrRgbOrRgba(props.color)) {
+	else if (isCssColor(props.color)) {
 		return {
 			['_color-hex-rgb-rgba']: true,
 		}
@@ -51,7 +51,7 @@ const styles = computed(() => {
 	styles = { ...styles, fontSize }
 
 	// hex や rgb のカラーが設定されている場合は、background-color を設定する
-	if (props.color !== '' && isColorHexOrRgbOrRgba(props.color)) {
+	if (props.color !== '' && isCssColor(props.color)) {
 		styles = { ...styles, backgroundColor: props.color }
 	}
 

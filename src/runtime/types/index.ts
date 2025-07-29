@@ -18,6 +18,7 @@ import type { TabsConfig } from './tabs'
 import type { SheetConfig } from './sheet'
 import type { StorageConfig } from './storage'
 import type { FormsConfig } from './forms'
+import type { DropdownMenuConfig } from './dropdown-menu'
 
 // VimeoPlayer types
 export type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from './vimeo-player'
@@ -45,4 +46,5 @@ export type UIConfig = {
 	logo?: LogoConfig
 	tabs?: TabsConfig
 	forms?: FormsConfig
+	dropdownMenu?: DropdownMenuConfig
 }

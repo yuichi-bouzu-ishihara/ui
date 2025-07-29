@@ -32,6 +32,7 @@ export const useRegex = () => {
 		tiktokProfileUrl,
 		tiktokProfileUrlPattern,
 		isColorHexOrRgbOrRgba,
+		isCssColor,
 	}
 }
 
@@ -109,4 +110,28 @@ const isColorHexOrRgbOrRgba = (color: string): boolean => {
 	const rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i
 	const rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/i
 	return hex.test(color) || rgb.test(color) || rgba.test(color)
+}
+
+/**
+ * CSSのカラー値かどうかを判定する
+ * @param color 判定するカラー文字列
+ * @returns {boolean} CSSカラー値の場合true
+ */
+const isCssColor = (color: string): boolean => {
+	// 既存のhex、rgb、rgba形式
+	const hex = /^#(?:[0-9A-F]{3}|[0-9A-F]{6})$/i
+	const rgb = /^rgb\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*\)$/i
+	const rgba = /^rgba\(\s*\d+\s*,\s*\d+\s*,\s*\d+\s*,\s*[\d.]+\s*\)$/i
+
+	// CSS変数（var()）
+	const cssVar = /^var\(\s*--[\w-]+\s*(?:,[^)]+)?\)$/i
+
+	// その他のCSSカラー値
+	const hsl = /^hsl\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*\)$/i
+	const hsla = /^hsla\(\s*\d+\s*,\s*\d+%\s*,\s*\d+%\s*,\s*[\d.]+\s*\)$/i
+
+	// 名前付きカラー（transparent、currentColor、inherit、initial、unset等）
+	const namedColors = /^(?:transparent|currentColor|inherit|initial|unset|revert|revert-layer)$/i
+
+	return hex.test(color) || rgb.test(color) || rgba.test(color) || cssVar.test(color) || hsl.test(color) || hsla.test(color) || namedColors.test(color)
 }

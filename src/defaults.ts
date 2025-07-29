@@ -388,5 +388,20 @@ export const defaultOptions = {
 			},
 			iconSvgSrc: 'url(/assets/icons/check.svg)',
 		},
+		switch: {
+			backgroundColor: 'color-text-020',
+			handleColor: 'color-light',
+			checked: {
+				backgroundColor: 'color-success',
+			},
+		},
+	},
+	dropdownMenu: {
+		backgroundColor: 'color-dark-090',
+		textColor: 'color-light',
+		hover: {
+			backgroundColor: 'color-light-005',
+			textColor: 'color-light',
+		},
 	},
 }
