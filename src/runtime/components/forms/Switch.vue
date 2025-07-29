@@ -51,8 +51,9 @@ $cn: '.switch'; // コンポーネントセレクタ名
 	$padding: 2px;
 
 	// スイッチの背景色
-	$color: var(--color-control-020); // スイッチOFF時の背景色
-	$color-checked: var(--color-success); // スイッチON時の背景色
+	$color: var(--forms-switch-background-color); // スイッチOFF時の背景色
+	$color-checked: var(--forms-switch-checked-background-color); // スイッチON時の背景色
+	$color-handle: var(--forms-switch-handle-color); // スイッチのハンドルの色
 
 	width: auto;
 	@include mix.tap-highlight-transparent();
@@ -88,7 +89,7 @@ $cn: '.switch'; // コンポーネントセレクタ名
 
 		&::before {
 			position: absolute;
-			background-color: var(--color-indicator);
+			background-color: $color-handle;
 			border-radius: 100%;
 			content: '';
 			width: $handle-size;

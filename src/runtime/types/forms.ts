@@ -46,4 +46,11 @@ export type FormsConfig = {
 		}
 		iconSvgSrc: string // svg 画像パス e.g. url(/assets/icons/checkbox.svg)
 	}
+	switch: {
+		backgroundColor: string
+		handleColor: string
+		checked: {
+			backgroundColor: string
+		}
+	}
 }
