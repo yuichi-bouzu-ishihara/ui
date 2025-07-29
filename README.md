@@ -57,7 +57,7 @@ export default defineNuxtConfig({
 <template>
   <div>
     <BouzuButton>Click me</BouzuButton>
-    <BouzuIcon name="arrow-right" />
+    <BouzuIcon name="arrowRight" />
   </div>
 </template>
 ```
