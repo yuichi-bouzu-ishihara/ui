@@ -18,7 +18,33 @@ A comprehensive UI component library for Nuxt.js applications, providing reusabl
 
 ### From GitHub Packages
 
+This package is published to GitHub Packages. You need to configure npm to use GitHub Packages for this scope.
+
+#### Option 1: Configure .npmrc (Recommended)
+
+Create a `.npmrc` file in your project root:
+
 ```bash
+# .npmrc
+@yuichi-bouzu-ishihara:registry=https://npm.pkg.github.com
+```
+
+Then install the package:
+
+```bash
+npm install @yuichi-bouzu-ishihara/ui
+```
+
+#### Option 2: Use npm install with registry
+
+```bash
+npm install @yuichi-bouzu-ishihara/ui --registry=https://npm.pkg.github.com
+```
+
+#### Option 3: Configure globally
+
+```bash
+npm config set @yuichi-bouzu-ishihara:registry https://npm.pkg.github.com
 npm install @yuichi-bouzu-ishihara/ui
 ```
 
@@ -37,6 +63,10 @@ For testing local changes:
 ### 1. Install the Package
 
 ```bash
+# Configure GitHub Packages registry
+echo "@yuichi-bouzu-ishihara:registry=https://npm.pkg.github.com" > .npmrc
+
+# Install the package
 npm install @yuichi-bouzu-ishihara/ui
 ```
 
