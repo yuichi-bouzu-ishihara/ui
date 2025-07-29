@@ -38,6 +38,7 @@ export const useAvatar = () => {
 	return {
 		init,
 		update,
+		config: readonly(config),
 		maskSrc: config.value ? readonly(config.value).maskSrc : '',
 	}
 }

@@ -25,12 +25,13 @@
 import { computed, ref } from 'vue'
 import Box from '../layout/Box.vue'
 import { useCss } from '../../composables/css'
+import { useAvatar } from '../../composables/elements/avatar'
 import SkeletonShape from '../elements/SkeletonShape.vue'
 import Image from './Image.vue'
-import { useRuntimeConfig } from '#imports'
 
 // Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
+const { config: avatarConfig } = useAvatar()
 
 // Props --------------------------------------------------------
 const props = defineProps({
@@ -54,8 +55,8 @@ const path = computed(() => {
 		if (!newPath.includes('https://') && !newPath.includes('http://')) {
 			if (!newPath.startsWith('data:image')) {
 				if (!newPath.includes('/_nuxt/')) {
-					if (useRuntimeConfig().public.STORAGE_URL) {
-						newPath = `${useRuntimeConfig().public.STORAGE_URL}/${newPath}`
+					if (avatarConfig.value?.urlPrefix) {
+						newPath = `${avatarConfig.value.urlPrefix}${newPath}`
 					}
 				}
 			}
