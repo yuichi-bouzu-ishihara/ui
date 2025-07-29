@@ -2,7 +2,6 @@
   "name": "@yuichi-bouzu-ishihara/ui",
   "version": "3.9.3",
   "description": "bouzu UI",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "git@github.com:yuichi-bouzu-ishihara/ui.git"
