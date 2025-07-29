@@ -389,4 +389,12 @@ export const defaultOptions = {
 			iconSvgSrc: 'url(/assets/icons/check.svg)',
 		},
 	},
+	dropdownMenu: {
+		backgroundColor: 'color-dark-090',
+		textColor: 'color-light',
+		hover: {
+			backgroundColor: 'color-light-005',
+			textColor: 'color-light',
+		},
+	},
 }
