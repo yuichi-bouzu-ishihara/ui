@@ -25,7 +25,7 @@ const props = defineProps({
 })
 
 // Stores & Composables ------------------
-const { isColorHexOrRgbOrRgba } = useRegex()
+const { isCssColor } = useRegex()
 
 const classes = computed(() => {
 	return {
@@ -38,7 +38,7 @@ const color = computed(() => {
 	if (props.color === '') {
 		str = useSpinner().color
 	}
-	else if (!isColorHexOrRgbOrRgba(props.color)) {
+	else if (!isCssColor(props.color)) {
 		str = props.color
 	}
 	else {
@@ -55,7 +55,7 @@ const styles = computed(() => {
 	let styles: { stroke?: string } = {}
 
 	// hex、rgb、rgba のカラーが設定されている場合は、stroke を設定する
-	if (!color.value && isColorHexOrRgbOrRgba(props.color)) {
+	if (!color.value && isCssColor(props.color)) {
 		styles = { ...styles, stroke: props.color }
 	}
 
