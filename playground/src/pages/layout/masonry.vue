@@ -58,7 +58,7 @@ const splitOptions = [
 
 // Methods ----------
 const addItem = () => {
-	items.value.push({ id: items.value.length + 1, height: 200, image: 'https://cdn.pixabay.com/photo/2023/04/30/05/05/anime-characters-7959747_1280.jpg' })
+	items.value.push({ id: items.value.length + 1, width: Math.random() * 100 + 100, height: Math.random() * 100 + 100, image: 'https://cdn.pixabay.com/photo/2023/04/30/05/05/anime-characters-7959747_1280.jpg' })
 }
 </script>
 

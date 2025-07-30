@@ -2,7 +2,7 @@
 	<Row v-resize="(rect: DOMRectReadOnly) => width = rect.width" class="masonry" justify="center" fit-w
 		:split="columns.length" v-bind="{ gap }">
 		<Column v-for="(column, columnIndex) in columns" :key="`masonry-column-${columnIndex}-update-${updateCount}`"
-			v-bind="{ gap }">
+			class="masonry-column" v-bind="{ gap }">
 			<Ratio v-for="(item, itemIndex) in column" :key="`masonry-item-${itemIndex}`"
 				:per="item.height / item.width * 100">
 				<slot :item="item" :index="getItemIndex(columnIndex, itemIndex)" :split="columnCount" />
@@ -25,6 +25,7 @@ const props = defineProps({
 // Data ----------
 const columnCount = ref(0)
 const columns = ref<T[][]>([])
+const columnHeights = ref<number[]>([])
 const width = ref(0)
 const updateCount = ref(0)
 
@@ -41,57 +42,69 @@ const init = () => {
 		columnCount.value = Math.floor((width.value + props.gap) / (Number.parseInt(String(props.columnWidth)) + props.gap))
 	}
 
+	// 列数が0以下の場合は処理をスキップ
+	if (columnCount.value <= 0) {
+		columns.value = []
+		columnHeights.value = []
+		return
+	}
+
 	// 列数が変わった場合は更新カウントを増やす
 	if (prevColumnCount !== columnCount.value) {
 		updateCount.value++
 	}
 
-	// 列の配列を初期化
+	// 列の配列と高さを初期化
 	columns.value = Array(columnCount.value).fill(null).map(() => [])
+	columnHeights.value = Array(columnCount.value).fill(0)
 
-	// 中央の列のインデックスを計算（偶数の場合は左寄り）
-	const centerIndex = Math.floor((columnCount.value - 1) / 2)
+	// アイテムを高さに基づいて最適な列に配置
+	props.items.forEach((item) => {
+		// 最も高さが小さい列のインデックスを見つける
+		const shortestColumnIndex = findShortestColumn()
 
-	// アイテムを中央から順に配置
-	props.items.forEach((item, index) => {
-		// 行と列の位置を計算
-		const col = index % columnCount.value
-
-		// 中央からの相対位置を計算
-		const relativePos = Math.ceil(col / 2)
-
-		// 列インデックスを計算（中央から左右交互に）
-		const columnIndex = col % 2 === 0
-			? centerIndex - relativePos
-			: centerIndex + relativePos
-
-		// console.log(index, '->', columnIndex, '(row:', row, 'col:', col, 'relativePos:', relativePos, ')')
-		if (columnIndex >= 0 && columnIndex < columnCount.value) {
+		// 有効なインデックスの場合のみ配置
+		if (shortestColumnIndex >= 0 && shortestColumnIndex < columns.value.length) {
+			// アイテムを配置
 			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			columns.value[columnIndex].push(item as any)
+			columns.value[shortestColumnIndex].push(item as any)
+
+			// 列の高さを更新（アイテムの高さ + gap）
+			const itemHeight = (item.height / item.width) * (Number.parseInt(String(props.columnWidth)))
+			columnHeights.value[shortestColumnIndex] += itemHeight + props.gap
 		}
 	})
 }
+
+const findShortestColumn = (): number => {
+	// 配列が空の場合は0を返す
+	if (columnHeights.value.length === 0) {
+		return 0
+	}
+
+	let shortestIndex = 0
+	let shortestHeight = columnHeights.value[0]
+
+	for (let i = 1; i < columnHeights.value.length; i++) {
+		if (columnHeights.value[i] < shortestHeight) {
+			shortestHeight = columnHeights.value[i]
+			shortestIndex = i
+		}
+	}
+
+	return shortestIndex
+}
+
 const getItemIndex = (columnIndex: number, itemIndex: number) => {
-	// 中央の列のインデックスを計算
-	const centerIndex = Math.floor((columnCount.value - 1) / 2)
-
-	// 列のオフセットを計算
-	const columnOffset = columnIndex - centerIndex
-
 	// 列内の位置から元のインデックスを計算
-	if (columnOffset === 0) {
-		// 中央の列
-		return itemIndex * columnCount.value
+	// 各列のアイテム数を考慮してインデックスを計算
+	let globalIndex = 0
+
+	for (let i = 0; i < columnIndex; i++) {
+		globalIndex += columns.value[i].length
 	}
-	else if (columnOffset > 0) {
-		// 中央より右側の列
-		return columnOffset * 2 - 1 + itemIndex * columnCount.value
-	}
-	else {
-		// 中央より左側の列
-		return -columnOffset * 2 + itemIndex * columnCount.value
-	}
+
+	return globalIndex + itemIndex
 }
 
 // Watch ----------
@@ -101,8 +114,11 @@ watch(() => props.items, async () => {
 }, { deep: true })
 
 watch(() => width.value, async () => {
-	await nextTick()
-	init()
+	// widthが有効な値の場合のみ初期化
+	if (width.value > 0) {
+		await nextTick()
+		init()
+	}
 })
 
 watch(() => props.split, async () => {
@@ -118,9 +134,17 @@ onMounted(async () => {
 </script>
 
 <style lang="scss">
-.masonry {
+$cn: '.masonry';
+
+#{$cn} {
 	width: 100%;
 	display: flex;
 	justify-content: center;
+
+	&-column {
+		&:empty {
+			display: none;
+		}
+	}
 }
 </style>
