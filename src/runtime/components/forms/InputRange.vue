@@ -1,5 +1,5 @@
 <template>
-	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="inputRange" :class="classes">
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="inputRange" :class="classes" :style="customColorStyle">
 		<Draggable v-model="handlePosition" class="inputRange-handle" :style="handleStyle" disabled-y>
 			<div class="inputRange-handle-inner" />
 		</Draggable>
@@ -40,6 +40,7 @@ const props = defineProps({
 	step: { type: [Number, String], default: 1 },
 	disabled: { type: Boolean, default: false },
 	controls: { type: Boolean, default: false },
+	color: { type: Object, default: () => ({ handle: '', bar: '', barBackground: '' }) }, // ハンドル、バー、バー背景の色を直接指定
 })
 
 // Emits ---------------------
@@ -91,6 +92,28 @@ const handleStyle = computed(() => {
 		top,
 		left,
 	}
+})
+// color プロパティによる直接指定のスタイル
+const customColorStyle = computed(() => {
+	if (!props.color || (!props.color.handle && !props.color.bar && !props.color.barBackground)) {
+		return {}
+	}
+
+	const style: Record<string, string> = {}
+
+	if (props.color.handle) {
+		style['--custom-range-handle-color'] = props.color.handle
+	}
+
+	if (props.color.bar) {
+		style['--custom-range-bar-color'] = props.color.bar
+	}
+
+	if (props.color.barBackground) {
+		style['--custom-range-bar-background-color'] = props.color.barBackground
+	}
+
+	return style
 })
 
 // Methods ---------------------
@@ -165,6 +188,19 @@ $cn: '.inputRange'; // コンポーネントセレクタ名
 	&._disabled {
 		opacity: 0.5;
 		pointer-events: none;
+	}
+
+	// カスタム色の適用
+	&[style*="--custom-range-handle-color"] &-handle-inner {
+		background-color: var(--custom-range-handle-color) !important;
+	}
+
+	&[style*="--custom-range-bar-background-color"] &-slider {
+		background-color: var(--custom-range-bar-background-color) !important;
+	}
+
+	&[style*="--custom-range-bar-color"] &-slider-bar {
+		background-color: var(--custom-range-bar-color) !important;
 	}
 }
 </style>
