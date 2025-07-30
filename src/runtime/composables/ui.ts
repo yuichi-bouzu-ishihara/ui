@@ -21,6 +21,7 @@ import { useLogo } from './elements/logo'
 import { useAvatar } from './elements/avatar'
 import { useForms } from './forms'
 import { useDropdownMenu } from './overlays/dropdown-menu'
+import { useToolTip } from './overlays/tool-tip'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -64,5 +65,6 @@ const init = () => {
 	useAvatar().init()
 	useForms().init()
 	useDropdownMenu().init()
+	useToolTip().init()
 	useDev().init()
 }

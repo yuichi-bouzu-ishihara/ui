@@ -19,6 +19,7 @@ import type { SheetConfig } from './sheet'
 import type { StorageConfig } from './storage'
 import type { FormsConfig } from './forms'
 import type { DropdownMenuConfig } from './dropdown-menu'
+import type { ToolTipConfig } from './tool-tip'
 
 // VimeoPlayer types
 export type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from './vimeo-player'
@@ -47,4 +48,5 @@ export type UIConfig = {
 	tabs?: TabsConfig
 	forms?: FormsConfig
 	dropdownMenu?: DropdownMenuConfig
+	toolTip?: ToolTipConfig
 }

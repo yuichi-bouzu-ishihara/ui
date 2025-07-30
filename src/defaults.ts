@@ -404,4 +404,8 @@ export const defaultOptions = {
 			textColor: 'color-light',
 		},
 	},
+	toolTip: {
+		backgroundColor: 'color-dark-090',
+		textColor: 'color-light',
+	},
 }
