@@ -2,7 +2,7 @@
 	<Box class="tooltip" :class="classes" :style="variables">
 		<div class="tooltip-inner">
 			<Typography v-if="!disabled" v-resize="(rect: DOMRectReadOnly) => { width = rect.width; height = rect.height }"
-				caption3 center nowrap cap-height-baseline>
+				caption3 center nowrap cap-height-baseline color="var(--tool-tip-text-color)">
 				<template v-if="text">
 					<!-- eslint-disable-next-line vue/no-v-html -->
 					<span v-html="text" />
@@ -91,7 +91,7 @@ $height: calc(var(--height) + $padding-top + $padding-bottom);
 		height: $height;
 		border-radius: 4px;
 		// box-shadow: 0 0 1px global.$light-50;
-		background-color: var(--color-text-005);
+		background-color: var(--tool-tip-background-color);
 		backdrop-filter: blur(40px);
 		box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.3);
 		transition: var.$transition-base;
