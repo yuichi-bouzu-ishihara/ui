@@ -19,7 +19,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
-import { useCss } from '../../composables/css'
+import { useForms } from '../../composables/forms'
 import Box from '../layout/Box.vue'
 import Row from '../layout/Row.vue'
 import IconButton from '../elements/IconButton.vue'
@@ -27,10 +27,10 @@ import Draggable from '../gesture/Draggable.vue'
 import type { Position } from '../gesture/Draggable.vue'
 
 // Constants ---------------------
-const HANDLE_SIZE = 16
+const HANDLE_SIZE = '16px'
 
 // Composables ---------------------
-const { getSize } = useCss()
+const { config } = useForms()
 
 // Props ---------------------
 const props = defineProps({
@@ -77,14 +77,17 @@ const value = computed({
 const normalizedValue = computed(() => {
 	return (value.value - Number(String(props.min))) / (Number(String(props.max)) - Number(String(props.min)))
 })
+const handleSize = computed(() => {
+	return config.value?.range.handleSize ?? HANDLE_SIZE
+})
 const handleStyle = computed(() => {
-	const t = props.controls ? 22 : 2
-	const l = props.controls ? 44 : 0
-	const top = getSize((height.value - HANDLE_SIZE) / 2 + t)
-	const left = getSize((height.value - HANDLE_SIZE) / 2 + l)
+	const t = props.controls ? '22px' : '2px'
+	const l = props.controls ? '44px' : '0px'
+	const top = `calc((${height.value}px - ${handleSize.value}) / 2 + ${t})`
+	const left = `calc((${height.value}px - ${handleSize.value}) / 2 + ${l})`
 	return {
-		width: getSize(HANDLE_SIZE),
-		height: getSize(HANDLE_SIZE),
+		width: handleSize.value,
+		height: handleSize.value,
 		top,
 		left,
 	}
@@ -125,71 +128,43 @@ onMounted(async () => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.inputRange'; // コンポーネントセレクタ名
 
-$bar-height: 4;
+#{$cn} {
+	position: relative;
+	z-index: 0;
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
+	&-slider {
 		position: relative;
-		z-index: 0;
+		height: var(--forms-range-bar-height);
+		border-radius: var.$border-radius-full;
+		backdrop-filter: blur(40px);
+		overflow: hidden;
+		background-color: var(--forms-range-bar-background-color);
+		flex-grow: 1;
 
-		&-slider {
-			position: relative;
-			height: func.get-size($bar-height);
+		&-bar {
+			width: 100%;
+			height: 100%;
+			transform-origin: left center;
+			background-color: var(--forms-range-bar-color);
+		}
+	}
+
+	&-handle {
+		position: absolute;
+		z-index: 1;
+		cursor: pointer;
+
+		&-inner {
+			width: 100%;
+			height: 100%;
 			border-radius: var.$border-radius-full;
-			backdrop-filter: blur(40px);
-			overflow: hidden;
-			background-color: var(--color-indicator-010);
-			flex-grow: 1;
-
-			&-bar {
-				width: 100%;
-				height: 100%;
-				transform-origin: left center;
-				background-color: var(--color-handle);
-			}
-		}
-
-		&-handle {
-			position: absolute;
-			z-index: 1;
-			cursor: pointer;
-
-			&-inner {
-				width: 100%;
-				height: 100%;
-				border-radius: var.$border-radius-full;
-				background-color: var(--color-handle);
-			}
-		}
-
-		&._disabled {
-			opacity: 0.5;
-			pointer-events: none;
+			background-color: var(--forms-range-handle-color);
 		}
 	}
 
-	@if $mode =='darkmode' {
-
-		&-slider {
-			background-color: var(--color-light-005);
-
-			&-bar {
-				background-color: var(--color-light);
-			}
-		}
-
-		&-handle {
-			&-inner {
-				background-color: var(--color-light);
-			}
-		}
-	}
-
-	@if $mode =='auto' {
-
-		&-slider {
-			height: func.get-size($bar-height, false);
-		}
+	&._disabled {
+		opacity: 0.5;
+		pointer-events: none;
 	}
 }
 </style>

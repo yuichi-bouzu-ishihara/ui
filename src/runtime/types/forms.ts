@@ -53,4 +53,11 @@ export type FormsConfig = {
 			backgroundColor: string
 		}
 	}
+	range: {
+		handleColor: string
+		barColor: string
+		barBackgroundColor: string
+		handleSize: string
+		barHeight: string
+	}
 }

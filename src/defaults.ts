@@ -395,6 +395,13 @@ export const defaultOptions = {
 				backgroundColor: 'color-success',
 			},
 		},
+		range: {
+			handleColor: 'color-primary',
+			handleSize: '16px',
+			barColor: 'color-primary',
+			barBackgroundColor: 'color-text-010',
+			barHeight: '4px',
+		},
 	},
 	dropdownMenu: {
 		backgroundColor: 'color-dark-090',
