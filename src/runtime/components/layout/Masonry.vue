@@ -3,19 +3,22 @@
 		:split="columns.length" v-bind="{ gap }">
 		<Column v-for="(column, columnIndex) in columns" :key="`masonry-column-${columnIndex}-update-${updateCount}`"
 			v-bind="{ gap }">
-			<slot v-for="(item, itemIndex) in column" :key="`masonry-item-${itemIndex}`" :item="item"
-				:index="getItemIndex(columnIndex, itemIndex)" :split="columnCount" />
+			<Ratio v-for="(item, itemIndex) in column" :key="`masonry-item-${itemIndex}`"
+				:per="item.height / item.width * 100">
+				<slot :item="item" :index="getItemIndex(columnIndex, itemIndex)" :split="columnCount" />
+			</Ratio>
 		</Column>
 	</Row>
 </template>
 
-<script setup lang="ts" generic="T extends { id: number }">
+<script setup lang="ts" generic="T extends { id: number; width: number; height: number }">
 import { ref, watch, nextTick, onMounted } from '#imports'
 
 // Props ----------
 const props = defineProps({
 	items: { type: Array as () => T[], required: true },
-	columnWidth: { type: Number, default: 300 },
+	columnWidth: { type: [Number, String], default: 300 },
+	split: { type: [Number, String], default: 0 }, // 分割数、1以上で columnWidth を無視して分割数で分割する
 	gap: { type: Number, default: 1 },
 })
 
@@ -31,7 +34,12 @@ const init = () => {
 	const prevColumnCount = columnCount.value
 
 	// コンテナの幅に基づいて列数を計算
-	columnCount.value = Math.floor((width.value + props.gap) / (props.columnWidth + props.gap))
+	if (Number.parseInt(String(props.split)) > 0) {
+		columnCount.value = Number.parseInt(String(props.split))
+	}
+	else {
+		columnCount.value = Math.floor((width.value + props.gap) / (Number.parseInt(String(props.columnWidth)) + props.gap))
+	}
 
 	// 列数が変わった場合は更新カウントを増やす
 	if (prevColumnCount !== columnCount.value) {
@@ -93,6 +101,11 @@ watch(() => props.items, async () => {
 }, { deep: true })
 
 watch(() => width.value, async () => {
+	await nextTick()
+	init()
+})
+
+watch(() => props.split, async () => {
 	await nextTick()
 	init()
 })
