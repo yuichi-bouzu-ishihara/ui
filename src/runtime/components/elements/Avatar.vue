@@ -125,7 +125,7 @@ $cn: '.avatar'; // コンポーネントセレクタ名
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			background-color: var(--color-dark-005);
+			// background-color: var(--color-dark-005);
 			user-select: none; // 選択できないようにする
 
 			&-img {
