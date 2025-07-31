@@ -7,12 +7,10 @@
 	<Box v-intersect.once="{ rootMargin: '0px 0px 200px 0px' }" class="avatar" v-bind="{ ...styles }"
 		@intersect="isIntersect = true">
 		<div class="avatar-inner">
+			<SkeletonShape class="avatar-inner-loader" avatar w="100%" h="100%" :animation="isIntersect" />
 			<template v-if="isIntersect">
-				<Image class="avatar-inner-img" :class="{ _show: isLoaded }" alt="" :src="path" cover @loaded="loaded"
-					@error="error" />
-			</template>
-			<template v-if="!isIntersect || !isLoaded">
-				<SkeletonShape class="avatar-inner-loader" avatar w="100%" h="100%" :animation="isIntersect" />
+				<Image class="avatar-inner-img" :class="{ _show: isLoaded }" alt="" :src="path" :background="false" cover
+					@loaded="loaded" @error="error" />
 			</template>
 		</div>
 		<template v-if="border">
@@ -119,6 +117,7 @@ $cn: '.avatar'; // コンポーネントセレクタ名
 		z-index: 0;
 
 		&-inner {
+			position: relative;
 			width: 100%;
 			height: 100%;
 			mask-image: var(--avatar-mask-src);
