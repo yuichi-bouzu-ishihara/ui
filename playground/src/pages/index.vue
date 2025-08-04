@@ -32,6 +32,13 @@
 						</Slider>
 					</DevSection>
 				</Row>
+				<Row justify="stretch" align="stretch" split="1" v-bind="{ gap }">
+					<DevSection title="FileUpload" :to="'/forms/FileUpload'">
+						<Container>
+							<FileUpload v-model="fileUploadValue" />
+						</Container>
+					</DevSection>
+				</Row>
 				<Row justify="stretch" align="stretch" split="3" v-bind="{ gap }">
 					<DevSection title="Input" :to="'/forms/input'">
 						<Typography headline>
@@ -219,12 +226,13 @@ const colors = ['primary', 'secondary', 'background', 'text', 'link']
 const inputValue = ref('Input')
 const inputSearchValue = ref('')
 const textareaValue = ref('Textarea')
-const selectValue = ref('Select')
+const selectValue = ref('')
 const switchValue = ref(true)
 const checkboxValue = ref(true)
 const rangeValue = ref(33)
 const radioValue = ref(2)
 const inputTagValue = ref([{ id: 1, value: 'item1' }])
+const fileUploadValue = ref(null)
 </script>
 
 <style lang="scss"></style>
