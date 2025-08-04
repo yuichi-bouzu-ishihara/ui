@@ -36,7 +36,6 @@ export const useFileDrop = () => {
 
 	/**
 	 * ファイルドロップの終了
-	 * @param event
 	 */
 	const destroy = () => {
 		callback.value?.('destroy', null)
