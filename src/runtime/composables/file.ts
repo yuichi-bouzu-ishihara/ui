@@ -13,6 +13,9 @@ export const useFile = () => {
 		getFileName,
 		getExtensionByFilename,
 		urlToFile,
+		fileToBase64,
+		getImageDimensions, // 画像の幅と高さを取得
+		getVideoDuration, // 動画の長さを取得
 	}
 }
 
@@ -323,4 +326,60 @@ const urlToFile = async (url: string, filename: string = '', mimeType: string = 
 
 	const blob = new Blob([buffer], { type: mimeType })
 	return new File([blob], filename, { type: mimeType })
+}
+
+/**
+ * File を Base64 に変換
+ * @param file - File オブジェクト
+ * @returns Base64 文字列
+ */
+const fileToBase64 = (file: File): Promise<string> => {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader()
+		reader.onload = () => {
+			if (typeof reader.result === 'string') {
+				resolve(reader.result)
+			}
+			else {
+				reject(new Error('Failed to convert file to base64'))
+			}
+		}
+		reader.onerror = () => reject(reader.error)
+		reader.readAsDataURL(file)
+	})
+}
+
+/**
+ * 画像の幅と高さを取得
+ * @param file - 画像ファイル
+ * @returns 幅と高さのオブジェクト
+ */
+const getImageDimensions = (file: File): Promise<{ width: number, height: number }> => {
+	return new Promise((resolve, reject) => {
+		const img = new Image()
+		img.onload = () => {
+			resolve({
+				width: img.naturalWidth,
+				height: img.naturalHeight,
+			})
+		}
+		img.onerror = () => reject(new Error('Failed to load image'))
+		img.src = URL.createObjectURL(file)
+	})
+}
+
+/**
+ * 動画の長さを取得
+ * @param file - 動画ファイル
+ * @returns 動画の長さ（秒）
+ */
+const getVideoDuration = (file: File): Promise<number> => {
+	return new Promise((resolve, reject) => {
+		const video = document.createElement('video')
+		video.onloadedmetadata = () => {
+			resolve(video.duration)
+		}
+		video.onerror = () => reject(new Error('Failed to load video'))
+		video.src = URL.createObjectURL(file)
+	})
 }
