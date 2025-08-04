@@ -2,6 +2,25 @@
  * 画像関連の便利関数をまとめたファイル
  */
 
+// Video metadata types
+export type VideoMetadata = {
+	width: number
+	height: number
+	duration: number
+	aspectRatio: number
+	fileSize: number
+	mimeType: string
+}
+
+// Image metadata types
+export type ImageMetadata = {
+	width: number
+	height: number
+	aspectRatio: number
+	fileSize: number
+	mimeType: string
+}
+
 export const useFile = () => {
 	return {
 		select,
@@ -14,8 +33,8 @@ export const useFile = () => {
 		getExtensionByFilename,
 		urlToFile,
 		fileToBase64,
-		getImageDimensions, // 画像の幅と高さを取得
-		getVideoDuration, // 動画の長さを取得
+		getImageMetadata, // 画像のメタデータを取得
+		getVideoMetadata, // 動画のメタデータを取得
 	}
 }
 
@@ -350,36 +369,61 @@ const fileToBase64 = (file: File): Promise<string> => {
 }
 
 /**
- * 画像の幅と高さを取得
+ * 画像のメタデータを取得
  * @param file - 画像ファイル
- * @returns 幅と高さのオブジェクト
+ * @returns 画像のメタデータ（幅、高さ、アスペクト比など）
  */
-const getImageDimensions = (file: File): Promise<{ width: number, height: number }> => {
+const getImageMetadata = (file: File): Promise<{
+	width: number
+	height: number
+	aspectRatio: number
+	fileSize: number
+	mimeType: string
+}> => {
 	return new Promise((resolve, reject) => {
 		const img = new Image()
 		img.onload = () => {
+			const aspectRatio = img.naturalWidth / img.naturalHeight
 			resolve({
 				width: img.naturalWidth,
 				height: img.naturalHeight,
+				aspectRatio,
+				fileSize: file.size,
+				mimeType: file.type,
 			})
 		}
-		img.onerror = () => reject(new Error('Failed to load image'))
+		img.onerror = () => reject(new Error('Failed to load image metadata'))
 		img.src = URL.createObjectURL(file)
 	})
 }
 
 /**
- * 動画の長さを取得
+ * 動画のメタデータを取得
  * @param file - 動画ファイル
- * @returns 動画の長さ（秒）
+ * @returns 動画のメタデータ（幅、高さ、長さ、アスペクト比など）
  */
-const getVideoDuration = (file: File): Promise<number> => {
+const getVideoMetadata = (file: File): Promise<{
+	width: number
+	height: number
+	duration: number
+	aspectRatio: number
+	fileSize: number
+	mimeType: string
+}> => {
 	return new Promise((resolve, reject) => {
 		const video = document.createElement('video')
 		video.onloadedmetadata = () => {
-			resolve(video.duration)
+			const aspectRatio = video.videoWidth / video.videoHeight
+			resolve({
+				width: video.videoWidth,
+				height: video.videoHeight,
+				duration: video.duration,
+				aspectRatio,
+				fileSize: file.size,
+				mimeType: file.type,
+			})
 		}
-		video.onerror = () => reject(new Error('Failed to load video'))
+		video.onerror = () => reject(new Error('Failed to load video metadata'))
 		video.src = URL.createObjectURL(file)
 	})
 }
