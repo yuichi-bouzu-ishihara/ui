@@ -51,7 +51,6 @@
 				</div>
 			</div>
 		</div>
-		<slot name="floating" />
 	</div>
 </template>
 
