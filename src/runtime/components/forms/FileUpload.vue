@@ -123,12 +123,12 @@ $cn: '.fileUpload'; // コンポーネントクラス名
 		cursor: pointer;
 
 		&:hover {
-			border-color: var(--color-text-60);
+			border-color: var(--color-text-060);
 		}
 
 		&._dragover {
-			border-color: var(--color-primary-60);
-			background-color: var(--color-primary-05);
+			border-color: var(--color-text-060);
+			background-color: var(--color-text-005);
 			transform: scale(1.02);
 		}
 	}
