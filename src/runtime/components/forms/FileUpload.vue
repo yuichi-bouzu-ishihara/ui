@@ -1,6 +1,6 @@
 <template>
-	<div class="originalWorkFileUpload" :class="{ _invalid: isInvalid }">
-		<Clickable ref="dropAreaRef" class="originalWorkFileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
+	<div class="fileUpload" :class="{ _invalid: isInvalid }">
+		<Clickable ref="dropAreaRef" class="fileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
 			<Ratio>
 				<Column justify="center" gap="12">
 					<Icon v-if="icon" :name="icon.name" :size="icon.size" :color="isInvalid ? 'danger' : 'text'" />
@@ -96,7 +96,7 @@ const handleFileDrop = (state: string, files: File[] | null) => {
 }
 
 onMounted(() => {
-	watch('.originalWorkFileUpload-ui', handleFileDrop)
+	watch('.fileUpload-ui', handleFileDrop)
 })
 
 onUnmounted(() => {
@@ -106,7 +106,7 @@ onUnmounted(() => {
 
 <style lang="scss">
 @use '../../scss/_variables.scss' as var;
-$cn: '.originalWorkFileUpload'; // コンポーネントクラス名
+$cn: '.fileUpload'; // コンポーネントクラス名
 
 #{$cn} {
 	&-ui {
