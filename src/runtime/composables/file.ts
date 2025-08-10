@@ -42,6 +42,13 @@ const select = async (accepts = ['image']): Promise<{ file: unknown, name: strin
 	const acceptStrList: string[] = []
 
 	accepts.forEach((accept) => {
+		// カスタムのMIMEタイプや拡張子が直接指定されている場合
+		if (accept.includes('/') || accept.startsWith('.')) {
+			acceptStrList.push(accept)
+			return
+		}
+
+		// 事前定義されたカテゴリの場合
 		switch (accept) {
 			case 'image':
 				acceptStrList.push('.jpg, .jpeg, .png')

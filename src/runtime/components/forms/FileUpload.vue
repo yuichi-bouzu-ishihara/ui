@@ -48,7 +48,8 @@ const isInvalid = ref(false)
 // Methods ----------
 const onUpload = async () => {
 	console.log('upload')
-	const selectFile = await useFile().select(props.accept.split(','))
+	const acceptTypes = props.accept ? props.accept.split(',').map(type => type.trim()).filter(type => type) : []
+	const selectFile = await useFile().select(acceptTypes)
 	if (selectFile) {
 		model.value = selectFile.file as unknown as File
 		isInvalid.value = false
@@ -69,7 +70,8 @@ const handleFileDrop = (state: string, files: File[] | null) => {
 				// ファイルタイプの検証
 				const validFiles = files.filter((file) => {
 					if (!props.accept) return true
-					const acceptedTypes = props.accept.split(',').map(type => type.trim())
+					const acceptedTypes = props.accept.split(',').map(type => type.trim()).filter(type => type)
+					if (acceptedTypes.length === 0) return true
 					return acceptedTypes.some((type) => {
 						if (type.startsWith('.')) {
 							return file.name.toLowerCase().endsWith(type.toLowerCase())

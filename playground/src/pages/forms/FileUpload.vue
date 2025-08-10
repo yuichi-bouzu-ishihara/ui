@@ -1,7 +1,7 @@
 <template>
 	<Column class="pageFormsFileUpload" gap="40">
 		<Container justify="center" narrow>
-			<FileUpload v-model="selectedFile" accept="image,video" />
+			<FileUpload v-model="selectedFile" accept="application/pdf,.pdf" />
 		</Container>
 		<Container>
 			<Typography caption2>
