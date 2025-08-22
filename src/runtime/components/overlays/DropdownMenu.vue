@@ -69,6 +69,7 @@ $cn: '.dropdownMenu'; // コンポーネントクラス名
 		display: block;
 		width: 100%;
 		transition: var.$transition-base;
+		pointer-events: auto;
 		cursor: pointer;
 
 		&-inner {
