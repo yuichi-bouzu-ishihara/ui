@@ -3,8 +3,7 @@
 		:split="columns.length" v-bind="{ gap }">
 		<Column v-for="(column, columnIndex) in columns" :key="`masonry-column-${columnIndex}-update-${updateCount}`"
 			class="masonry-column" v-bind="{ gap }">
-			<Ratio v-for="(item, itemIndex) in column" :key="`masonry-item-${itemIndex}`"
-				:per="item.height / item.width * 100">
+			<Ratio v-for="(item, itemIndex) in column" :key="`masonry-item-${item.id}`" :per="item.height / item.width * 100">
 				<slot :item="item" :index="getItemIndex(columnIndex, itemIndex)" :split="columnCount" />
 			</Ratio>
 		</Column>
