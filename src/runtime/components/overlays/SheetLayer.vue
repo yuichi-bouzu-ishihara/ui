@@ -74,6 +74,10 @@ $cn: '.sheetLayer'; // コンポーネントセレクタ名
 	// overflow-y: scroll;
 
 	&._open {
+		height: 100vh;
+	}
+
+	&-inner {
 		height: 100%;
 	}
 
