@@ -16,6 +16,15 @@
 							id: {{ item.id }}, index: {{ index }}, split: {{ sp }}
 						</Typography>
 					</Center>
+					<Box absolute top="0" right="0">
+						<Clickable @click="removeItem(item.id)">
+							<Box w="40" h="40">
+								<Center>
+									<Icon name="cross" size="16" color="light-060" />
+								</Center>
+							</Box>
+						</Clickable>
+					</Box>
 				</Box>
 			</template>
 		</Masonry>
@@ -59,6 +68,10 @@ const splitOptions = [
 // Methods ----------
 const addItem = () => {
 	items.value.push({ id: items.value.length + 1, width: Math.random() * 100 + 100, height: Math.random() * 100 + 100, image: 'https://cdn.pixabay.com/photo/2023/04/30/05/05/anime-characters-7959747_1280.jpg' })
+}
+
+const removeItem = (id: number) => {
+	items.value = items.value.filter(item => item.id !== id)
 }
 </script>
 
