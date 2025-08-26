@@ -2,6 +2,7 @@
   <div class="pageElementsIconButton">
     <Container>
       <Row justify="center" :gap="[8, 8]">
+        <IconButton :icon="{ name: 'check' }" r="8" />
         <IconButton :icon="{ name: 'check' }" />
         <IconButton :icon="{ name: 'check' }" secondary />
         <IconButton :icon="{ name: 'check' }" tertiary />

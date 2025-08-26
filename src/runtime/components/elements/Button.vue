@@ -3,7 +3,7 @@
 	ボタンUIコンポーネント
 -->
 <template>
-	<Box class="button" :class="[classes, $attrs.class]" :style="customColorStyle" v-bind="{ w, h, minW: w, minH: h }">
+	<Box class="button" :class="[classes, $attrs.class]" :style="customColorStyle" v-bind="{ w, h, minW: w, minH: h, r }">
 		<template v-if="to">
 			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true, blank }">
 				<Typography class="button-inner-slot" v-bind="typography">
@@ -84,6 +84,7 @@ const props = defineProps({
 	noPadding: { type: Boolean, default: false },
 
 	color: { type: Object, default: () => ({ background: '', text: '' }) }, // ボタンの色を直接指定
+	r: { type: [String, Number], default: '' }, // 角丸の大きさを直接指定
 })
 
 // Emits ---------------------------
