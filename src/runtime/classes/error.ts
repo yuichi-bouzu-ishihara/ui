@@ -117,6 +117,7 @@ export enum CustomErrorCode {
 	NetworkError = 'Network Error',
 	ValidationError = 'Validation Error',
 	UnknownError = 'Unknown Error',
+	AbortError = 'Abort Error',
 	BadRequest = 400,
 	AuthorizationRequired = 401,
 	Forbidden = 403,
