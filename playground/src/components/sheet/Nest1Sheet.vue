@@ -1,6 +1,10 @@
 <template>
-	<Sheet class="nest1Sheet" :name="NAME" close v-bind="{ title, full, wide, narrow, center }"
-		@close="close(NAME, false)">
+	<Sheet class="nest1Sheet" :name="NAME" v-bind="{ title, full, wide, narrow, center }">
+		<template #header-right>
+			<Button xsmall rounded @click="close(NAME, false)">
+				close
+			</Button>
+		</template>
 		<SheetContainer>
 			<Column justify="center" align="end" gap="20">
 				<template v-if="icon">

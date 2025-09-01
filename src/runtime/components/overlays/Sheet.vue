@@ -10,17 +10,16 @@
 									<Container no-padding full>
 										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title }" blur
 											:background="backgroundColor" :color="textColor">
-											<template v-if="leftIcon" #left>
-												<IconMenu :icon="leftIcon" :color="textColor" @click="emit('left-icon-click')" />
+											<template #left>
+												<IconMenu v-if="leftIcon" :icon="leftIcon" :color="textColor"
+													@click="emit('left-icon-click')" />
+												<slot v-else name="header-left" />
 											</template>
-											<template v-else #left>
-												<slot name="header-left" />
-											</template>
-											<template v-if="close" #right>
-												<IconMenu icon="cross" :color="textColor" @click="emit('close')" />
-											</template>
-											<template v-else-if="rightIcon" #right>
-												<IconMenu :icon="rightIcon" :color="textColor" @click="emit('right-icon-click')" />
+											<template #right>
+												<IconMenu v-if="close" icon="cross" :color="textColor" @click="emit('close')" />
+												<IconMenu v-else-if="rightIcon" :icon="rightIcon" :color="textColor"
+													@click="emit('right-icon-click')" />
+												<slot v-else name="header-right" />
 											</template>
 											<template #center>
 												<slot name="header-center" />
