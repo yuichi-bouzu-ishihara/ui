@@ -39,8 +39,12 @@ const open = async (name, options) => {
 	console.log(result)
 }
 
-watch(useSheet().current, (current) => {
-	console.log('useSheet().current', current)
+const sheet = useSheet()
+watch(() => sheet.current.value, (nv) => {
+	console.log('useSheet().current', nv)
+}, { immediate: true })
+watch(() => sheet.list.value, (list) => {
+	console.log('useSheet().list', list)
 }, { immediate: true, deep: true })
 </script>
 

@@ -75,6 +75,7 @@ export const useSheet = () => {
 		close: async (name: string | 'all', result: unknown = true) => {
 			if (name === 'all') {
 				list.value = []
+				current.value = null
 			}
 			else {
 				const pl = list.value.find(item => item.name === name)
@@ -85,8 +86,8 @@ export const useSheet = () => {
 					pl.resolve = undefined
 				}
 				list.value = list.value.filter(item => item.name !== name)
+				current.value = list.value[list.value.length - 1] || null
 			}
-			current.value = null
 		},
 
 		/**
