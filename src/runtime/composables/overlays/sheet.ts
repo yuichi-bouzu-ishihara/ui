@@ -22,6 +22,7 @@ export const useSheet = () => {
 	const isOpen = useState<boolean>('ui-sheet-isOpen', () => false) // シートが開かれているかどうか
 	const scrollY = useState<number>('ui-sheet-scrollY', () => 0) // スクロール位置を保持する
 	const list = useState<PayloadWithResolve[]>('ui-sheet-list', () => []) // シートのリストを保持する
+	const current = useState<PayloadWithResolve | null>('ui-sheet-current', () => null) // 現在表示中のシートを保持する
 	const config = useState<SheetConfig | null>('ui-sheet-config', () => null)
 
 	return {
@@ -61,6 +62,7 @@ export const useSheet = () => {
 		open: (pl: Payload): Promise<unknown> => {
 			isOpen.value = true
 			return new Promise((rsv) => {
+				current.value = { ...pl, resolve: rsv as (value: unknown) => void }
 				list.value.push({ ...pl, resolve: rsv as (value: unknown) => void })
 			})
 		},
@@ -84,6 +86,7 @@ export const useSheet = () => {
 				}
 				list.value = list.value.filter(item => item.name !== name)
 			}
+			current.value = null
 		},
 
 		/**
@@ -106,5 +109,6 @@ export const useSheet = () => {
 		scrollY: readonly(scrollY),
 		list: readonly(list),
 		color: config.value ? readonly(config.value).color : { background: '', text: '' },
+		current: readonly(current),
 	}
 }
