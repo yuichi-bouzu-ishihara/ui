@@ -38,6 +38,10 @@ const open = async (name, options) => {
 	const result = await useSheet().open({ name, options })
 	console.log(result)
 }
+
+watch(useSheet().current, (current) => {
+	console.log('useSheet().current', current)
+}, { immediate: true, deep: true })
 </script>
 
 <style lang="scss"></style>
