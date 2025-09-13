@@ -62,7 +62,7 @@ export const useColor = () => {
 			for (const opacity of OPACITY_STEPS) {
 				if (!rgb) continue
 				cssVariables += `
-					--color-${key}-${Math.round(opacity * 100).toString().padStart(3, '0')}: rgb(${rgb.r} ${rgb.g} ${rgb.b} / ${opacity * 100}%);
+					--color-${key}-${Math.round(opacity * 100).toString().padStart(3, '0')}: rgb(${rgb}, ${opacity * 100}%);
 				`
 			}
 		}
@@ -72,36 +72,39 @@ export const useColor = () => {
 		document.head.appendChild(styleElement)
 	}
 
+	/**
+	 * 16進数をRGBに変換する
+	 * @param {string} hex - 16進数のカラー値
+	 * @returns {string} - RGB値をカンマ区切りで返す
+	 */
+	const hexToRgb = (hex: string): string | null => {
+		// 先頭の#を削除
+		const sanitizedHex = hex.replace(/^#/, '')
+
+		// 3桁の16進数を6桁に変換
+		const fullHex = sanitizedHex.length === 3
+			? sanitizedHex.split('').map(char => char + char).join('')
+			: sanitizedHex
+
+		// 16進数が正しいかどうかを確認
+		if (fullHex.length !== 6) {
+			return null
+		}
+
+		// RGB値に変換
+		const r = Number.parseInt(fullHex.substring(0, 2), 16)
+		const g = Number.parseInt(fullHex.substring(2, 4), 16)
+		const b = Number.parseInt(fullHex.substring(4, 6), 16)
+
+		return `${r}, ${g}, ${b}`
+	}
+
 	return {
 		init,
 		update,
+		hexToRgb,
 		config: readonly(config),
 		priorities: config.value ? readonly(config.value) : null,
 		opacitySteps: readonly(OPACITY_STEPS),
 	}
-}
-
-/**
- * 16進数をRGBに変換する
- */
-const hexToRgb = (hex: string): { r: number, g: number, b: number } | null => {
-	// 先頭の#を削除
-	const sanitizedHex = hex.replace(/^#/, '')
-
-	// 3桁の16進数を6桁に変換
-	const fullHex = sanitizedHex.length === 3
-		? sanitizedHex.split('').map(char => char + char).join('')
-		: sanitizedHex
-
-	// 16進数が正しいかどうかを確認
-	if (fullHex.length !== 6) {
-		return null
-	}
-
-	// RGB値に変換
-	const r = Number.parseInt(fullHex.substring(0, 2), 16)
-	const g = Number.parseInt(fullHex.substring(2, 4), 16)
-	const b = Number.parseInt(fullHex.substring(4, 6), 16)
-
-	return { r, g, b }
 }

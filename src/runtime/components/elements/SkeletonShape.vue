@@ -1,6 +1,8 @@
 <template>
-	<Box class="skeletonShape" :class="classes" :r="shape === 'circle' ? 'circle' : 0" max-w="100%" :bg-blur="blur"
-		v-bind="box" />
+	<Box class="skeletonShape" :class="classes" :style="`
+		--custom-color: ${color ? color : 'var(--skeleton-shape-color)'};
+		--custom-color-animation-to: ${colorAnimationTo ? colorAnimationTo : 'var(--skeleton-shape-animation-to)'}
+		`" :r="shape === 'circle' ? 'circle' : 0" max-w="100%" :bg-blur="blur" v-bind="box" />
 </template>
 
 <script setup lang="ts">
@@ -20,6 +22,8 @@ const props = defineProps({
 	w: { type: [Number, String], default: 0 }, // 横幅 px
 	h: { type: [Number, String], default: 0 }, // 高さ px
 	r: { type: [Number, String], default: 0 }, // 角丸 px
+	color: { type: String, default: '' }, // 色
+	colorAnimationTo: { type: String, default: '' }, // アニメーションの色
 	delayIndex: { type: [Number, String], default: -1 }, // アニメーション遅延のインデックス。 delay は theme config で設定した値を使用する。
 	delay: { type: [Number, String], default: 0 }, // アニメーション遅延 ms。 delayIndex が -1 の場合はこの値を使用する。
 	animation: { type: Boolean, default: true }, // アニメーションを有効にするか
@@ -101,7 +105,7 @@ onUnmounted(() => {
 $cn: '.skeletonShape'; // クラス名
 
 #{$cn} {
-	background-color: var(--skeleton-shape-color);
+	background-color: var(--custom-color);
 	transition: background-color calc(var(--skeleton-shape-duration) / 2) linear;
 
 	&._avatar {
@@ -110,7 +114,7 @@ $cn: '.skeletonShape'; // クラス名
 	}
 
 	&._to {
-		background-color: var(--skeleton-shape-animation-to);
+		background-color: var(--custom-color-animation-to);
 	}
 }
 </style>
