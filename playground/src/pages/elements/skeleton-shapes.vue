@@ -4,7 +4,7 @@
 			<Row justify="center" gap="12">
 				<Box v-for="i in 100" :key="i" w="120" pt="20" pb="20" pr="20" pl="20">
 					<Column justify="center" gap="8">
-						<SkeletonShape avatar w="72" />
+						<SkeletonShape avatar w="72" :color="`rgba(${color.hexToRgb('#ff0000')}, 0.5)`" />
 						<SkeletonShape w="96" h="16" />
 						<SkeletonShape w="72" h="16" />
 					</Column>
@@ -23,6 +23,7 @@
 </template>
 
 <script setup>
+const color = useColor()
 </script>
 
 <style lang="scss"></style>
