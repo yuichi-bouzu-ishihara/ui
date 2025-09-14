@@ -123,7 +123,7 @@ const textColor = computed(() => {
 	}
 	return str.replace('color-', '').replace('-', '')
 })
-const isHeader = computed(() => props.title || props.close || props.leftIcon || props.rightIcon || !!slots['header-left'] || !!slots['header-center'])
+const isHeader = computed(() => props.title || props.close || props.leftIcon || props.rightIcon || !!slots['header-left'] || !!slots['header-right'] || !!slots['header-center'])
 const isScroll = computed(() => /* useSheetsStore().scrollY > 0 */ false)
 const container = computed(() => ({
 	narrow: useBreakPoint().baseAbove() ? props.narrow : false,
