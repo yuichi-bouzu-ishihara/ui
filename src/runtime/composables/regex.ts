@@ -42,7 +42,9 @@ export const useRegex = () => {
  * @returns {string} 変換後の文字列
  */
 const convertRegexToPattern = (regex: RegExp): string => {
-	return regex.toString().slice(1, -1)
+	const str = regex.toString()
+	// 最初と最後の / を削除し、フラグも削除
+	return str.slice(1, str.lastIndexOf('/'))
 }
 
 // Emailアドレス -------------------------------------
@@ -51,7 +53,7 @@ const email
 const emailPattern = convertRegexToPattern(email)
 
 // URL -------------------------------------
-const url = /^[a-z][\w-]{3,99}$/i
+const url = /^[a-z][\w\-]{3,99}$/i
 const urlPattern = convertRegexToPattern(url)
 
 // 郵便番号 -------------------------------------
@@ -81,7 +83,7 @@ const upperCaseAlphanumeric = /^[A-Z0-9]+$/
 const upperCaseAlphanumericPattern = convertRegexToPattern(upperCaseAlphanumeric)
 
 // X プロフィール URL
-const xProfileUrl = /^https:\/\/twitter\.com\/\w{1,15}$/
+const xProfileUrl = /^https:\/\/x\.com\/\w{1,15}$/
 const xProfileUrlPattern = convertRegexToPattern(xProfileUrl)
 
 // Youtube チャンネル URL
