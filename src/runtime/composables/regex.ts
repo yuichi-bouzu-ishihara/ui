@@ -53,7 +53,7 @@ const email
 const emailPattern = convertRegexToPattern(email)
 
 // URL -------------------------------------
-const url = /^[a-z][\w\-]{3,99}$/i
+const url = /^[a-z][\w-]{3,99}$/i
 const urlPattern = convertRegexToPattern(url)
 
 // 郵便番号 -------------------------------------
@@ -83,7 +83,7 @@ const upperCaseAlphanumeric = /^[A-Z0-9]+$/
 const upperCaseAlphanumericPattern = convertRegexToPattern(upperCaseAlphanumeric)
 
 // X プロフィール URL
-const xProfileUrl = /^https:\/\/x\.com\/\w{1,15}$/
+const xProfileUrl = /^https?:\/\/(?:www\.)?x\.com\/(\w{1,15})$/
 const xProfileUrlPattern = convertRegexToPattern(xProfileUrl)
 
 // Youtube チャンネル URL
