@@ -83,7 +83,7 @@ const upperCaseAlphanumeric = /^[A-Z0-9]+$/
 const upperCaseAlphanumericPattern = convertRegexToPattern(upperCaseAlphanumeric)
 
 // X プロフィール URL
-const xProfileUrl = /^https:\/\/twitter\.com\/\w{1,15}$/
+const xProfileUrl = /^https:\/\/x\.com\/\w{1,15}$/
 const xProfileUrlPattern = convertRegexToPattern(xProfileUrl)
 
 // Youtube チャンネル URL
