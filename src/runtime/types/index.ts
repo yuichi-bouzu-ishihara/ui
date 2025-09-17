@@ -20,6 +20,7 @@ import type { StorageConfig } from './storage'
 import type { FormsConfig } from './forms'
 import type { DropdownMenuConfig } from './dropdown-menu'
 import type { ToolTipConfig } from './tool-tip'
+import type { HeaderConfig } from './header'
 
 // VimeoPlayer types
 export type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from './vimeo-player'
@@ -49,4 +50,5 @@ export type UIConfig = {
 	forms?: FormsConfig
 	dropdownMenu?: DropdownMenuConfig
 	toolTip?: ToolTipConfig
+	header?: HeaderConfig
 }

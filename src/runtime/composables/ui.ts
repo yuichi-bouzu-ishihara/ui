@@ -22,6 +22,7 @@ import { useAvatar } from './elements/avatar'
 import { useForms } from './forms'
 import { useDropdownMenu } from './overlays/dropdown-menu'
 import { useToolTip } from './overlays/tool-tip'
+import { useHeader } from './navigation/header'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -66,5 +67,6 @@ const init = () => {
 	useForms().init()
 	useDropdownMenu().init()
 	useToolTip().init()
+	useHeader().init()
 	useDev().init()
 }

@@ -88,7 +88,7 @@ $cn: '.sheetLayer'; // コンポーネントセレクタ名
 	@include mix.breakpoint('base') {
 		&-inner {
 			align-items: center;
-			// padding-bottom: func.get-size(var.$header-height);
+			// padding-bottom: var(--header-height);
 		}
 	}
 }

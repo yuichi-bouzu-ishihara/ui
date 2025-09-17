@@ -306,6 +306,9 @@ export const defaultOptions = {
 		},
 		mark: 'gradation-horizontal', // マークの色
 	},
+	header: {
+		height: '72px',
+	},
 	skeletonShape: {
 		color: 'color-light-005',
 		animationTo: 'color-light-003',

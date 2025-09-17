@@ -196,8 +196,8 @@ $footnote-padding-vertical: 24;
 		justify-content: center;
 		min-height: 100%;
 		height: auto;
-		padding-top: calc(#{var.$header-height}px / 2);
-		// padding-bottom: calc(#{var.$header-height}px / 2);
+		padding-top: calc(var(--header-height) / 2);
+		// padding-bottom: calc(var(--header-height) / 2);
 		transform-style: preserve-3d; // 子要素に preserve-3d がある場合に表示がバグる不具合を回避する
 
 		&-item {
@@ -205,7 +205,7 @@ $footnote-padding-vertical: 24;
 
 			&-content {
 				padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
-				height: calc(var(--sheet-inner-height) - #{var.$header-height}px / 2);
+				height: calc(var(--sheet-inner-height) - var(--header-height) / 2);
 				border-radius: #{var.$border-radius-xlarge}px;
 
 				&-header {

@@ -72,8 +72,8 @@ $cn: '.modalLayer'; // コンポーネントセレクタ名
 			width: 100%;
 			height: 100%;
 			pointer-events: none;
-			padding-top: func.get-size(var.$header-height, $mode !='auto');
-			padding-bottom: func.get-size(var.$header-height, $mode !='auto');
+			padding-top: var(--header-height);
+			padding-bottom: var(--header-height);
 
 			&>* {
 				pointer-events: auto;
