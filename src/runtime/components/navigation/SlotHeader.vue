@@ -70,8 +70,8 @@ $cn: '.slotHeader'; // コンポーネントセレクタ名
 $transition-base: var.$transition-base;
 
 #{$cn} {
-	min-height: func.get-size(var.$header-height);
-	height: func.get-size(var.$header-height);
+	min-height: var(--header-height);
+	height: var(--header-height);
 	transition: var.$transition-base;
 
 	&-blur {
