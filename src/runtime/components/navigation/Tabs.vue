@@ -1,8 +1,9 @@
 <template>
-	<div class="tabs">
-		<Row class="tabs-list" align="start" nowrap fit-h>
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs">
+		<Row class="tabs-list" justify="center" align="start" nowrap fit-h>
 			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
-				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
+				v-resize="(rect: DOMRectReadOnly) => itemRectList[index] = rect" class="tabs-list-item"
+				:class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
 				@click="tab.click && tab.click()">
 				<Row justify="center" align="start" gap="8" fit-h>
 					<template v-if="tab.icon">
@@ -17,13 +18,14 @@
 			</component>
 		</Row>
 		<template v-if="activeIndex !== -1">
-			<div class="tabs-bar" :style="`${itemWidth}; transform: translateX(${100 * activeIndex}%)`" />
+			<div v-if="rect && itemRectList[activeIndex]" class="tabs-bar"
+				:style="`transform: translateX(${itemRectList[activeIndex].left - rect.left}px); width: ${itemRectList[activeIndex].width}px`" />
 		</template>
-	</div>
+	</Box>
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs } from 'vue'
+import { computed, toRefs, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
@@ -44,24 +46,30 @@ export type TabsItem = {
 	current?: boolean // 現在選択されているか
 }
 
+// Composables ------------------------------------------------------------
+const route = useRoute()
+
 // Props --------------
 const props = defineProps({
 	list: { type: Array as () => TabsItem[], default: () => [] },
+	itemWidthAuto: { type: Boolean, default: false },
 })
 const { list } = toRefs(props)
 
-// Setup ------------------------------------------------------------
-const route = useRoute()
+// Data ------------------
+const rect = ref<DOMRectReadOnly | null>(null)
+const itemRectList = ref<DOMRectReadOnly[]>([])
 
 // Computed ------------------
 const itemWidth = computed(() => {
-	return `width: calc(100% / ${list.value.length});`
+	return props.itemWidthAuto ? '' : `width: calc(100% / ${list.value.length});`
 })
 const itemClasses = computed(() => (index: number) => {
 	return {
 		_icon: list.value[index].icon,
 		_current: list.value[index].current ?? (list.value[index].path ? activeIndex.value === index : false),
 		_disabled: !list.value[index].click && !list.value[index].path,
+		_auto: props.itemWidthAuto,
 	}
 })
 const activeIndex = computed(() => {
@@ -75,6 +83,7 @@ const activeIndex = computed(() => {
 			index = list.value.findIndex(item => item.current)
 		}
 	}
+	console.log(itemRectList.value[index])
 	return index
 })
 const typography = computed(() => {
@@ -133,6 +142,12 @@ $border-height: 0.5; // ボーダーの高さ
 
 				&._disabled {
 					cursor: default;
+				}
+
+				&._auto {
+					width: auto;
+					padding-right: 1em;
+					padding-left: 1em;
 				}
 			}
 		}

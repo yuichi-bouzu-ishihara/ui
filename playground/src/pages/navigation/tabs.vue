@@ -4,6 +4,8 @@
 			<Column gap="40">
 				<Tabs :list="list" />
 				<Tabs :list="iconList" />
+				<Tabs :list="list" item-width-auto />
+				<Tabs :list="iconList" item-width-auto />
 			</Column>
 		</Container>
 	</div>
@@ -35,35 +37,61 @@ const list = ref([
 const iconList = ref([
 	{
 		icon: {
-			name: 'x',
-			size: 24,
+			name: 'calendar',
+			size: 18,
+		},
+		current: true,
+		click: () => {
+			handleIconClick(0)
 		},
 	},
 	{
 		icon: {
-			name: 'instagram',
-			size: 24,
+			name: 'grid2',
+			size: 18,
+		},
+		current: false,
+		click: () => {
+			handleIconClick(1)
 		},
 	},
 	{
 		icon: {
-			name: 'youtube',
-			size: 24,
+			name: 'mail',
+			size: 18,
+		},
+		current: false,
+		click: () => {
+			handleIconClick(2)
 		},
 	},
 	{
 		icon: {
-			name: 'tiktok',
-			size: 24,
+			name: 'phone',
+			size: 18,
+		},
+		click: () => {
+			handleIconClick(3)
 		},
 	},
 	{
 		icon: {
-			name: 'threads',
-			size: 24,
+			name: 'check',
+			size: 18,
+		},
+		current: false,
+		click: () => {
+			handleIconClick(4)
 		},
 	},
 ])
+
+// method ------------------------------------------------------------
+const handleIconClick = (index) => {
+	iconList.value.forEach((item, i) => {
+		item.current = i === index
+	})
+}
 // ver.Link
 // const list = ref([
 //   {
