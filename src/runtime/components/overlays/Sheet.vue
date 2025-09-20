@@ -11,12 +11,12 @@
 										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title }" blur
 											:background="backgroundColor" :color="textColor">
 											<template #left>
-												<IconMenu v-if="leftIcon" :icon="leftIcon" :color="textColor"
+												<IconMenu v-if="leftIcon" :icon="leftIcon" size="18" :color="textColor"
 													@click="emit('left-icon-click')" />
 												<slot v-else name="header-left" />
 											</template>
 											<template #right>
-												<IconMenu v-if="close" icon="cross" :color="textColor" @click="emit('close')" />
+												<IconMenu v-if="close" icon="cross" size="18" :color="textColor" @click="emit('close')" />
 												<IconMenu v-else-if="rightIcon" :icon="rightIcon" :color="textColor"
 													@click="emit('right-icon-click')" />
 												<slot v-else name="header-right" />
