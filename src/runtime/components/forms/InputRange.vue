@@ -5,13 +5,15 @@
 		</Draggable>
 		<Row justify="center" align="center" nowrap>
 			<template v-if="controls">
-				<IconButton :icon="{ name: 'minus' }" link medium v-bind="{ disabled }" @click="value -= Number(step)" />
+				<IconButton :icon="{ name: 'minus', size: 16 }" link small v-bind="{ disabled }"
+					@click="value -= Number(step)" />
 			</template>
 			<Box v-resize="(rect: DOMRectReadOnly) => updateBar(rect)" class="inputRange-slider">
 				<div class="inputRange-slider-bar" :style="{ transform: `scaleX(${normalizedValue})` }" />
 			</Box>
 			<template v-if="controls">
-				<IconButton :icon="{ name: 'plus' }" link medium v-bind="{ disabled }" @click="value += Number(step)" />
+				<IconButton :icon="{ name: 'plus', size: 16 }" link small v-bind="{ disabled }"
+					@click="value += Number(step)" />
 			</template>
 		</Row>
 	</Box>
@@ -82,8 +84,8 @@ const handleSize = computed(() => {
 	return config.value?.range.handleSize ?? HANDLE_SIZE
 })
 const handleStyle = computed(() => {
-	const t = props.controls ? '22px' : '2px'
-	const l = props.controls ? '44px' : '0px'
+	const t = props.controls ? '18px' : '2px'
+	const l = props.controls ? '36px' : '0px'
 	const top = `calc((${height.value}px - ${handleSize.value}) / 2 + ${t})`
 	const left = `calc((${height.value}px - ${handleSize.value}) / 2 + ${l})`
 	return {
