@@ -3,13 +3,13 @@
 		<Column gap="40">
 			<FileUpload v-model="selectedFile" accept="image/jpg,image/jpeg,image/png,video/mp4"
 				:icon="{ success: { name: 'checkCircleLine' }, error: { name: 'exclamation' } }"
-				:label="{ idle: 'ファイルを選択してください。', loading: '', success: 'ファイルの読み込みが完了しました。', error: 'ファイルの読み込み中にエラーが発生しました。' }"
-				:description="{ idle: '5GB以内の .jpg .jpeg .png .mp4 のファイルを選択してください。', loading: '', success: '', error: 'ファイルの拡張子や、ファイルが壊れていないか確認してください。' }"
-				:max-size="5 * 1024 * 1024 * 1024" @metadata-loaded="handleMetadataLoaded" @metadata-error="handleMetadataError"
+				:label="{ idle: 'ファイルを選択してください。', loading: '', success: 'ファイルの読み込みが完了しました。' }"
+				:description="{ idle: '5GB以内の .jpg .jpeg .png .mp4 のファイルを選択してください。', loading: '', success: '' }"
+				:max-size="5 * 1024 * 1024" @metadata-loaded="handleMetadataLoaded" @metadata-error="handleMetadataError"
 				@metadata-loading="handleMetadataLoading" />
 			<template v-if="selectedFile">
 				<Image v-if="isImage" v-bind="{ src }" />
-				<video v-else-if="isVideo" v-bind="{ src }" />
+				<video v-else-if="isVideo" v-bind="{ src }" controls />
 				<Tooltip v-if="!error" :text="getFileInfoTooltipText()">
 					<Row justify="center" align="center" gap="8">
 						<Typography caption3 extrabold>

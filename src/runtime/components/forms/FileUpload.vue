@@ -133,14 +133,14 @@ const defaultLabel: StatusText = {
 	idle: 'ファイルを選択してください',
 	loading: 'ファイルを読み込み中です...',
 	success: 'ファイルの読み込みが完了しました',
-	error: 'ファイルの読み込み中にエラーが発生しました',
+	error: '', // エラー時は動的に生成
 }
 
 const defaultDescription: StatusText = {
 	idle: '5MB以内のファイルを選択してください',
 	loading: 'ファイルを検証中です...',
 	success: '別のファイルを選択するにはクリックしてください',
-	error: 'ファイルの形式を確認してください',
+	error: '', // エラー時は動的に生成
 }
 
 // Computed ----------
@@ -159,9 +159,90 @@ const mergedDescription = computed(() => ({
 	...props.description,
 }))
 
+// 許可されているファイル形式の情報を取得する関数
+const getAllowedFileTypes = () => {
+	if (!props.accept) return ''
+
+	const { parseAccepts } = useFile()
+	const acceptTypes = parseAccepts(props.accept)
+
+	// 人間が読みやすい形式に変換
+	const readableTypes: string[] = []
+
+	acceptTypes.forEach((accept) => {
+		if (accept === 'image') {
+			readableTypes.push('画像')
+		}
+		else if (accept === 'video') {
+			readableTypes.push('動画')
+		}
+		else if (accept === 'audio') {
+			readableTypes.push('音声')
+		}
+		else if (accept === 'document') {
+			readableTypes.push('ドキュメント')
+		}
+		else if (accept === 'text') {
+			readableTypes.push('テキスト')
+		}
+		else if (accept.startsWith('.')) {
+			readableTypes.push(accept.toUpperCase())
+		}
+		else if (accept.includes('/')) {
+			// MIMEタイプの場合、拡張子に変換
+			if (accept === 'image/jpeg' || accept === 'image/jpg') {
+				readableTypes.push('JPEG')
+			}
+			else if (accept === 'image/png') {
+				readableTypes.push('PNG')
+			}
+			else if (accept === 'image/webp') {
+				readableTypes.push('WebP')
+			}
+			else if (accept === 'video/mp4') {
+				readableTypes.push('MP4')
+			}
+			else if (accept === 'application/pdf') {
+				readableTypes.push('PDF')
+			}
+			else {
+				readableTypes.push(accept)
+			}
+		}
+	})
+
+	// 重複を除去
+	const uniqueTypes = [...new Set(readableTypes)]
+
+	return uniqueTypes.length > 0 ? `許可されている形式: ${uniqueTypes.join(', ')}` : ''
+}
+
+// エラー時のテキスト生成関数
+const getErrorLabel = () => {
+	if (props.label.error && props.label.error !== '') {
+		return props.label.error
+	}
+	return 'ファイルの読み込み中にエラーが発生しました'
+}
+
+const getErrorDescription = () => {
+	if (props.description.error && props.description.error !== '') {
+		return props.description.error
+	}
+
+	const baseMessage = errorMessage.value || 'ファイルの形式を確認してください'
+	const allowedTypes = getAllowedFileTypes()
+
+	if (allowedTypes && errorMessage.value?.includes('無効なファイル形式')) {
+		return `${baseMessage}。<br>${allowedTypes}`
+	}
+
+	return baseMessage
+}
+
 const getStatusText = computed(() => {
 	if (isDragOver.value) return mergedLabel.value.idle
-	if (fileStatus.value === 'error') return mergedLabel.value.error
+	if (fileStatus.value === 'error') return getErrorLabel()
 	if (isLoading.value) return mergedLabel.value.loading
 	if (selectedFile.value) return mergedLabel.value.success
 	return mergedLabel.value.idle
@@ -169,7 +250,7 @@ const getStatusText = computed(() => {
 
 const getDescriptionText = computed(() => {
 	if (isDragOver.value) return mergedDescription.value.idle
-	if (fileStatus.value === 'error') return mergedDescription.value.error
+	if (fileStatus.value === 'error') return getErrorDescription()
 	if (selectedFile.value) return mergedDescription.value.success
 	if (isLoading.value) return mergedDescription.value.loading
 	return mergedDescription.value.idle
@@ -345,11 +426,11 @@ const loadMetadata = async (file: File) => {
 }
 
 const formatFileSize = (bytes: number): string => {
-	if (bytes === 0) return '0 Bytes'
+	if (bytes === 0) return '0Bytes'
 	const k = 1024
 	const sizes = ['Bytes', 'KB', 'MB', 'GB']
 	const i = Math.floor(Math.log(bytes) / Math.log(k))
-	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + sizes[i]
 }
 
 // Lifecycle ----------
