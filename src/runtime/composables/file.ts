@@ -35,41 +35,14 @@ export const useFile = () => {
 		fileToBase64,
 		getImageMetadata, // 画像のメタデータを取得
 		getVideoMetadata, // 動画のメタデータを取得
+		isFileTypeAllowed, // ファイルタイプ検証の共通関数
+		parseAccepts, // accepts文字列を解析する共通関数
+		convertAcceptsToMimeTypes, // accepts配列をMIMEタイプ文字列に変換する共通関数
 	}
 }
 
 const select = async (accepts = ['image']): Promise<{ file: unknown, name: string, blob: string } | null> => {
-	const acceptStrList: string[] = []
-
-	accepts.forEach((accept) => {
-		// カスタムのMIMEタイプや拡張子が直接指定されている場合
-		if (accept.includes('/') || accept.startsWith('.')) {
-			acceptStrList.push(accept)
-			return
-		}
-
-		// 事前定義されたカテゴリの場合
-		switch (accept) {
-			case 'image':
-				acceptStrList.push('.jpg, .jpeg, .png')
-				break
-			case 'audio':
-				acceptStrList.push('audio/*')
-				break
-			case 'video':
-				acceptStrList.push('video/*')
-				break
-			case 'document':
-				acceptStrList.push(
-					'application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation',
-				)
-				break
-			case 'text': // テキストファイルのみを選択するオプションを追加
-				acceptStrList.push('text/plain, .txt')
-				break
-		}
-	})
-
+	const acceptStrList = convertAcceptsToMimeTypes(accepts)
 	const acceptStr = acceptStrList.join(', ')
 
 	const input = document.createElement('input')
@@ -278,6 +251,7 @@ const getExtensionByBase64 = (base64Data: string): string => {
  */
 const getFileTypeByExtension = (extension: string): string => {
 	const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'JPG', 'JPEG', 'PNG', 'GIF', 'BMP', 'SVG']
+	const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv', 'm4v', '3gp', 'MP4', 'AVI', 'MOV', 'WMV', 'FLV', 'WEBM', 'MKV', 'M4V', '3GP']
 	const documentExtensions = [
 		'pdf',
 		'doc',
@@ -299,6 +273,9 @@ const getFileTypeByExtension = (extension: string): string => {
 
 	if (imageExtensions.includes(extension)) {
 		return 'image'
+	}
+	else if (videoExtensions.includes(extension)) {
+		return 'video'
 	}
 	else if (documentExtensions.includes(extension)) {
 		return 'document'
@@ -433,4 +410,88 @@ const getVideoMetadata = (file: File): Promise<{
 		video.onerror = () => reject(new Error('Failed to load video metadata'))
 		video.src = URL.createObjectURL(file)
 	})
+}
+
+/**
+ * accepts文字列を解析して配列に変換する共通関数
+ * @param accepts - カンマ区切りのaccepts文字列
+ * @returns 解析されたaccepts配列
+ */
+const parseAccepts = (accepts: string): string[] => {
+	return accepts.split(',').map(type => type.trim()).filter(type => type)
+}
+
+/**
+ * accepts配列をMIMEタイプ文字列に変換する共通関数
+ * @param accepts - 許可するファイルタイプの配列
+ * @returns MIMEタイプ文字列の配列
+ */
+const convertAcceptsToMimeTypes = (accepts: string[]): string[] => {
+	const acceptStrList: string[] = []
+
+	accepts.forEach((accept) => {
+		// カスタムのMIMEタイプや拡張子が直接指定されている場合
+		if (accept.includes('/') || accept.startsWith('.')) {
+			acceptStrList.push(accept)
+			return
+		}
+
+		// 事前定義されたカテゴリの場合
+		switch (accept) {
+			case 'image':
+				acceptStrList.push('image/*')
+				break
+			case 'audio':
+				acceptStrList.push('audio/*')
+				break
+			case 'video':
+				acceptStrList.push('video/*')
+				break
+			case 'document':
+				acceptStrList.push(
+					'application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation',
+				)
+				break
+			case 'text':
+				acceptStrList.push('text/plain, .txt')
+				break
+		}
+	})
+
+	return acceptStrList
+}
+
+/**
+ * ファイルタイプが許可されているかチェックする共通関数
+ * @param file - チェックするファイル
+ * @param accepts - 許可するファイルタイプの配列
+ * @returns 許可されているかどうか
+ */
+const isFileTypeAllowed = (file: File, accepts: string[]): boolean => {
+	const acceptStrList = convertAcceptsToMimeTypes(accepts)
+
+	// ファイルのMIMEタイプをチェック
+	for (const acceptStr of acceptStrList) {
+		if (acceptStr.includes('*')) {
+			// ワイルドカードの場合（例: image/*）
+			const baseType = acceptStr.split('/')[0]
+			if (file.type.startsWith(baseType + '/')) {
+				return true
+			}
+		}
+		else if (acceptStr.startsWith('.')) {
+			// 拡張子の場合
+			const extension = acceptStr.substring(1)
+			const fileName = file.name.toLowerCase()
+			if (fileName.endsWith('.' + extension.toLowerCase())) {
+				return true
+			}
+		}
+		else if (file.type === acceptStr) {
+			// 完全一致の場合
+			return true
+		}
+	}
+
+	return false
 }

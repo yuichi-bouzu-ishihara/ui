@@ -3,6 +3,7 @@
  */
 
 import { nextTick, useState } from '#imports'
+import { useFile } from './file'
 
 export const useFileDrop = () => {
 	// Data -------------------------
@@ -11,15 +12,21 @@ export const useFileDrop = () => {
 	const isMouseDownInsideDropArea = useState<boolean>('ui-file-drop-is-mouse-down-inside-drop-area', () => false)
 	const enabled = useState<boolean>('ui-file-drop-enabled', () => false)
 	const callback = useState<((state: string, files: File[] | null) => void) | null>('ui-file-drop-callback', () => null)
+	const acceptedTypes = useState<string[]>('ui-file-drop-accepted-types', () => ['image'])
+
+	// Composables -------------------------
+	const { isFileTypeAllowed } = useFile()
 
 	/**
 	 * ファイルのドロップ開始
 	 * @param {string} selector - 監視対象のセレクタ
 	 * @param {Function} func - ドロップ時のコールバック関数
+	 * @param {string[]} accepts - 許可するファイルタイプ（デフォルト: ['image']）
 	 */
-	const watch = async (selector: string, func: (state: string, files: File[] | null) => void) => {
+	const watch = async (selector: string, func: (state: string, files: File[] | null) => void, accepts = ['image']) => {
 		enabled.value = true
 		callback.value = func
+		acceptedTypes.value = accepts
 		await nextTick()
 		element.value = document.querySelector(selector)
 		dropFiles.value = []
@@ -85,9 +92,25 @@ export const useFileDrop = () => {
 
 	const handleFiles = (files: FileList) => {
 		dropFiles.value = []
+		const validFiles: File[] = []
+		const errors: string[] = []
+
 		for (let i = 0; i < files.length; i++) {
 			const file = files[i]
-			dropFiles.value.push(file)
+			if (isFileTypeAllowed(file, acceptedTypes.value)) {
+				validFiles.push(file)
+			}
+			else {
+				errors.push(`${file.name} は許可されていないファイルタイプです`)
+			}
+		}
+
+		dropFiles.value = validFiles
+
+		// エラーがある場合はコールバックで通知
+		if (errors.length > 0) {
+			callback.value?.('error', null)
+			console.error('File type validation errors:', errors)
 		}
 	}
 

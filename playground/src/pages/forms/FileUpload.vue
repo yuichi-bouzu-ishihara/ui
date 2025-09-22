@@ -1,71 +1,69 @@
 <template>
-	<Column class="pageFormsFileUpload" gap="40">
-		<Container justify="center" narrow>
-			<FileUpload v-model="selectedFile" accept="application/pdf,.pdf" />
-		</Container>
-		<Container>
-			<Typography caption2>
-				<div v-if="selectedFile">
-					<div>ファイル名: {{ selectedFile.name }}</div>
-					<div>サイズ: {{ formatFileSize(selectedFile.size) }}</div>
-					<div>タイプ: {{ selectedFile.type }}</div>
-				</div>
-
-				<!-- 画像メタデータ表示 -->
-				<div v-if="imageMetadata">
-					<div>幅: {{ imageMetadata.width }}px</div>
-					<div>高さ: {{ imageMetadata.height }}px</div>
-					<div>アスペクト比: {{ imageMetadata.aspectRatio.toFixed(2) }}</div>
-					<div>ファイルサイズ: {{ formatFileSize(imageMetadata.fileSize) }}</div>
-					<div>MIMEタイプ: {{ imageMetadata.mimeType }}</div>
-				</div>
-
-				<!-- 動画メタデータ表示 -->
-				<div v-if="videoMetadata">
-					<div>幅: {{ videoMetadata.width }}px</div>
-					<div>高さ: {{ videoMetadata.height }}px</div>
-					<div>長さ: {{ formatDuration(videoMetadata.duration) }}</div>
-					<div>アスペクト比: {{ videoMetadata.aspectRatio.toFixed(2) }}</div>
-					<div>ファイルサイズ: {{ formatFileSize(videoMetadata.fileSize) }}</div>
-					<div>MIMEタイプ: {{ videoMetadata.mimeType }}</div>
-				</div>
-
-				<Typography v-if="error" color="danger" inherit>
-					<div>エラー</div>
-					<div>
-						{{ error }}
-					</div>
-				</Typography>
-
-				<div v-if="loading" class="mb-4">
-					<Typography color="text-060">
-						メタデータを読み込み中...
-					</Typography>
-				</div>
-			</Typography>
-		</Container>
-	</Column>
+	<Container class="pageFormsFileUpload" narrow>
+		<Column gap="40">
+			<FileUpload v-model="selectedFile" accept="image/jpg,image/jpeg,image/png,video/mp4"
+				:label="{ idle: 'ファイルを選択してください。', loading: 'ファイルを読み込み中です...', success: 'ファイルの読み込みが完了しました。', error: 'ファイルの読み込み中にエラーが発生しました。' }"
+				:description="{ idle: '5GB以内の .jpg .jpeg .png .mp4 のファイルを選択してください。', loading: '', success: '', error: 'ファイルの拡張子や、ファイルが壊れていないか確認してください。' }"
+				:max-size="5 * 1024 * 1024 * 1024" @metadata-loaded="handleMetadataLoaded" @metadata-error="handleMetadataError"
+				@metadata-loading="handleMetadataLoading" />
+			<template v-if="selectedFile">
+				<Image v-if="isImage" v-bind="{ src }" />
+				<video v-else-if="isVideo" v-bind="{ src }" />
+				<Tooltip v-if="!error" :text="getFileInfoTooltipText()">
+					<Row justify="center" align="center" gap="8">
+						<Typography caption3 extrabold>
+							File Info
+						</Typography>
+						<Icon name="info" size="16" />
+					</Row>
+				</Tooltip>
+				<Tooltip v-else :text="error">
+					<Row justify="center" align="center" gap="8">
+						<Typography caption3 extrabold color="danger">
+							Error
+						</Typography>
+						<Icon name="exclamation" size="16" color="danger" />
+					</Row>
+				</Tooltip>
+			</template>
+		</Column>
+	</Container>
 </template>
 
 <script setup lang="ts">
 const selectedFile = ref<File | null>(null)
-const imageMetadata = ref<{
-	width: number
-	height: number
-	aspectRatio: number
+const metadata = ref<{
+	width?: number
+	height?: number
+	aspectRatio?: number
 	fileSize: number
 	mimeType: string
-} | null>(null)
-const videoMetadata = ref<{
-	width: number
-	height: number
-	duration: number
-	aspectRatio: number
-	fileSize: number
-	mimeType: string
+	duration?: number
 } | null>(null)
 const error = ref<string | null>(null)
 const loading = ref(false)
+
+// Computed ----------
+const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))
+const isVideo = computed(() => selectedFile.value?.type.startsWith('video/'))
+const src = computed(() => selectedFile.value ? URL.createObjectURL(selectedFile.value) : '')
+const getFileInfoTooltipText = () => {
+	let text = `File Name: ${selectedFile.value?.name}<br>File Size: ${formatFileSize(selectedFile.value?.size || 0)}<br>File Type: ${selectedFile.value?.type}`
+
+	if (metadata.value) {
+		if (metadata.value.width !== undefined && metadata.value.height !== undefined) {
+			text += `<br>Width: ${metadata.value.width}px<br>Height: ${metadata.value.height}px`
+		}
+		if (metadata.value.aspectRatio !== undefined) {
+			text += `<br>Aspect Ratio: ${metadata.value.aspectRatio.toFixed(2)}`
+		}
+		if (metadata.value.duration !== undefined) {
+			text += `<br>Duration: ${formatDuration(metadata.value.duration)}`
+		}
+	}
+
+	return text
+}
 
 const formatFileSize = (bytes: number): string => {
 	if (bytes === 0) return '0 Bytes'
@@ -86,30 +84,48 @@ const formatDuration = (seconds: number): string => {
 	return `${minutes}:${secs.toString().padStart(2, '0')}`
 }
 
-watch(selectedFile, async () => {
-	if (selectedFile.value) {
-		loading.value = true
+const getMetadataTitle = () => {
+	if (!metadata.value) return 'メタデータ'
+
+	if (metadata.value.duration !== undefined) {
+		return '動画メタデータ'
+	}
+	else if (metadata.value.width !== undefined && metadata.value.height !== undefined) {
+		return '画像メタデータ'
+	}
+	else {
+		return 'ファイルメタデータ'
+	}
+}
+
+// メタデータイベントハンドラー
+const handleMetadataLoaded = (metadataData: {
+	width?: number
+	height?: number
+	aspectRatio?: number
+	fileSize: number
+	mimeType: string
+	duration?: number
+}) => {
+	metadata.value = metadataData
+	error.value = null
+}
+
+const handleMetadataError = (errorMessage: string) => {
+	error.value = errorMessage
+	metadata.value = null
+}
+
+const handleMetadataLoading = (isLoading: boolean) => {
+	loading.value = isLoading
+}
+
+// ファイルが変更されたときにメタデータをクリア
+watch(selectedFile, () => {
+	if (!selectedFile.value) {
+		metadata.value = null
 		error.value = null
-		imageMetadata.value = null
-		videoMetadata.value = null
-
-		try {
-			const { getImageMetadata, getVideoMetadata } = useFile()
-
-			// ファイルタイプに応じてメタデータを取得
-			if (selectedFile.value.type.startsWith('image/')) {
-				imageMetadata.value = await getImageMetadata(selectedFile.value)
-			}
-			else if (selectedFile.value.type.startsWith('video/')) {
-				videoMetadata.value = await getVideoMetadata(selectedFile.value)
-			}
-		}
-		catch (err) {
-			error.value = err instanceof Error ? err.message : 'Unknown error'
-		}
-		finally {
-			loading.value = false
-		}
+		loading.value = false
 	}
 })
 </script>
