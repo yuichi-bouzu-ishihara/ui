@@ -3,6 +3,7 @@
  */
 
 import { nextTick, useState } from '#imports'
+import { useFile } from './file'
 
 export const useFileDrop = () => {
 	// Data -------------------------
@@ -12,6 +13,9 @@ export const useFileDrop = () => {
 	const enabled = useState<boolean>('ui-file-drop-enabled', () => false)
 	const callback = useState<((state: string, files: File[] | null) => void) | null>('ui-file-drop-callback', () => null)
 	const acceptedTypes = useState<string[]>('ui-file-drop-accepted-types', () => ['image'])
+
+	// Composables -------------------------
+	const { isFileTypeAllowed } = useFile()
 
 	/**
 	 * ファイルのドロップ開始
@@ -108,70 +112,6 @@ export const useFileDrop = () => {
 			callback.value?.('error', null)
 			console.error('File type validation errors:', errors)
 		}
-	}
-
-	/**
-	 * ファイルタイプが許可されているかチェック
-	 * @param {File} file - チェックするファイル
-	 * @param {string[]} accepts - 許可するファイルタイプ
-	 * @returns {boolean} 許可されているかどうか
-	 */
-	const isFileTypeAllowed = (file: File, accepts: string[]): boolean => {
-		const acceptStrList: string[] = []
-
-		accepts.forEach((accept) => {
-			// カスタムのMIMEタイプや拡張子が直接指定されている場合
-			if (accept.includes('/') || accept.startsWith('.')) {
-				acceptStrList.push(accept)
-				return
-			}
-
-			// 事前定義されたカテゴリの場合
-			switch (accept) {
-				case 'image':
-					acceptStrList.push('image/*')
-					break
-				case 'audio':
-					acceptStrList.push('audio/*')
-					break
-				case 'video':
-					acceptStrList.push('video/*')
-					break
-				case 'document':
-					acceptStrList.push(
-						'application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation',
-					)
-					break
-				case 'text':
-					acceptStrList.push('text/plain, .txt')
-					break
-			}
-		})
-
-		// ファイルのMIMEタイプをチェック
-		for (const acceptStr of acceptStrList) {
-			if (acceptStr.includes('*')) {
-				// ワイルドカードの場合（例: image/*）
-				const baseType = acceptStr.split('/')[0]
-				if (file.type.startsWith(baseType + '/')) {
-					return true
-				}
-			}
-			else if (acceptStr.startsWith('.')) {
-				// 拡張子の場合
-				const extension = acceptStr.substring(1)
-				const fileName = file.name.toLowerCase()
-				if (fileName.endsWith('.' + extension.toLowerCase())) {
-					return true
-				}
-			}
-			else if (file.type === acceptStr) {
-				// 完全一致の場合
-				return true
-			}
-		}
-
-		return false
 	}
 
 	const isInsideDropArea = (event: MouseEvent) => {

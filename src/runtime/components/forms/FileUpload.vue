@@ -208,7 +208,8 @@ const formatFileSize = (bytes: number): string => {
 // Lifecycle ----------
 onMounted(() => {
 	// acceptプロパティをuseFileDropのacceptsパラメータに変換
-	const acceptTypes = props.accept ? props.accept.split(',').map(type => type.trim()).filter(type => type) : ['image']
+	const { parseAccepts } = useFile()
+	const acceptTypes = props.accept ? parseAccepts(props.accept) : ['image']
 	watch('.fileUpload-ui', handleFileDrop, acceptTypes)
 })
 onUnmounted(() => {
