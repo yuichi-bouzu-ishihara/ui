@@ -1,34 +1,77 @@
 <template>
-	<Column class="pageFormsFileUpload" gap="40">
-		<Container justify="center" narrow>
-			<FileUpload v-model="selectedFile" accept="application/pdf,.pdf" />
-		</Container>
-		<Container>
+	<Container class="pageFormsFileUpload" narrow>
+		<Column gap="40">
+			<FileUpload v-model="selectedFile" accept="image,video" :icon="{ name: 'upload' }"
+				:max-size="5 * 1024 * 1024 * 1024" />
 			<Typography caption2>
-				<div v-if="selectedFile">
-					<div>ファイル名: {{ selectedFile.name }}</div>
-					<div>サイズ: {{ formatFileSize(selectedFile.size) }}</div>
-					<div>タイプ: {{ selectedFile.type }}</div>
-				</div>
+				<table v-if="selectedFile" class="mb-2">
+					<tbody>
+						<tr>
+							<th>ファイル名</th>
+							<td>{{ selectedFile.name }}</td>
+						</tr>
+						<tr>
+							<th>サイズ</th>
+							<td>{{ formatFileSize(selectedFile.size) }}</td>
+						</tr>
+						<tr>
+							<th>タイプ</th>
+							<td>{{ selectedFile.type }}</td>
+						</tr>
+					</tbody>
 
-				<!-- 画像メタデータ表示 -->
-				<div v-if="imageMetadata">
-					<div>幅: {{ imageMetadata.width }}px</div>
-					<div>高さ: {{ imageMetadata.height }}px</div>
-					<div>アスペクト比: {{ imageMetadata.aspectRatio.toFixed(2) }}</div>
-					<div>ファイルサイズ: {{ formatFileSize(imageMetadata.fileSize) }}</div>
-					<div>MIMEタイプ: {{ imageMetadata.mimeType }}</div>
-				</div>
+					<!-- 画像メタデータ表示 -->
+					<tbody v-if="imageMetadata">
+						<tr>
+							<th>幅</th>
+							<td>{{ imageMetadata.width }}px</td>
+						</tr>
+						<tr>
+							<th>高さ</th>
+							<td>{{ imageMetadata.height }}px</td>
+						</tr>
+						<tr>
+							<th>アスペクト比</th>
+							<td>{{ imageMetadata.aspectRatio.toFixed(2) }}</td>
+						</tr>
+						<tr>
+							<th>ファイルサイズ</th>
+							<td>{{ formatFileSize(imageMetadata.fileSize) }}</td>
+						</tr>
+						<tr>
+							<th>MIMEタイプ</th>
+							<td>{{ imageMetadata.mimeType }}</td>
+						</tr>
+					</tbody>
 
-				<!-- 動画メタデータ表示 -->
-				<div v-if="videoMetadata">
-					<div>幅: {{ videoMetadata.width }}px</div>
-					<div>高さ: {{ videoMetadata.height }}px</div>
-					<div>長さ: {{ formatDuration(videoMetadata.duration) }}</div>
-					<div>アスペクト比: {{ videoMetadata.aspectRatio.toFixed(2) }}</div>
-					<div>ファイルサイズ: {{ formatFileSize(videoMetadata.fileSize) }}</div>
-					<div>MIMEタイプ: {{ videoMetadata.mimeType }}</div>
-				</div>
+					<!-- 動画メタデータ表示 -->
+					<tbody v-if="videoMetadata">
+						<tr>
+							<th>幅</th>
+							<td>{{ videoMetadata.width }}px</td>
+						</tr>
+						<tr>
+							<th>高さ</th>
+							<td>{{ videoMetadata.height }}px</td>
+						</tr>
+						<tr>
+							<th>長さ</th>
+							<td>{{ formatDuration(videoMetadata.duration) }}</td>
+						</tr>
+						<tr>
+							<th>アスペクト比</th>
+							<td>{{ videoMetadata.aspectRatio.toFixed(2) }}</td>
+						</tr>
+						<tr>
+							<th>ファイルサイズ</th>
+							<td>{{ formatFileSize(videoMetadata.fileSize) }}</td>
+						</tr>
+						<tr>
+							<th>MIMEタイプ</th>
+							<td>{{ videoMetadata.mimeType }}</td>
+						</tr>
+					</tbody>
+				</table>
 
 				<Typography v-if="error" color="danger" inherit>
 					<div>エラー</div>
@@ -43,8 +86,8 @@
 					</Typography>
 				</div>
 			</Typography>
-		</Container>
-	</Column>
+		</Column>
+	</Container>
 </template>
 
 <script setup lang="ts">

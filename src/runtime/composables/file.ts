@@ -51,7 +51,7 @@ const select = async (accepts = ['image']): Promise<{ file: unknown, name: strin
 		// 事前定義されたカテゴリの場合
 		switch (accept) {
 			case 'image':
-				acceptStrList.push('.jpg, .jpeg, .png')
+				acceptStrList.push('image/*')
 				break
 			case 'audio':
 				acceptStrList.push('audio/*')
