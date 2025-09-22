@@ -3,15 +3,16 @@
 		<Clickable ref="dropAreaRef" class="fileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
 			<Ratio>
 				<Column justify="center">
-					<Icon v-if="fileStatus === 'idle' && icon" :name="icon.idle.name" :size="icon.idle.size || ICON_SIZE" />
-					<template v-else-if="fileStatus === 'loading'">
-						<Spinner v-if="icon.loading.name === 'spinner'" :size="icon.loading.size || ICON_SIZE" />
-						<Icon v-else :name="icon.loading.name" :size="icon.loading.size || ICON_SIZE" />
+					<Icon v-if="fileStatus === 'idle' && mergedIcon.idle" :name="mergedIcon.idle.name"
+						:size="mergedIcon.idle.size || ICON_SIZE" />
+					<template v-else-if="fileStatus === 'loading' && mergedIcon.loading">
+						<Spinner v-if="mergedIcon.loading.name === 'spinner'" :size="mergedIcon.loading.size || ICON_SIZE" />
+						<Icon v-else :name="mergedIcon.loading.name" :size="mergedIcon.loading.size || ICON_SIZE" />
 					</template>
-					<Icon v-else-if="fileStatus === 'success'" name="checkCircleLine" :size="icon.success.size || ICON_SIZE"
-						color="success" />
-					<Icon v-else-if="fileStatus === 'error'" name="exclamation" :size="icon.error.size || ICON_SIZE"
-						color="danger" />
+					<Icon v-else-if="fileStatus === 'success' && mergedIcon.success" name="checkCircleLine"
+						:size="mergedIcon.success.size || ICON_SIZE" color="success" />
+					<Icon v-else-if="fileStatus === 'error' && mergedIcon.error" name="exclamation"
+						:size="mergedIcon.error.size || ICON_SIZE" color="danger" />
 					<TransitionAcordion>
 						<div v-if="getStatusText">
 							<Box h="12" />
@@ -47,16 +48,16 @@ type Icon = {
 }
 type FileStatus = 'idle' | 'loading' | 'success' | 'error'
 type StatusIcon = {
-	idle: Icon
-	loading: Icon
-	success: Icon
-	error: Icon
+	idle?: Icon
+	loading?: Icon
+	success?: Icon
+	error?: Icon
 }
 type StatusText = {
-	idle: string
-	loading: string
-	success: string
-	error: string
+	idle?: string
+	loading?: string
+	success?: string
+	error?: string
 }
 
 // Constants ----------
@@ -94,33 +95,9 @@ const props = defineProps({
 	 * @example 'image', 'video', 'audio', 'document', 'text' (事前定義カテゴリ)
 	 */
 	accept: { type: String, default: '' },
-	icon: {
-		type: Object as PropType<StatusIcon>,
-		default: () => ({
-			idle: { name: 'upload' },
-			loading: { name: 'spinner' },
-			success: { name: 'checkCircleLine' },
-			error: { name: 'exclamation' },
-		}),
-	},
-	label: {
-		type: Object as PropType<StatusText>,
-		default: () => ({
-			idle: 'ファイルを選択してください',
-			loading: 'ファイルを読み込み中です...',
-			success: 'ファイルの読み込みが完了しました',
-			error: 'ファイルの読み込み中にエラーが発生しました',
-		}),
-	},
-	description: {
-		type: Object as PropType<StatusText>,
-		default: () => ({
-			idle: '5MB以内のファイルを選択してください',
-			loading: 'ファイルを検証中です...',
-			success: '別のファイルを選択するにはクリックしてください',
-			error: 'ファイルの形式を確認してください',
-		}),
-	},
+	icon: { type: Object as PropType<StatusIcon>, default: () => ({}) },
+	label: { type: Object as PropType<StatusText>, default: () => ({}) },
+	description: { type: Object as PropType<StatusText>, default: () => ({}) },
 	maxSize: { type: Number, default: 5 * 1024 * 1024 }, // デフォルト5MB
 })
 
@@ -144,21 +121,58 @@ const metadata = ref<{
 const metadataError = ref<string | null>(null)
 const isMetadataLoading = ref(false)
 
+// Default values ----------
+const defaultIcon: StatusIcon = {
+	idle: { name: 'upload' },
+	loading: { name: 'spinner' },
+	success: { name: 'checkCircleLine' },
+	error: { name: 'exclamation' },
+}
+
+const defaultLabel: StatusText = {
+	idle: 'ファイルを選択してください',
+	loading: 'ファイルを読み込み中です...',
+	success: 'ファイルの読み込みが完了しました',
+	error: 'ファイルの読み込み中にエラーが発生しました',
+}
+
+const defaultDescription: StatusText = {
+	idle: '5MB以内のファイルを選択してください',
+	loading: 'ファイルを検証中です...',
+	success: '別のファイルを選択するにはクリックしてください',
+	error: 'ファイルの形式を確認してください',
+}
+
 // Computed ----------
+const mergedIcon = computed(() => ({
+	...defaultIcon,
+	...props.icon,
+}))
+
+const mergedLabel = computed(() => ({
+	...defaultLabel,
+	...props.label,
+}))
+
+const mergedDescription = computed(() => ({
+	...defaultDescription,
+	...props.description,
+}))
+
 const getStatusText = computed(() => {
-	if (isDragOver.value) return props.label.idle
-	if (fileStatus.value === 'error') return props.label.error
-	if (isLoading.value) return props.label.loading
-	if (selectedFile.value) return props.label.success
-	return props.label.idle
+	if (isDragOver.value) return mergedLabel.value.idle
+	if (fileStatus.value === 'error') return mergedLabel.value.error
+	if (isLoading.value) return mergedLabel.value.loading
+	if (selectedFile.value) return mergedLabel.value.success
+	return mergedLabel.value.idle
 })
 
 const getDescriptionText = computed(() => {
-	if (isDragOver.value) return props.description.idle
-	if (fileStatus.value === 'error') return props.description.error
-	if (selectedFile.value) return props.description.success
-	if (isLoading.value) return props.description.loading
-	return props.description.idle
+	if (isDragOver.value) return mergedDescription.value.idle
+	if (fileStatus.value === 'error') return mergedDescription.value.error
+	if (selectedFile.value) return mergedDescription.value.success
+	if (isLoading.value) return mergedDescription.value.loading
+	return mergedDescription.value.idle
 })
 
 // Methods ----------
@@ -205,7 +219,7 @@ const selectFile = async (file: File) => {
 
 		// ファイル読み込み状態を開始
 		isLoading.value = true
-		loadingMessage.value = props.label.loading
+		loadingMessage.value = mergedLabel.value.loading ?? ''
 		fileStatus.value = 'loading'
 		isInvalid.value = false
 		errorMessage.value = ''
@@ -214,7 +228,7 @@ const selectFile = async (file: File) => {
 		await validateFile(file)
 
 		// ファイルが正常に読み込めることを確認
-		loadingMessage.value = props.label.loading
+		loadingMessage.value = mergedLabel.value.loading ?? ''
 
 		// 少し待機してユーザーに処理中であることを示す
 		await new Promise(resolve => setTimeout(resolve, 500))
