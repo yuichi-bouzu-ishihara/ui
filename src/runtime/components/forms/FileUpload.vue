@@ -178,9 +178,10 @@ const getDescriptionText = computed(() => {
 // Methods ----------
 const onUpload = async () => {
 	const acceptTypes = props.accept ? props.accept.split(',').map(type => type.trim()).filter(type => type) : []
-	const { file } = await useFile().select(acceptTypes) as { file: File }
-	if (file) {
-		await selectFile(file)
+	const res = await useFile().select(acceptTypes) as { file: File }
+	// ファイルが選択されなかった場合（キャンセル）は何もしない
+	if (res && res.file) {
+		await selectFile(res.file)
 	}
 }
 
