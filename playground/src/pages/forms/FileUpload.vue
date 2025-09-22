@@ -84,20 +84,6 @@ const formatDuration = (seconds: number): string => {
 	return `${minutes}:${secs.toString().padStart(2, '0')}`
 }
 
-const getMetadataTitle = () => {
-	if (!metadata.value) return 'メタデータ'
-
-	if (metadata.value.duration !== undefined) {
-		return '動画メタデータ'
-	}
-	else if (metadata.value.width !== undefined && metadata.value.height !== undefined) {
-		return '画像メタデータ'
-	}
-	else {
-		return 'ファイルメタデータ'
-	}
-}
-
 // メタデータイベントハンドラー
 const handleMetadataLoaded = (metadataData: {
 	width?: number
