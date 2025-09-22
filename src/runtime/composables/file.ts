@@ -251,6 +251,7 @@ const getExtensionByBase64 = (base64Data: string): string => {
  */
 const getFileTypeByExtension = (extension: string): string => {
 	const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'JPG', 'JPEG', 'PNG', 'GIF', 'BMP', 'SVG']
+	const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'webm', 'mkv', 'm4v', '3gp', 'MP4', 'AVI', 'MOV', 'WMV', 'FLV', 'WEBM', 'MKV', 'M4V', '3GP']
 	const documentExtensions = [
 		'pdf',
 		'doc',
@@ -272,6 +273,9 @@ const getFileTypeByExtension = (extension: string): string => {
 
 	if (imageExtensions.includes(extension)) {
 		return 'image'
+	}
+	else if (videoExtensions.includes(extension)) {
+		return 'video'
 	}
 	else if (documentExtensions.includes(extension)) {
 		return 'document'

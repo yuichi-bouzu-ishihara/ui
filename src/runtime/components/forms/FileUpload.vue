@@ -2,31 +2,34 @@
 	<div class="fileUpload" :class="{ _invalid: isInvalid, _loading: isLoading }">
 		<Clickable ref="dropAreaRef" class="fileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
 			<Ratio>
-				<Column justify="center" gap="12">
-					<Icon v-if="fileStatus === 'idle' && icon" :name="icon.name" :size="icon.size || ICON_SIZE" />
-					<Spinner v-else-if="fileStatus === 'loading'" :size="icon?.size || ICON_SIZE" />
-					<Icon v-else-if="fileStatus === 'success'" name="checkCircleLine" :size="icon?.size || ICON_SIZE"
+				<Column justify="center">
+					<Icon v-if="fileStatus === 'idle' && icon" :name="icon.idle.name" :size="icon.idle.size || ICON_SIZE" />
+					<template v-else-if="fileStatus === 'loading'">
+						<Spinner v-if="icon.loading.name === 'spinner'" :size="icon.loading.size || ICON_SIZE" />
+						<Icon v-else :name="icon.loading.name" :size="icon.loading.size || ICON_SIZE" />
+					</template>
+					<Icon v-else-if="fileStatus === 'success'" name="checkCircleLine" :size="icon.success.size || ICON_SIZE"
 						color="success" />
-					<Icon v-else-if="fileStatus === 'error'" name="exclamation" :size="icon?.size || ICON_SIZE" color="danger" />
-					<Typography caption1 extrabold cap-height-baseline :color="isInvalid ? 'danger' : 'text'">
-						{{ getStatusText() }}
-					</Typography>
-					<Typography caption1 cap-height-baseline :color="isInvalid ? 'danger' : 'text-060'">
-						{{ getDescriptionText() }}
-					</Typography>
-					<!-- ファイル読み込み中のプログレス表示 -->
-					<!-- <div v-if="isLoading" class="fileUpload-progress">
-						<Spinner size="small" />
-						<Typography caption2 :color="'text-060'">
-							{{ loadingMessage }}
-						</Typography>
-					</div> -->
-					<!-- 選択されたファイル情報 -->
-					<!-- <div v-if="selectedFile && !isLoading" class="fileUpload-fileInfo">
-						<Typography caption2 :color="'text-060'">
-							{{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
-						</Typography>
-					</div> -->
+					<Icon v-else-if="fileStatus === 'error'" name="exclamation" :size="icon.error.size || ICON_SIZE"
+						color="danger" />
+					<TransitionAcordion>
+						<div v-if="getStatusText">
+							<Box h="12" />
+							<Typography caption1 extrabold center cap-height-baseline :color="isInvalid ? 'danger' : 'text'">
+								<!-- eslint-disable-next-line vue/no-v-html -->
+								<span v-html="getStatusText" />
+							</Typography>
+						</div>
+					</TransitionAcordion>
+					<TransitionAcordion>
+						<div v-if="getDescriptionText">
+							<Box h="12" />
+							<Typography caption1 center cap-height-baseline :color="isInvalid ? 'danger' : 'text-060'">
+								<!-- eslint-disable-next-line vue/no-v-html -->
+								<span v-html="getDescriptionText" />
+							</Typography>
+						</div>
+					</TransitionAcordion>
 				</Column>
 			</Ratio>
 		</Clickable>
@@ -34,15 +37,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, type PropType } from 'vue'
+import { ref, onMounted, onUnmounted, type PropType, computed } from 'vue'
 import { useFile, useFileDrop } from '#imports'
 
 // Types ----------
 type Icon = {
 	name: string
-	size: number
+	size?: number
 }
 type FileStatus = 'idle' | 'loading' | 'success' | 'error'
+type StatusIcon = {
+	idle: Icon
+	loading: Icon
+	success: Icon
+	error: Icon
+}
+type StatusText = {
+	idle: string
+	loading: string
+	success: string
+	error: string
+}
 
 // Constants ----------
 const ICON_SIZE = 20
@@ -53,12 +68,26 @@ const { watch, destroy } = useFileDrop()
 // Models ----------
 const model = defineModel<File | null>({ default: () => null })
 
+// Emits ----------
+const emit = defineEmits<{
+	'metadata-loaded': [metadata: {
+		width?: number // 画像・動画の場合のみ
+		height?: number // 画像・動画の場合のみ
+		aspectRatio?: number // 画像・動画の場合のみ
+		fileSize: number
+		mimeType: string
+		duration?: number // 動画の場合のみ
+	}]
+	'metadata-error': [error: string]
+	'metadata-loading': [loading: boolean]
+}>()
+
 // Props ----------
 const props = defineProps({
 	accept: { type: String, default: '' },
-	icon: { type: Object as PropType<Icon | null>, default: () => null },
-	label: { type: String, default: 'Drop your file here' },
-	description: { type: String, default: 'under 5MB' },
+	icon: { type: Object as PropType<StatusIcon>, default: () => ({ idle: { name: 'upload' }, loading: { name: 'spinner' }, success: { name: 'checkCircleLine' }, error: { name: 'exclamation' } }) },
+	label: { type: Object as PropType<StatusText>, default: () => ({ idle: 'Drop your file here', loading: 'Processing file...', success: 'File selected', error: 'File upload failed' }) },
+	description: { type: Object as PropType<StatusText>, default: () => ({ idle: 'under 5MB', loading: 'Validating file...', success: 'Click to select another file', error: 'Invalid file type' }) },
 	maxSize: { type: Number, default: 5 * 1024 * 1024 }, // デフォルト5MB
 })
 
@@ -71,22 +100,33 @@ const fileStatus = ref<FileStatus>('idle')
 const selectedFile = ref<File | null>(null)
 const errorMessage = ref('')
 const loadingMessage = ref('')
+const metadata = ref<{
+	width?: number
+	height?: number
+	duration?: number
+	aspectRatio?: number
+	fileSize: number
+	mimeType: string
+} | null>(null)
+const metadataError = ref<string | null>(null)
+const isMetadataLoading = ref(false)
 
 // Computed ----------
-const getStatusText = () => {
-	if (isDragOver.value) return 'Drop files here'
-	if (isLoading.value) return 'Processing file...'
-	if (fileStatus.value === 'error') return 'File upload failed'
-	if (selectedFile.value) return 'File selected'
-	return props.label
-}
+const getStatusText = computed(() => {
+	if (isDragOver.value) return props.label.idle
+	if (fileStatus.value === 'error') return props.label.error
+	if (isLoading.value) return props.label.loading
+	if (selectedFile.value) return props.label.success
+	return props.label.idle
+})
 
-const getDescriptionText = () => {
-	if (fileStatus.value === 'error') return errorMessage.value
-	if (isLoading.value) return loadingMessage.value
-	if (selectedFile.value) return 'Click to select another file'
-	return props.description
-}
+const getDescriptionText = computed(() => {
+	if (isDragOver.value) return props.description.idle
+	if (fileStatus.value === 'error') return props.description.error
+	if (selectedFile.value) return props.description.success
+	if (isLoading.value) return props.description.loading
+	return props.description.idle
+})
 
 // Methods ----------
 const onUpload = async () => {
@@ -132,7 +172,7 @@ const selectFile = async (file: File) => {
 
 		// ファイル読み込み状態を開始
 		isLoading.value = true
-		loadingMessage.value = 'Validating file...'
+		loadingMessage.value = props.label.loading
 		fileStatus.value = 'loading'
 		isInvalid.value = false
 		errorMessage.value = ''
@@ -141,17 +181,17 @@ const selectFile = async (file: File) => {
 		await validateFile(file)
 
 		// ファイルが正常に読み込めることを確認
-		loadingMessage.value = 'Finalizing...'
+		loadingMessage.value = props.label.loading
 
 		// 少し待機してユーザーに処理中であることを示す
 		await new Promise(resolve => setTimeout(resolve, 500))
 
-		// 成功状態に設定
+		// ファイル選択完了（メタデータ読み込み前）
 		selectedFile.value = file
-		model.value = file
-		fileStatus.value = 'success'
-		isLoading.value = false
 		isInvalid.value = false
+
+		// メタデータを取得
+		await loadMetadata(file)
 	}
 	catch (error) {
 		setError(error instanceof Error ? error.message : 'Failed to process file')
@@ -195,6 +235,65 @@ const setError = (message: string) => {
 	isLoading.value = false
 	selectedFile.value = null
 	model.value = null
+	// メタデータもクリア
+	metadata.value = null
+	metadataError.value = null
+	isMetadataLoading.value = false
+	emit('metadata-loading', false)
+}
+
+const loadMetadata = async (file: File) => {
+	isMetadataLoading.value = true
+	isLoading.value = true
+	fileStatus.value = 'loading'
+	metadataError.value = null
+	metadata.value = null
+	emit('metadata-loading', true)
+
+	try {
+		const { getImageMetadata, getVideoMetadata } = useFile()
+
+		// ファイルタイプに応じてメタデータを取得
+		if (file.type.startsWith('image/')) {
+			const meta = await getImageMetadata(file)
+			metadata.value = meta
+			emit('metadata-loaded', meta)
+		}
+		else if (file.type.startsWith('video/')) {
+			const meta = await getVideoMetadata(file)
+			metadata.value = meta
+			emit('metadata-loaded', meta)
+		}
+		else {
+			// その他のファイルタイプ（テキスト、ドキュメントなど）の基本メタデータ
+			const basicMetadata = {
+				fileSize: file.size,
+				mimeType: file.type,
+			}
+			metadata.value = basicMetadata
+			emit('metadata-loaded', basicMetadata)
+		}
+
+		// メタデータ読み込み成功時（またはメタデータ不要なファイル）のみmodelに反映
+		model.value = file
+		fileStatus.value = 'success'
+	}
+	catch (err) {
+		const errorMsg = err instanceof Error ? err.message : 'Failed to load metadata'
+		metadataError.value = errorMsg
+		emit('metadata-error', errorMsg)
+
+		// メタデータ読み込みエラー時はmodelをクリア
+		model.value = null
+		fileStatus.value = 'error'
+		isInvalid.value = true
+		errorMessage.value = errorMsg
+	}
+	finally {
+		isMetadataLoading.value = false
+		isLoading.value = false
+		emit('metadata-loading', false)
+	}
 }
 
 const formatFileSize = (bytes: number): string => {
