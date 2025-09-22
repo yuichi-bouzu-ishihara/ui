@@ -84,10 +84,43 @@ const emit = defineEmits<{
 
 // Props ----------
 const props = defineProps({
+	/**
+	 * 許可するファイルタイプを指定。カンマ区切りで複数指定可能
+	 * @example 'image/*' (すべての画像)
+	 * @example 'image/jpeg,image/png' (JPEGとPNGのみ)
+	 * @example '.pdf,.doc,.docx' (拡張子指定)
+	 * @example 'image,video' (事前定義カテゴリ: image/*, video/*)
+	 * @example 'image/jpeg,video/mp4,.pdf' (MIMEタイプと拡張子の混在)
+	 * @example 'image', 'video', 'audio', 'document', 'text' (事前定義カテゴリ)
+	 */
 	accept: { type: String, default: '' },
-	icon: { type: Object as PropType<StatusIcon>, default: () => ({ idle: { name: 'upload' }, loading: { name: 'spinner' }, success: { name: 'checkCircleLine' }, error: { name: 'exclamation' } }) },
-	label: { type: Object as PropType<StatusText>, default: () => ({ idle: 'Drop your file here', loading: 'Processing file...', success: 'File selected', error: 'File upload failed' }) },
-	description: { type: Object as PropType<StatusText>, default: () => ({ idle: 'under 5MB', loading: 'Validating file...', success: 'Click to select another file', error: 'Invalid file type' }) },
+	icon: {
+		type: Object as PropType<StatusIcon>,
+		default: () => ({
+			idle: { name: 'upload' },
+			loading: { name: 'spinner' },
+			success: { name: 'checkCircleLine' },
+			error: { name: 'exclamation' },
+		}),
+	},
+	label: {
+		type: Object as PropType<StatusText>,
+		default: () => ({
+			idle: 'ファイルを選択してください',
+			loading: 'ファイルを読み込み中です...',
+			success: 'ファイルの読み込みが完了しました',
+			error: 'ファイルの読み込み中にエラーが発生しました',
+		}),
+	},
+	description: {
+		type: Object as PropType<StatusText>,
+		default: () => ({
+			idle: '5MB以内のファイルを選択してください',
+			loading: 'ファイルを検証中です...',
+			success: '別のファイルを選択するにはクリックしてください',
+			error: 'ファイルの形式を確認してください',
+		}),
+	},
 	maxSize: { type: Number, default: 5 * 1024 * 1024 }, // デフォルト5MB
 })
 
@@ -154,7 +187,7 @@ const handleFileDrop = async (state: string, files: File[] | null) => {
 			break
 		case 'error':
 			isDragOver.value = false
-			setError('Invalid file type')
+			setError('無効なファイル形式です')
 			break
 		case 'destroy':
 			isDragOver.value = false
@@ -166,7 +199,7 @@ const selectFile = async (file: File) => {
 	try {
 		// ファイルサイズチェック
 		if (file.size > props.maxSize) {
-			setError(`File size exceeds ${formatFileSize(props.maxSize)} limit`)
+			setError(`ファイルサイズが${formatFileSize(props.maxSize)}の制限を超えています`)
 			return
 		}
 
@@ -194,7 +227,7 @@ const selectFile = async (file: File) => {
 		await loadMetadata(file)
 	}
 	catch (error) {
-		setError(error instanceof Error ? error.message : 'Failed to process file')
+		setError(error instanceof Error ? error.message : 'ファイルの処理に失敗しました')
 	}
 }
 
@@ -202,7 +235,7 @@ const validateFile = async (file: File): Promise<void> => {
 	return new Promise((resolve, reject) => {
 		// ファイルが存在するかチェック
 		if (!file || file.size === 0) {
-			reject(new Error('File is empty or corrupted'))
+			reject(new Error('ファイルが空か破損しています'))
 			return
 		}
 
@@ -214,11 +247,11 @@ const validateFile = async (file: File): Promise<void> => {
 		}
 
 		reader.onerror = () => {
-			reject(new Error('Failed to read file'))
+			reject(new Error('ファイルの読み込みに失敗しました'))
 		}
 
 		reader.onabort = () => {
-			reject(new Error('File reading was aborted'))
+			reject(new Error('ファイルの読み込みが中断されました'))
 		}
 
 		// ファイルの一部を読み込んでテスト（大きなファイルの場合の対策）
@@ -279,7 +312,7 @@ const loadMetadata = async (file: File) => {
 		fileStatus.value = 'success'
 	}
 	catch (err) {
-		const errorMsg = err instanceof Error ? err.message : 'Failed to load metadata'
+		const errorMsg = err instanceof Error ? err.message : 'メタデータの読み込みに失敗しました'
 		metadataError.value = errorMsg
 		emit('metadata-error', errorMsg)
 
