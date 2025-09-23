@@ -2,7 +2,7 @@
 	<div class="fileUpload" :class="{ _invalid: isInvalid, _loading: isLoading }">
 		<Clickable ref="dropAreaRef" class="fileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
 			<Ratio>
-				<Column justify="center">
+				<Column justify="center" gap="12">
 					<Icon v-if="fileStatus === 'idle' && mergedIcon.idle" :name="mergedIcon.idle.name"
 						:size="mergedIcon.idle.size || ICON_SIZE" />
 					<template v-else-if="fileStatus === 'loading' && mergedIcon.loading">
@@ -13,24 +13,16 @@
 						:size="mergedIcon.success.size || ICON_SIZE" color="success" />
 					<Icon v-else-if="fileStatus === 'error' && mergedIcon.error" name="exclamation"
 						:size="mergedIcon.error.size || ICON_SIZE" color="danger" />
-					<TransitionAcordion>
-						<div v-if="getStatusText">
-							<Box h="12" />
-							<Typography caption1 extrabold center cap-height-baseline :color="isInvalid ? 'danger' : 'text'">
-								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-html="getStatusText" />
-							</Typography>
-						</div>
-					</TransitionAcordion>
-					<TransitionAcordion>
-						<div v-if="getDescriptionText">
-							<Box h="12" />
-							<Typography caption1 center cap-height-baseline :color="isInvalid ? 'danger' : 'text-060'">
-								<!-- eslint-disable-next-line vue/no-v-html -->
-								<span v-html="getDescriptionText" />
-							</Typography>
-						</div>
-					</TransitionAcordion>
+					<Typography v-if="getStatusText" caption1 extrabold center cap-height-baseline
+						:color="isInvalid ? 'danger' : 'text'">
+						<!-- eslint-disable-next-line vue/no-v-html -->
+						<span v-html="getStatusText" />
+					</Typography>
+					<Typography v-if="getDescriptionText" caption1 center cap-height-baseline
+						:color="isInvalid ? 'danger' : 'text-060'">
+						<!-- eslint-disable-next-line vue/no-v-html -->
+						<span v-html="getDescriptionText" />
+					</Typography>
 				</Column>
 			</Ratio>
 		</Clickable>
@@ -498,8 +490,8 @@ $cn: '.fileUpload';
 
 	&._loading {
 		#{$cn}-ui {
-			border-color: var(--color-primary-060);
-			background-color: var(--color-primary-005);
+			border-color: var(--color-text-060);
+			background-color: var(--color-text-005);
 		}
 	}
 }
