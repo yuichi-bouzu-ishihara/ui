@@ -7,9 +7,7 @@
 			</Row>
 		</Box>
 		<Box class="avatarCropper-ui" :class="{ _disabled: !src && !value }" w="100%" :max-w="`calc(${trimSize}px + 24px)`">
-			<Row align="stretch" gap="20" fit-w nowrap>
-				<InputRange v-model="transform.scale" :step="ZOOM_BTN_STEP" min="1" :max="ZOOM_MAX" :disabled="!src" controls />
-			</Row>
+			<InputRange v-model="transform.scale" :step="ZOOM_BTN_STEP" min="1" :max="ZOOM_MAX" :disabled="!src" controls />
 		</Box>
 	</Column>
 </template>
