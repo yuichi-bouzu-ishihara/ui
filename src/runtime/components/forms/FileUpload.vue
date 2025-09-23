@@ -51,6 +51,14 @@ type StatusText = {
 	success?: string
 	error?: string
 }
+export type FileUploadMetadata = {
+	width?: number
+	height?: number
+	aspectRatio?: number
+	fileSize: number
+	mimeType: string
+	duration?: number
+}
 
 // Constants ----------
 const ICON_SIZE = 20
@@ -63,14 +71,7 @@ const model = defineModel<File | null>({ default: () => null })
 
 // Emits ----------
 const emit = defineEmits<{
-	'metadata-loaded': [metadata: {
-		width?: number // 画像・動画の場合のみ
-		height?: number // 画像・動画の場合のみ
-		aspectRatio?: number // 画像・動画の場合のみ
-		fileSize: number
-		mimeType: string
-		duration?: number // 動画の場合のみ
-	}]
+	'metadata-loaded': [metadata: FileUploadMetadata]
 	'metadata-error': [error: string]
 	'metadata-loading': [loading: boolean]
 }>()
@@ -102,14 +103,7 @@ const fileStatus = ref<FileStatus>('idle')
 const selectedFile = ref<File | null>(null)
 const errorMessage = ref('')
 const loadingMessage = ref('')
-const metadata = ref<{
-	width?: number
-	height?: number
-	duration?: number
-	aspectRatio?: number
-	fileSize: number
-	mimeType: string
-} | null>(null)
+const metadata = ref<FileUploadMetadata | null>(null)
 const metadataError = ref<string | null>(null)
 const isMetadataLoading = ref(false)
 
@@ -387,7 +381,7 @@ const loadMetadata = async (file: File) => {
 		}
 		else {
 			// その他のファイルタイプ（テキスト、ドキュメントなど）の基本メタデータ
-			const basicMetadata = {
+			const basicMetadata: FileUploadMetadata = {
 				fileSize: file.size,
 				mimeType: file.type,
 			}
