@@ -247,7 +247,7 @@ $cn: '.cropper'; // コンポーネントクラス名
 			inset: calc(-1px * 2);
 			margin: auto;
 			display: block;
-			background: var(--avatar-mask-src) center / cover no-repeat;
+			// background: var(--avatar-mask-src) center / cover no-repeat;
 			pointer-events: none;
 		}
 
