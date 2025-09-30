@@ -19,14 +19,8 @@
 			</template>
 		</Box>
 		<template v-if="value">
-			<Box w="100%" :max-w="trimWidth" pr="40" relative>
-				<InputRange v-model="transform.scale" :step="ZOOM_BTN_STEP" min="1" :max="ZOOM_MAX"
-					:disabled="changeRequired && !isImageChange" controls />
-				<Box absolute top="0" right="0">
-					<IconButton v-if="isImageChange" :icon="{ name: 'image', size: 18 }" link small
-						:disabled="changeRequired && !isImageChange" @click="select" />
-				</Box>
-			</Box>
+			<InputRange v-model="transform.scale" :step="ZOOM_BTN_STEP" min="1" :max="ZOOM_MAX"
+				:disabled="changeRequired && !isImageChange" controls />
 		</template>
 	</Column>
 </template>
