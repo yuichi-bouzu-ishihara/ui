@@ -1,16 +1,27 @@
 <template>
-  <Box class="pageElementsVimeoPlayer" w="100vw" h="100vh">
-    <Column gap="20">
+  <Box class="pageElementsVimeoPlayer">
+    <Container v-if="!videoId" gap="20">
+      <Input v-model="videoId" name="videoId" label="Vimeo Video ID" placeholder="e.g. 1123117748" focus />
+      <FieldFooter focus description="Please enter the Vimeo Video ID." />
+    </Container>
+    <Column v-else gap="20">
       <Container wide>
-        <Box color="text-030">
-          <VimeoPlayer v-bind="{ videoId: 1099561804, background: false }" ref="vimeoPlayer"
-            v-model:current-time="currentTime" v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute"
-            style="width: 100%; height: 100%;"
-            thumbnail-src="https://dev-default-api.honoo.tokyo/api/original/thumbnail/531" @ready="onReady"
-            @play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @loaded="onLoaded"
-            @bufferend="onBufferEnd" @bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange"
-            @progress="onProgress" @seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
+        <Box v-if="!isReady" w="100%" h="100%" relative>
+          <Ratio golden>
+            <SkeletonShape animation w="100%" h="100%" />
+          </Ratio>
+          <Box absolute top="0" left="0" bottom="0" right="0">
+            <Center>
+              <Spinner />
+            </Center>
+          </Box>
         </Box>
+        <VimeoPlayer v-bind="{ videoId, background: false }" ref="vimeoPlayer" v-model:current-time="currentTime"
+          v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute" :style="`opacity: ${isReady ? 1 : 0}`"
+          style="width: 100%; height: 100%;" @ready="onReady" @play="onPlay" @pause="onPause" @ended="onEnded"
+          @error="onError" @loaded="onLoaded" @bufferend="onBufferEnd" @bufferstart="onBufferStart"
+          @playbackratechange="onPlaybackRateChange" @progress="onProgress" @seeked="onSeeked"
+          @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
       </Container>
       <Container>
         <Column gap="20" justify="stretch" fit-w>
@@ -53,12 +64,14 @@ import { ref } from 'vue'
 import type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from '../../../src/runtime/components/elements/VimeoPlayer.vue'
 
 const vimeoPlayer = ref<VimeoPlayerInstance>()
+const videoId = ref('')
 const currentTime = ref(0)
 const seekTime = ref(0)
 const isSeeking = ref(false)
 const duration = ref(0)
 const volume = ref(0.25)
 const mute = ref(false)
+const isReady = ref(false)
 
 const play = () => {
   vimeoPlayer.value?.play()
@@ -69,6 +82,7 @@ const pause = () => {
 const onReady = (evt: ReadyEvent) => {
   // console.log('ready', evt)
   duration.value = evt.duration
+  isReady.value = true
 }
 const onPlay = () => {
   // console.log('play')
