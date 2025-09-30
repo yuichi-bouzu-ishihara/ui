@@ -396,9 +396,15 @@ watch(
 onMounted(async () => {
 	if (!props.thumbnailSrc) {
 		// サムネイル取得
-		const res = await useFetchClient().request(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${props.videoId}&width=1920&t=${Date.now()}`, { method: 'GET' })
-		if ('thumbnail_url' in res) {
-			thumbnailUrl.value = res.thumbnail_url
+		try {
+			const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${props.videoId}&width=1920&t=${Date.now()}`, { method: 'GET' })
+			const resJson = await res.json()
+			if ('thumbnail_url' in resJson) {
+				thumbnailUrl.value = resJson.thumbnail_url
+			}
+		}
+		catch (error: unknown) {
+			console.error('Vimeo thumbnail error:', error)
 		}
 	}
 
