@@ -13,7 +13,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import Player from '@vimeo/player'
-import { useFetchClient } from '../../composables/fetch-client'
 
 // Model --------------------------------------------------
 const volume = defineModel<number>('volume', { default: 0.25 })
