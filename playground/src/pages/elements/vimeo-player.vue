@@ -18,7 +18,7 @@
         </Box>
         <VimeoPlayer v-bind="{ videoId, background: false }" ref="vimeoPlayer" v-model:current-time="currentTime"
           v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute" :style="`opacity: ${isReady ? 1 : 0}`"
-          style="width: 100%; height: 100%;" @ready="onReady" @play="onPlay" @pause="onPause" @ended="onEnded"
+          style="width: 100%; height: 100%;" @ready="onReady" @play="onPlay" @pause="onPause" controls @ended="onEnded"
           @error="onError" @loaded="onLoaded" @bufferend="onBufferEnd" @bufferstart="onBufferStart"
           @playbackratechange="onPlaybackRateChange" @progress="onProgress" @seeked="onSeeked"
           @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />

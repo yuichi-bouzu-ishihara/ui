@@ -418,4 +418,7 @@ export const defaultOptions = {
 		backgroundColor: 'color-dark-090',
 		textColor: 'color-light',
 	},
+	video: {
+		defaultVolume: 0.2,
+	},
 }

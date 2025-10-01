@@ -21,6 +21,7 @@ import type { FormsConfig } from './forms'
 import type { DropdownMenuConfig } from './dropdown-menu'
 import type { ToolTipConfig } from './tool-tip'
 import type { HeaderConfig } from './header'
+import type { VideoConfig } from './video'
 
 // VimeoPlayer types
 export type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from './vimeo-player'
@@ -51,4 +52,5 @@ export type UIConfig = {
 	dropdownMenu?: DropdownMenuConfig
 	toolTip?: ToolTipConfig
 	header?: HeaderConfig
+	video?: VideoConfig
 }
