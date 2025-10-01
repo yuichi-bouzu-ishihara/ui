@@ -38,6 +38,7 @@ export const useFile = () => {
 		isFileTypeAllowed, // ファイルタイプ検証の共通関数
 		parseAccepts, // accepts文字列を解析する共通関数
 		convertAcceptsToMimeTypes, // accepts配列をMIMEタイプ文字列に変換する共通関数
+		formatFileSize, // ファイルサイズをフォーマットする共通関数
 	}
 }
 
@@ -494,4 +495,17 @@ const isFileTypeAllowed = (file: File, accepts: string[]): boolean => {
 	}
 
 	return false
+}
+
+/**
+ * ファイルサイズをフォーマットする共通関数
+ * @param bytes - ファイルサイズ
+ * @returns フォーマットされたファイルサイズ
+ */
+const formatFileSize = (bytes: number): string => {
+	if (bytes === 0) return '0Bytes'
+	const k = 1024
+	const sizes = ['Bytes', 'KB', 'MB', 'GB']
+	const i = Math.floor(Math.log(bytes) / Math.log(k))
+	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + sizes[i]
 }

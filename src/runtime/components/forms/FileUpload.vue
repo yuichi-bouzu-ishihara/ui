@@ -64,6 +64,7 @@ export type FileUploadMetadata = {
 const ICON_SIZE = 20
 
 // Composables ----------
+const { formatFileSize } = useFile()
 const { watch, destroy } = useFileDrop()
 
 // Models ----------
@@ -107,41 +108,39 @@ const metadata = ref<FileUploadMetadata | null>(null)
 const metadataError = ref<string | null>(null)
 const isMetadataLoading = ref(false)
 
-// Default values ----------
-const defaultIcon: StatusIcon = {
+// Computed ----------
+const defaultIcon = computed(() => ({
 	idle: { name: 'upload' },
 	loading: { name: 'spinner' },
 	success: { name: 'checkCircleLine' },
 	error: { name: 'exclamation' },
-}
+}))
 
-const defaultLabel: StatusText = {
+const defaultLabel = computed(() => ({
 	idle: 'ファイルを選択してください',
 	loading: 'ファイルを読み込み中です...',
 	success: 'ファイルの読み込みが完了しました',
 	error: '', // エラー時は動的に生成
-}
-
-const defaultDescription: StatusText = {
-	idle: '5MB以内のファイルを選択してください',
+}))
+const defaultDescription = computed(() => ({
+	idle: `${formatFileSize(props.maxSize)}以内の${getAllowedFileTypes()}ファイルを選択してください`,
 	loading: 'ファイルを検証中です...',
 	success: '別のファイルを選択するにはクリックしてください',
 	error: '', // エラー時は動的に生成
-}
+}))
 
-// Computed ----------
 const mergedIcon = computed(() => ({
-	...defaultIcon,
+	...defaultIcon.value,
 	...props.icon,
 }))
 
 const mergedLabel = computed(() => ({
-	...defaultLabel,
+	...defaultLabel.value,
 	...props.label,
 }))
 
 const mergedDescription = computed(() => ({
-	...defaultDescription,
+	...defaultDescription.value,
 	...props.description,
 }))
 
@@ -409,14 +408,6 @@ const loadMetadata = async (file: File) => {
 		isLoading.value = false
 		emit('metadata-loading', false)
 	}
-}
-
-const formatFileSize = (bytes: number): string => {
-	if (bytes === 0) return '0Bytes'
-	const k = 1024
-	const sizes = ['Bytes', 'KB', 'MB', 'GB']
-	const i = Math.floor(Math.log(bytes) / Math.log(k))
-	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + sizes[i]
 }
 
 // Lifecycle ----------

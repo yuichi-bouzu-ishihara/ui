@@ -49,7 +49,7 @@ const isImage = computed(() => selectedFile.value?.type.startsWith('image/'))
 const isVideo = computed(() => selectedFile.value?.type.startsWith('video/'))
 const src = computed(() => selectedFile.value ? URL.createObjectURL(selectedFile.value) : '')
 const getFileInfoTooltipText = () => {
-	let text = `File Name: ${selectedFile.value?.name}<br>File Size: ${formatFileSize(selectedFile.value?.size || 0)}<br>File Type: ${selectedFile.value?.type}`
+	let text = `File Name: ${selectedFile.value?.name}<br>File Size: ${useFile().formatFileSize(selectedFile.value?.size || 0)}<br>File Type: ${selectedFile.value?.type}`
 
 	if (metadata.value) {
 		if (metadata.value.width !== undefined && metadata.value.height !== undefined) {
@@ -64,14 +64,6 @@ const getFileInfoTooltipText = () => {
 	}
 
 	return text
-}
-
-const formatFileSize = (bytes: number): string => {
-	if (bytes === 0) return '0 Bytes'
-	const k = 1024
-	const sizes = ['Bytes', 'KB', 'MB', 'GB']
-	const i = Math.floor(Math.log(bytes) / Math.log(k))
-	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
 const formatDuration = (seconds: number): string => {
