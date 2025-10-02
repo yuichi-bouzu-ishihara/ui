@@ -1,6 +1,6 @@
 <template>
 	<div class="pageNavigationTabs">
-		<Container>
+		<Container full>
 			<Column gap="40">
 				<Tabs :list="list" />
 				<Tabs :list="iconList" />
