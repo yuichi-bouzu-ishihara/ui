@@ -2,7 +2,7 @@
 	<div class="pageIndex">
 		<Container wide>
 			<Column justify="stretch" align="stretch" v-bind="{ gap }">
-				<Row justify="stretch" align="stretch" split="2" v-bind="{ gap }">
+				<Row justify="stretch" align="stretch" split="3" v-bind="{ gap }">
 					<DevSection title="Color" :to="'/color'">
 						<Row :split="colors.length" gap="4" fit-w>
 							<Ratio v-for="color in colors" :key="color" square>
@@ -30,6 +30,9 @@
 									:style="{ right: '-40px' }" />
 							</template>
 						</Slider>
+					</DevSection>
+					<DevSection title="Pagenation" :to="'/navigation/pagenation'">
+						<Pagenation :current="2" :total="4" />
 					</DevSection>
 				</Row>
 				<Row justify="stretch" align="stretch" split="1" v-bind="{ gap }">
