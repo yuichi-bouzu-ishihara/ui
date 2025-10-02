@@ -99,9 +99,9 @@ const image = computed(() => {
 	mask-position: center;
 	mask-repeat: no-repeat;
 	mask-size: cover;
-	transition-property: opacity, background-color;
-	transition-duration: 0.25s;
-	transition-timing-function: ease;
+	// transition-property: opacity, background-color;
+	// transition-duration: 0.25s;
+	// transition-timing-function: ease;
 }
 
 @mixin icon-color($color) {
