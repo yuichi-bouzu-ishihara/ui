@@ -6,7 +6,7 @@
 		</Container>
 		<Column v-else gap="20">
 			<Container wide>
-				<Box v-if="!isReady" w="100%" h="100%" relative>
+				<Box v-if="!isMetadataLoaded" w="100%" h="100%" relative>
 					<Ratio golden>
 						<SkeletonShape animation w="100%" h="100%" />
 					</Ratio>
@@ -16,12 +16,12 @@
 						</Center>
 					</Box>
 				</Box>
-				<VimeoPlayer v-bind="{ videoId, background: false }" ref="vimeoPlayer" v-model:current-time="currentTime"
-					v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute" :style="`opacity: ${isReady ? 1 : 0}`"
-					style="width: 100%; height: 100%;" controls @ready="onReady" @play="onPlay" @pause="onPause" @ended="onEnded"
-					@error="onError" @loaded="onLoaded" @bufferend="onBufferEnd" @bufferstart="onBufferStart"
-					@playbackratechange="onPlaybackRateChange" @progress="onProgress" @seeked="onSeeked"
-					@timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
+				<VimeoPlayer v-bind="{ videoId, autoplay }" ref="vimeoPlayer" v-model:current-time="currentTime"
+					v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute"
+					:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" style="width: 100%; height: 100%;" controls @ready="onReady"
+					@play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded"
+					@bufferend="onBufferEnd" @bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange"
+					@progress="onProgress" @seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
 			</Container>
 			<Container>
 				<Column gap="20" justify="stretch" fit-w>
@@ -45,13 +45,16 @@
 							Pause
 						</Button>
 					</Row>
-					<Row align="center" gap="20" fit-w nowrap>
-						<Clickable @click="mute = !mute">
-							<Icon :name="mute ? 'volumeOff' : 'volume'" size="20" />
-						</Clickable>
-						<Box w="100%">
-							<InputRange v-model="volume" min="0" max="1" step="0.1" />
-						</Box>
+					<Row split="3" align="center" gap="20" fit-w nowrap>
+						<Row align="center" gap="20" fit-w nowrap>
+							<Clickable @click="mute = !mute">
+								<Icon :name="mute ? 'volumeOff' : 'volume'" size="20" />
+							</Clickable>
+							<Box w="100%">
+								<InputRange v-model="volume" min="0" max="1" step="0.1" />
+							</Box>
+						</Row>
+						<Switch v-model="autoplay" name="autoplay" label="Autoplay" />
 					</Row>
 				</Column>
 			</Container>
@@ -72,6 +75,8 @@ const duration = ref(0)
 const volume = ref(0.25)
 const mute = ref(false)
 const isReady = ref(false)
+const isMetadataLoaded = ref(false)
+const autoplay = ref(false)
 
 const play = () => {
 	vimeoPlayer.value?.play()
@@ -98,6 +103,7 @@ const onError = () => {
 }
 const onLoaded = () => {
 	// console.log('loaded')
+	isMetadataLoaded.value = true
 }
 const onBufferEnd = () => {
 	// console.log('bufferend')

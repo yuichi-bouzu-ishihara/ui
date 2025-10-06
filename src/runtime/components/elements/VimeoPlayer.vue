@@ -38,6 +38,7 @@ const props = defineProps({
 	thumbnailSrc: { type: String, default: '' },
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
 	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
+	autoplay: { type: Boolean, default: false },
 	width: { type: Number, default: 0 },
 	height: { type: Number, default: 0 },
 	mute: { type: Boolean, default: false },
@@ -48,7 +49,6 @@ const play = async () => {
 	if (vimeoPlayer) {
 		try {
 			await vimeoPlayer.play()
-			onPlay()
 		}
 		catch (error: unknown) {
 			console.error('Vimeo play error:', error)
@@ -60,7 +60,6 @@ const pause = async () => {
 	if (vimeoPlayer) {
 		try {
 			await vimeoPlayer.pause()
-			onPause()
 		}
 		catch (error: unknown) {
 			console.error('Vimeo pause error:', error)
@@ -96,7 +95,7 @@ const emit = defineEmits<{
 	pause: []
 	ended: []
 	error: []
-	loaded: []
+	metadataloaded: []
 	bufferend: []
 	bufferstart: []
 	playbackratechange: []
@@ -177,24 +176,10 @@ const onError = async () => {
 const onLoaded = async () => {
 	// console.log('Loaded')
 	// state.value = 'loaded'
-	emit('loaded')
-
-	// 動画の準備が完了したらreadyイベントをemit
-	if (!isReady.value) {
-		try {
-			const duration = await vimeoPlayer.getDuration()
-			videoDuration.value = duration
-			isReady.value = true
-			emit('ready', {
-				duration: videoDuration.value,
-				width: videoNativeWidth.value,
-				height: videoNativeHeight.value,
-				ratio: videoRatioHeight.value,
-			})
-		}
-		catch (error: unknown) {
-			console.error('Vimeo duration error:', error)
-		}
+	emit('metadataloaded')
+	await setReady()
+	if (props.autoplay) {
+		play()
 	}
 }
 const onPause = async () => {
@@ -255,6 +240,26 @@ const onVolumeChange = async () => {
 const onMute = () => {
 	if (vimeoPlayer) {
 		muted.value = !muted.value
+	}
+}
+
+const setReady = async () => {
+	// 動画の準備が完了したらreadyイベントをemit
+	if (!isReady.value) {
+		try {
+			const duration = await vimeoPlayer.getDuration()
+			videoDuration.value = duration
+			isReady.value = true
+			emit('ready', {
+				duration: videoDuration.value,
+				width: videoNativeWidth.value,
+				height: videoNativeHeight.value,
+				ratio: videoRatioHeight.value,
+			})
+		}
+		catch (error: unknown) {
+			console.error('Vimeo duration error:', error)
+		}
 	}
 }
 
@@ -411,6 +416,15 @@ watch(
 					console.error('Vimeo seek error:', error)
 				}
 			}
+		}
+	},
+)
+
+watch(
+	() => props.autoplay,
+	(nv) => {
+		if (nv) {
+			play()
 		}
 	},
 )
