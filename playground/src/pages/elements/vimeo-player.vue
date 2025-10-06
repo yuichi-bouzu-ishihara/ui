@@ -45,20 +45,23 @@
 							Pause
 						</Button>
 					</Row>
-					<Row split="3" align="center" gap="20" fit-w nowrap>
-						<Row align="center" gap="20" fit-w nowrap>
-							<Clickable @click="mute = !mute">
-								<Icon :name="mute ? 'volumeOff' : 'volume'" size="20" />
-							</Clickable>
-							<Box w="100%">
-								<InputRange v-model="volume" min="0" max="1" step="0.1" />
-							</Box>
-						</Row>
-						<Switch v-model="autoplay" name="autoplay" label="Autoplay" />
+					<Row align="center" gap="20" fit-w nowrap>
+						<Clickable @click="mute = !mute">
+							<Icon :name="mute ? 'volumeOff' : 'volume'" size="20" />
+						</Clickable>
+						<Box w="100%">
+							<InputRange v-model="volume" min="0" max="1" step="0.1" />
+						</Box>
 					</Row>
 				</Column>
 			</Container>
 		</Column>
+		<Container>
+			<Box h="20" />
+			<Row justify="center">
+				<Switch v-model="autoplay" name="autoplay" label="Autoplay" />
+			</Row>
+		</Container>
 	</Box>
 </template>
 
@@ -76,7 +79,7 @@ const volume = ref(0.25)
 const mute = ref(false)
 const isReady = ref(false)
 const isMetadataLoaded = ref(false)
-const autoplay = ref(false)
+const autoplay = ref(true)
 
 const play = () => {
 	vimeoPlayer.value?.play()

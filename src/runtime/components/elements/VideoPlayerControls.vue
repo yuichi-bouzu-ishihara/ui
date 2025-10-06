@@ -2,9 +2,8 @@
 	<div class="videoPlayerControls">
 		<Box absolute top="0" left="0" right="0" bottom="0">
 			<Clickable class="videoPlayerControls-play" @click="isPlaying ? emit('pause') : emit('play')">
-				<Center>
-					<Spinner v-if="isBuffering" size="40" color="light" />
-					<Icon v-else-if="!isPlaying" name="play" size="40" color="light" />
+				<Center v-if="!isBuffering">
+					<Icon v-if="!isPlaying" name="play" size="40" color="light" />
 					<Icon v-else name="pause" size="40" color="light" />
 				</Center>
 			</Clickable>
@@ -61,7 +60,7 @@ $cn: '.videoPlayerControls';
 #{$cn} {
 	position: relative;
 	width: 100%;
-	background-color: var(--color-darkblack-030);
+	background-color: rgba(0, 0, 0, 0.3);
 
 	&-play {
 		width: 100%;
