@@ -23,6 +23,7 @@ import { useForms } from './forms'
 import { useDropdownMenu } from './overlays/dropdown-menu'
 import { useToolTip } from './overlays/tool-tip'
 import { useHeader } from './navigation/header'
+import { useVideo } from './elements/video'
 import { useDev } from './dev'
 import { useAppConfig } from '#imports'
 
@@ -68,5 +69,6 @@ const init = () => {
 	useDropdownMenu().init()
 	useToolTip().init()
 	useHeader().init()
+	useVideo().init()
 	useDev().init()
 }
