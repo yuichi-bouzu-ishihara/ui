@@ -1,9 +1,8 @@
 <template>
 	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs">
-		<Row class="tabs-list" justify="center" align="start" nowrap fit-h>
+		<Row ref="tabsListRef" class="tabs-list" justify="center" align="start" nowrap fit-h>
 			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
-				v-resize="(rect: DOMRectReadOnly) => itemRectList[index] = rect" class="tabs-list-item"
-				:class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
+				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
 				@click="tab.click && tab.click()">
 				<Row justify="center" align="start" gap="8" fit-h>
 					<template v-if="tab.icon">
@@ -25,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, ref } from 'vue'
+import { computed, toRefs, ref, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
@@ -59,6 +58,7 @@ const { list } = toRefs(props)
 // Data ------------------
 const rect = ref<DOMRectReadOnly | null>(null)
 const itemRectList = ref<DOMRectReadOnly[]>([])
+const tabsListRef = ref<{ $el?: HTMLElement } | null>(null)
 
 // Computed ------------------
 const itemWidth = computed(() => {
@@ -83,12 +83,30 @@ const activeIndex = computed(() => {
 			index = list.value.findIndex(item => item.current)
 		}
 	}
-	console.log(itemRectList.value[index])
 	return index
 })
 const typography = computed(() => {
 	return { [`${useTabs().typography}`]: true }
 })
+
+// Watch ------------------
+// itemWidthAutoの場合の初期化と更新処理
+const updateItemRects = async () => {
+	if (rect.value && tabsListRef.value) {
+		await nextTick()
+		const element = tabsListRef.value?.$el || tabsListRef.value
+		if (element && 'querySelectorAll' in element) {
+			const items = (element as HTMLElement).querySelectorAll('.tabs-list-item')
+			const newRects: DOMRectReadOnly[] = []
+			items.forEach((item: Element) => {
+				newRects.push(item.getBoundingClientRect())
+			})
+			itemRectList.value = newRects
+		}
+	}
+}
+
+watch(() => rect.value, updateItemRects, { immediate: true, deep: true })
 </script>
 
 <style lang="scss">
