@@ -1,5 +1,6 @@
 <template>
-	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="vimeoPlayer" :class="classes" :style="styles">
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="vimeoPlayer" :class="classes" :style="styles"
+		@mouseover="isHover = true" @mouseleave="isHover = false">
 		<component :is="background ? 'div' : 'Ratio'"
 			v-if="thumbnailUrl && (isEnded || !isReady || (currentTime === 0 && state === ''))" class="vimeoPlayer-thumbnail"
 			:per="videoRatioHeight * 100">
@@ -7,16 +8,26 @@
 		</component>
 		<div ref="element" class="vimeoPlayer-main"
 			:class="{ _ready: isReady, _play: state === 'play', _pause: state === 'pause', _ended: isEnded }" />
+		<TransitionFade v-if="controls">
+			<VideoPlayerControls v-if="isHover || state !== 'play'" v-model:mute="muted" v-model:volume="volume"
+				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
+				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" @mute="onMute" />
+		</TransitionFade>
 	</Box>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import Player from '@vimeo/player'
+import { useVideo } from '../../composables/elements/video'
+import VideoPlayerControls from './VideoPlayerControls.vue'
+
+// Composables --------------
+const { config } = useVideo()
 
 // Model --------------------------------------------------
-const volume = defineModel<number>('volume', { default: 0.25 })
-const mute = defineModel<boolean>('mute', { default: false })
+const volume = defineModel<number>('volume', { default: 0.2 })
+const muted = defineModel<boolean>('muted', { default: false })
 const currentTime = defineModel<number>('currentTime', { default: 0 })
 const seeking = defineModel<boolean>('seeking', { default: false })
 
@@ -25,9 +36,12 @@ const props = defineProps({
 	videoId: { type: [String, Number], required: true },
 	background: { type: Boolean, default: false },
 	thumbnailSrc: { type: String, default: '' },
-	controller: { type: Boolean, default: false },
+	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
+	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
+	autoplay: { type: Boolean, default: false },
 	width: { type: Number, default: 0 },
 	height: { type: Number, default: 0 },
+	mute: { type: Boolean, default: false },
 })
 
 // Expose methods --------------------------------------------------
@@ -35,7 +49,6 @@ const play = async () => {
 	if (vimeoPlayer) {
 		try {
 			await vimeoPlayer.play()
-			onPlay()
 		}
 		catch (error: unknown) {
 			console.error('Vimeo play error:', error)
@@ -47,7 +60,6 @@ const pause = async () => {
 	if (vimeoPlayer) {
 		try {
 			await vimeoPlayer.pause()
-			onPause()
 		}
 		catch (error: unknown) {
 			console.error('Vimeo pause error:', error)
@@ -83,7 +95,7 @@ const emit = defineEmits<{
 	pause: []
 	ended: []
 	error: []
-	loaded: []
+	metadataloaded: []
 	bufferend: []
 	bufferstart: []
 	playbackratechange: []
@@ -109,6 +121,8 @@ const videoDuration = ref(0) // 動画の長さ
 const isReady = ref(false) // 動画の準備が完了したかどうか
 const isEnded = ref(false) // 動画が終了したかどうか
 const isSeeking = ref(false) // 外部からのシーク操作中かどうか
+const isHover = ref(false) // ホバー状態かどうか
+const isBuffering = ref(false) // バッファリング中かどうか
 const previousState = ref('') // 前回のstate
 
 // Computed -----------------------------------------------
@@ -139,11 +153,13 @@ const styles = computed(() => {
 const onBufferEnd = async () => {
 	// console.log('Buffer end')
 	// state.value = 'bufferend'
+	isBuffering.value = false
 	emit('bufferend')
 }
 const onBufferStart = async () => {
 	// console.log('Buffer start')
 	// state.value = 'bufferstart'
+	isBuffering.value = true
 	emit('bufferstart')
 }
 const onEnded = async () => {
@@ -160,24 +176,10 @@ const onError = async () => {
 const onLoaded = async () => {
 	// console.log('Loaded')
 	// state.value = 'loaded'
-	emit('loaded')
-
-	// 動画の準備が完了したらreadyイベントをemit
-	if (!isReady.value) {
-		try {
-			const duration = await vimeoPlayer.getDuration()
-			videoDuration.value = duration
-			isReady.value = true
-			emit('ready', {
-				duration: videoDuration.value,
-				width: videoNativeWidth.value,
-				height: videoNativeHeight.value,
-				ratio: videoRatioHeight.value,
-			})
-		}
-		catch (error: unknown) {
-			console.error('Vimeo duration error:', error)
-		}
+	emit('metadataloaded')
+	await setReady()
+	if (props.autoplay) {
+		play()
 	}
 }
 const onPause = async () => {
@@ -234,6 +236,33 @@ const onVolumeChange = async () => {
 		emit('volumechange')
 	}
 }
+
+const onMute = () => {
+	if (vimeoPlayer) {
+		muted.value = !muted.value
+	}
+}
+
+const setReady = async () => {
+	// 動画の準備が完了したらreadyイベントをemit
+	if (!isReady.value) {
+		try {
+			const duration = await vimeoPlayer.getDuration()
+			videoDuration.value = duration
+			isReady.value = true
+			emit('ready', {
+				duration: videoDuration.value,
+				width: videoNativeWidth.value,
+				height: videoNativeHeight.value,
+				ratio: videoRatioHeight.value,
+			})
+		}
+		catch (error: unknown) {
+			console.error('Vimeo duration error:', error)
+		}
+	}
+}
+
 // 動画の縦横サイズを取得する
 const getVideoSize = async () => {
 	try {
@@ -321,8 +350,8 @@ watch(
 	async (newVolume) => {
 		if (vimeoPlayer) {
 			try {
-				// mute中の場合、mute状態を再設定して確実に音を止める
-				if (!mute.value) {
+				// muted中の場合、muted状態を再設定して確実に音を止める
+				if (!muted.value) {
 					await vimeoPlayer.setVolume(newVolume)
 				}
 			}
@@ -334,11 +363,11 @@ watch(
 )
 
 watch(
-	() => mute.value,
+	() => muted.value,
 	(newMute) => {
 		if (vimeoPlayer) {
 			vimeoPlayer.setMuted(newMute).catch((error: unknown) => {
-				console.error('Vimeo mute update error:', error)
+				console.error('Vimeo muted update error:', error)
 			})
 			if (!newMute) {
 				vimeoPlayer.setVolume(volume.value)
@@ -387,6 +416,15 @@ watch(
 					console.error('Vimeo seek error:', error)
 				}
 			}
+		}
+	},
+)
+
+watch(
+	() => props.autoplay,
+	(nv) => {
+		if (nv) {
+			play()
 		}
 	},
 )
@@ -441,17 +479,13 @@ onMounted(async () => {
 	vimeoPlayer.on('volumechange', onVolumeChange)
 
 	// 初期音量を設定
-	await vimeoPlayer.setVolume(volume.value)
+	volume.value = config.value?.defaultVolume || 0.2
 
-	// 初期mute状態を設定
-	await vimeoPlayer.setMuted(mute.value)
+	// 初期muted状態を設定
+	muted.value = props.mute || false
 
-	// mute中の場合、mute状態を再設定して確実に音を止める
-	if (mute.value) {
-		await vimeoPlayer.setMuted(true)
-	}
-
-	await vimeoPlayer.setCurrentTime(0)
+	// 初期currentTimeを設定
+	currentTime.value = 0
 })
 onBeforeUnmount(() => {
 	if (vimeoPlayer) {
@@ -557,6 +591,14 @@ $cn: '.vimeoPlayer'; // コンポーネントクラス名
 		&._ended {
 			opacity: 0;
 		}
+	}
+
+	&-controls {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
 	}
 }
 </style>
