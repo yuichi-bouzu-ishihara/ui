@@ -16,12 +16,14 @@
 						</Center>
 					</Box>
 				</Box>
-				<VimeoPlayer v-bind="{ videoId, autoplay }" ref="vimeoPlayer" v-model:current-time="currentTime"
-					v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute"
-					:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" style="width: 100%; height: 100%;" controls @ready="onReady"
-					@play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded"
-					@bufferend="onBufferEnd" @bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange"
-					@progress="onProgress" @seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
+				<Ratio golden>
+					<VimeoPlayer v-bind="{ videoId, autoplay, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
+						v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute"
+						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" controls contain @ready="onReady" @play="onPlay"
+						@pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
+						@bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange" @progress="onProgress"
+						@seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
+				</Ratio>
 			</Container>
 			<Container>
 				<Column gap="20" justify="stretch" fit-w>
@@ -58,8 +60,9 @@
 		</Column>
 		<Container>
 			<Box h="20" />
-			<Row justify="center">
+			<Row justify="center" gap="40">
 				<Switch v-model="autoplay" name="autoplay" label="Autoplay" />
+				<Switch v-model="cover" name="cover" label="Cover" />
 			</Row>
 		</Container>
 	</Box>
@@ -79,7 +82,8 @@ const volume = ref(0.25)
 const mute = ref(false)
 const isReady = ref(false)
 const isMetadataLoaded = ref(false)
-const autoplay = ref(true)
+const autoplay = ref(false)
+const cover = ref(false)
 
 const play = () => {
 	vimeoPlayer.value?.play()

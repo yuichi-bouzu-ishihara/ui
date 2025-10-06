@@ -3,11 +3,10 @@
 		@mouseover="isHover = true" @mouseleave="isHover = false">
 		<div ref="element" class="vimeoPlayer-main"
 			:class="{ _ready: isReady, _play: state === 'play', _pause: state === 'pause', _ended: isEnded }" />
-		<component :is="background ? 'div' : 'Ratio'"
-			v-if="thumbnailUrl && (isEnded || !isReady || (currentTime === 0 && state === ''))" class="vimeoPlayer-thumbnail"
-			:per="videoRatioHeight * 100">
-			<Image class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl" cover />
-		</component>
+		<div v-if="thumbnailUrl && (isEnded || !isReady || (currentTime === 0 && state === ''))"
+			class="vimeoPlayer-thumbnail">
+			<img class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl">
+		</div>
 		<TransitionFade v-if="!background && controls && !controller">
 			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:mute="muted" v-model:volume="volume"
 				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
@@ -44,9 +43,8 @@ const props = defineProps({
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
 	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
 	autoplay: { type: Boolean, default: false },
-	width: { type: Number, default: 0 },
-	height: { type: Number, default: 0 },
 	mute: { type: Boolean, default: false },
+	cover: { type: Boolean, default: false },
 })
 
 // Expose methods --------------------------------------------------
@@ -115,8 +113,8 @@ const emit = defineEmits<{
 const element = ref(null)
 const rect = ref<DOMRectReadOnly | null>(null)
 const state = ref('')
-const videoNativeWidth = ref(props.width)
-const videoNativeHeight = ref(props.height)
+const videoNativeWidth = ref(0)
+const videoNativeHeight = ref(0)
 const videoRatioHeight = ref(0)
 const videoContainWidth = ref(0) // コンポーネントに収まる動画の幅
 const videoContainHeight = ref(0) // コンポーネントに収まる動画の高さ
@@ -135,6 +133,7 @@ const classes = computed(() => {
 	return {
 		[`_${state.value}`]: true,
 		_background: props.background,
+		_cover: props.cover,
 	}
 })
 const styles = computed(() => {
@@ -146,11 +145,11 @@ const styles = computed(() => {
 		'--vimeoPlayer-ratio': `${videoCoverRatio.value}`,
 		'--vimeoPlayer-width': `${videoContainWidth.value * videoCoverRatio.value}px`,
 		'--vimeoPlayer-height': `${videoContainHeight.value * videoCoverRatio.value}px`,
-		...(!props.background
-			? {
-				paddingTop: `${videoRatioHeight.value * 100}%`,
-			}
-			: {}),
+		// ...(props.cover
+		// 	? {
+		// 		paddingTop: `${videoRatioHeight.value * 100}%`,
+		// 	}
+		// 	: {}),
 	}
 })
 
@@ -343,12 +342,6 @@ watch(
 		immediate: true,
 	},
 )
-watch(
-	() => props.controller,
-	() => {
-		updateController()
-	},
-)
 
 watch(
 	() => volume.value,
@@ -518,13 +511,13 @@ $cn: '.vimeoPlayer'; // コンポーネントクラス名
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	width: 100%;
+	height: 100%;
 	overflow: hidden;
 	background-color: black;
 
-	&._background {
-		width: 100%;
-		height: 100%;
-
+	&._background,
+	&._cover {
 		#{$cn}-main {
 			transition: var.$transition-base;
 			transition-duration: 500ms;
@@ -563,14 +556,22 @@ $cn: '.vimeoPlayer'; // コンポーネントクラス名
 		z-index: -1;
 		width: 100%;
 		height: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		&-inner {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
 	}
 
 	&-main {
-		position: absolute;
-		top: 0;
-		left: 0;
+		position: relative;
 		width: 100%;
 		height: 100%;
+		overflow: hidden;
 		opacity: 0;
 
 		iframe {
@@ -594,6 +595,10 @@ $cn: '.vimeoPlayer'; // コンポーネントクラス名
 		left: 0;
 		right: 0;
 		bottom: 0;
+	}
+
+	&._cover &-thumbnail-inner {
+		object-fit: cover;
 	}
 }
 </style>
