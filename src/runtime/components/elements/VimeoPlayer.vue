@@ -1,18 +1,23 @@
 <template>
 	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="vimeoPlayer" :class="classes" :style="styles"
 		@mouseover="isHover = true" @mouseleave="isHover = false">
+		<div ref="element" class="vimeoPlayer-main"
+			:class="{ _ready: isReady, _play: state === 'play', _pause: state === 'pause', _ended: isEnded }" />
 		<component :is="background ? 'div' : 'Ratio'"
 			v-if="thumbnailUrl && (isEnded || !isReady || (currentTime === 0 && state === ''))" class="vimeoPlayer-thumbnail"
 			:per="videoRatioHeight * 100">
 			<Image class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl" cover />
 		</component>
-		<div ref="element" class="vimeoPlayer-main"
-			:class="{ _ready: isReady, _play: state === 'play', _pause: state === 'pause', _ended: isEnded }" />
-		<TransitionFade v-if="controls">
-			<VideoPlayerControls v-if="isHover || state !== 'play'" v-model:mute="muted" v-model:volume="volume"
+		<TransitionFade v-if="!background && controls">
+			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:mute="muted" v-model:volume="volume"
 				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
 				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" @mute="onMute" />
 		</TransitionFade>
+		<Box v-if="isBuffering" absolute top="0" left="0" w="100%" h="100%" z-index="1">
+			<Center>
+				<Spinner size="40" color="light" />
+			</Center>
+		</Box>
 	</Box>
 </template>
 
@@ -295,18 +300,34 @@ const updateVideoSize = () => {
 
 // コントローラーの表示/非表示を切り替える
 const updateController = async () => {
-	// if (props.background) {
-	// 	return
-	// }
+	if (props.background) {
+		return
+	}
 
-	// if (vimeoPlayer) {
-	// 	try {
-	// 		await vimeoPlayer.setControls(props.controller)
-	// 	}
-	// 	catch (error: unknown) {
-	// 		console.error('Vimeo controller update error:', error)
-	// 	}
-	// }
+	if (vimeoPlayer) {
+		try {
+			await vimeoPlayer.setControls(props.controller)
+		}
+		catch (error: unknown) {
+			console.error('Vimeo controller update error:', error)
+		}
+	}
+}
+
+const setThumbnail = async () => {
+	if (!props.thumbnailSrc) {
+		// サムネイル取得
+		try {
+			const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${props.videoId}&width=1920&t=${Date.now()}`, { method: 'GET' })
+			const resJson = await res.json()
+			if ('thumbnail_url' in resJson) {
+				thumbnailUrl.value = resJson.thumbnail_url
+			}
+		}
+		catch (error: unknown) {
+			console.error('Vimeo thumbnail error:', error)
+		}
+	}
 }
 
 // Watchers ------------------------------------------------
@@ -431,20 +452,6 @@ watch(
 
 // Lifecycle Hooks ----------------------------------------
 onMounted(async () => {
-	if (!props.thumbnailSrc) {
-		// サムネイル取得
-		try {
-			const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${props.videoId}&width=1920&t=${Date.now()}`, { method: 'GET' })
-			const resJson = await res.json()
-			if ('thumbnail_url' in resJson) {
-				thumbnailUrl.value = resJson.thumbnail_url
-			}
-		}
-		catch (error: unknown) {
-			console.error('Vimeo thumbnail error:', error)
-		}
-	}
-
 	vimeoPlayer = new Player(element.value, {
 		id: props.videoId,
 		background: props.background,
@@ -461,10 +468,9 @@ onMounted(async () => {
 		// ローディングスピナーを非表示にするための追加オプション
 		playsinline: true,
 	})
-	// console.log(vimeoPlayer)
-	await getVideoSize()
-	await updateVideoSize()
-	await updateController()
+	await Promise.all([getVideoSize(), setThumbnail()])
+	updateVideoSize()
+	updateController()
 	vimeoPlayer.on('bufferend', onBufferEnd)
 	vimeoPlayer.on('bufferstart', onBufferStart)
 	vimeoPlayer.on('ended', onEnded)
@@ -525,6 +531,7 @@ $cn: '.vimeoPlayer'; // コンポーネントクラス名
 	justify-content: center;
 	align-items: center;
 	overflow: hidden;
+	background-color: black;
 
 	&._background {
 		width: 100%;

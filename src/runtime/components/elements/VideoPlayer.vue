@@ -10,10 +10,17 @@
 				@timeupdate="onTimeUpdate" />
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" contain />
 			<TransitionFade v-if="controls">
-				<VideoPlayerControls v-if="isHover || !isPlaying" v-model:mute="isMuted" v-model:volume="volume"
-					v-model:current-time="currentTime" v-bind="{ duration, isPlaying, isBuffering }" class="videoPlayer-controls"
-					@play="play" @pause="pause" @mute="onMute" />
+				<Box v-if="isHover" absolute top="0" left="0" w="100%" h="100%" z-index="0">
+					<VideoPlayerControls v-model:mute="isMuted" v-model:volume="volume" v-model:current-time="currentTime"
+						v-bind="{ duration, isPlaying, isBuffering }" class="videoPlayer-controls" @play="play" @pause="pause"
+						@mute="onMute" />
+				</Box>
 			</TransitionFade>
+			<Box v-if="isBuffering" absolute top="0" left="0" w="100%" h="100%" z-index="1">
+				<Center>
+					<Spinner size="40" color="light" />
+				</Center>
+			</Box>
 		</Ratio>
 	</Box>
 </template>
@@ -98,6 +105,10 @@ const onMute = () => {
 $cn: '.videoPlayer';
 
 #{$cn} {
+	&-bg {
+		background-color: black;
+	}
+
 	&-video {
 		position: relative;
 		width: 100%;
@@ -121,11 +132,8 @@ $cn: '.videoPlayer';
 	}
 
 	&-controls {
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
+		width: 100%;
+		height: 100%;
 	}
 }
 </style>
