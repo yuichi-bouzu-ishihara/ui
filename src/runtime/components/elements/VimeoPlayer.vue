@@ -8,7 +8,7 @@
 			:per="videoRatioHeight * 100">
 			<Image class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl" cover />
 		</component>
-		<TransitionFade v-if="!background && controls">
+		<TransitionFade v-if="!background && controls && !controller">
 			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:mute="muted" v-model:volume="volume"
 				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
 				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" @mute="onMute" />
@@ -298,22 +298,6 @@ const updateVideoSize = () => {
 	videoCoverRatio.value = Math.max(r.width / videoContainWidth.value, r.height / videoContainHeight.value)
 }
 
-// コントローラーの表示/非表示を切り替える
-const updateController = async () => {
-	if (props.background) {
-		return
-	}
-
-	if (vimeoPlayer) {
-		try {
-			await vimeoPlayer.setControls(props.controller)
-		}
-		catch (error: unknown) {
-			console.error('Vimeo controller update error:', error)
-		}
-	}
-}
-
 const setThumbnail = async () => {
 	if (!props.thumbnailSrc) {
 		// サムネイル取得
@@ -470,7 +454,6 @@ onMounted(async () => {
 	})
 	await Promise.all([getVideoSize(), setThumbnail()])
 	updateVideoSize()
-	updateController()
 	vimeoPlayer.on('bufferend', onBufferEnd)
 	vimeoPlayer.on('bufferstart', onBufferStart)
 	vimeoPlayer.on('ended', onEnded)
