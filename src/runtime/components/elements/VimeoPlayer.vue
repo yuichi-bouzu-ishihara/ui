@@ -436,6 +436,9 @@ watch(
 
 // Lifecycle Hooks ----------------------------------------
 onMounted(async () => {
+	/**
+	 * @see https://help.vimeo.com/hc/ja/articles/12426260232977-%E3%83%97%E3%83%AC%E3%82%A4%E3%83%A4%E3%83%BC%E3%81%AE%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
+	 */
 	vimeoPlayer = new Player(element.value, {
 		id: props.videoId,
 		background: props.background,
@@ -444,13 +447,15 @@ onMounted(async () => {
 		showTitle: false,
 		showPortrait: false,
 		showByline: false,
-		autopause: false,
+		autopause: true,
 		// ローディング中の表示を制御
 		loading: 'lazy',
 		// プレイヤーの外観を制御
 		transparent: true,
 		// ローディングスピナーを非表示にするための追加オプション
 		playsinline: true,
+		// メタデータと動画の最初の数秒をすぐに読み込むには、「auto」を使用します。
+		preload: 'auto',
 	})
 	await Promise.all([getVideoSize(), setThumbnail()])
 	updateVideoSize()
