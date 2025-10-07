@@ -5,14 +5,14 @@
 				<Image v-if="thumbnail" class="videoPlayer-thumbnail" :src="thumbnail" cover />
 			</Box>
 			<div class="videoPlayer-filter" />
-			<video ref="player" class="videoPlayer-video" :src="src" :autoplay="autoplay" :volume="volume" :muted="isMuted"
+			<video ref="player" class="videoPlayer-video" :src="src" :autoplay="autoplay" :volume="volume" :muted="muted"
 				@loadedmetadata="onReady" @play="onPlay" @pause="onPause" @ended="onEnded" @error="onError"
 				@timeupdate="onTimeUpdate" />
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" contain />
 			<TransitionFade v-if="controls">
 				<Box v-if="isHover" absolute top="0" left="0" w="100%" h="100%" z-index="0">
-					<VideoPlayerControls v-model:mute="isMuted" v-model:volume="volume" v-model:current-time="currentTime"
-						v-bind="{ duration, isPlaying, isBuffering }" class="videoPlayer-controls" @play="play" @pause="pause"
+					<VideoPlayerControls v-model:volume="volume" v-model:current-time="currentTime"
+						v-bind="{ duration, isPlaying, isBuffering, mute }" class="videoPlayer-controls" @play="play" @pause="pause"
 						@mute="onMute" />
 				</Box>
 			</TransitionFade>
@@ -26,12 +26,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from '#imports'
+import { ref, onMounted } from '#imports'
 import VideoPlayerControls from './VideoPlayerControls.vue'
 import { useVideo } from '../../composables/elements/video'
 
 // Composables --------------
 const { config } = useVideo()
+
+// Model --------------------------------------------------
+const muted = defineModel<boolean>('muted', { default: false })
 
 // Props --------------
 const props = defineProps({
@@ -51,7 +54,6 @@ const isBuffering = ref(false)
 const currentTime = ref(0)
 const duration = ref(0)
 const progress = ref(0)
-const isMuted = ref(props.mute || false)
 const volume = ref(config.value?.defaultVolume || 0.5)
 const player = ref<HTMLVideoElement>()
 
@@ -96,9 +98,14 @@ const pause = () => {
 
 const onMute = () => {
 	if (player.value) {
-		isMuted.value = !isMuted.value
+		muted.value = !muted.value
 	}
 }
+
+// Lifecycle Hooks --------------------------------------------------
+onMounted(() => {
+	muted.value = props.mute || false
+})
 </script>
 
 <style lang="scss">
