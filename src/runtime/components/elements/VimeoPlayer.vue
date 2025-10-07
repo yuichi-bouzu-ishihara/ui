@@ -8,8 +8,8 @@
 			<img class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl">
 		</div>
 		<TransitionFade v-if="!background && controls && !controller">
-			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:mute="muted" v-model:volume="volume"
-				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
+			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:volume="volume"
+				v-model:current-time="currentTime" :mute="muted" v-bind="{ isBuffering }" :duration="videoDuration"
 				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" @mute="onMute" />
 		</TransitionFade>
 		<Box v-if="isBuffering" absolute top="0" left="0" w="100%" h="100%" z-index="1">
@@ -242,9 +242,7 @@ const onVolumeChange = async () => {
 }
 
 const onMute = () => {
-	if (vimeoPlayer) {
-		muted.value = !muted.value
-	}
+	muted.value = !muted.value
 }
 
 const setReady = async () => {

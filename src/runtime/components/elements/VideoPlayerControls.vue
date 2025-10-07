@@ -19,8 +19,8 @@
 							&nbsp;/&nbsp;{{ formatTime(duration) }}
 						</Typography>
 					</Row>
-					<Clickable @click="mute = !mute">
-						<Icon v-if="!mute" name="volume" size="20" color="light" />
+					<Clickable @click="isMute = !isMute">
+						<Icon v-if="!isMute" name="volume" size="20" color="light" />
 						<Icon v-else name="volumeOff" size="20" color="light" />
 					</Clickable>
 				</Row>
@@ -33,18 +33,19 @@
 </template>
 
 <script setup lang="ts">
+import { watch, ref } from 'vue'
 import { useVideo } from '../../composables/elements/video'
 
 // Composables --------------
 const { formatTime } = useVideo()
 
 // Models --------------
-const mute = defineModel<boolean>('mute', { default: false })
 const currentTime = defineModel<number>('current-time', { default: 0 })
 const seeking = defineModel<boolean>('seeking', { default: false })
 
 // Props --------------
-defineProps({
+const props = defineProps({
+	mute: { type: Boolean, default: false },
 	duration: { type: Number, default: 1 },
 	isPlaying: { type: Boolean, default: false },
 	isBuffering: { type: Boolean, default: true },
@@ -52,6 +53,17 @@ defineProps({
 
 // Emits --------------
 const emit = defineEmits(['play', 'pause', 'mute'])
+
+// Data --------------
+const isMute = ref(props.mute)
+
+// Watche --------------
+watch(() => props.mute, (nv) => {
+	isMute.value = nv
+})
+watch(() => isMute.value, (nv) => {
+	emit('mute', nv)
+})
 </script>
 
 <style lang="scss">
