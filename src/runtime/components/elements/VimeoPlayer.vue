@@ -50,6 +50,8 @@ const props = defineProps({
 const play = async () => {
 	if (vimeoPlayer) {
 		try {
+			await vimeoPlayer.setMuted(muted.value)
+			await vimeoPlayer.setVolume(volume.value)
 			await vimeoPlayer.play()
 		}
 		catch (error: unknown) {
