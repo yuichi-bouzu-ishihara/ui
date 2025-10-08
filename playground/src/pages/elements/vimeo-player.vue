@@ -18,7 +18,7 @@
 				</Box>
 				<Ratio golden>
 					<VimeoPlayer v-bind="{ videoId, autoplay, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
-						v-model:seeking="isSeeking" v-model:volume="volume" v-model:mute="mute"
+						v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
 						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" controls contain @ready="onReady" @play="onPlay"
 						@pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
 						@bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange" @progress="onProgress"
@@ -48,8 +48,8 @@
 						</Button>
 					</Row>
 					<Row align="center" gap="20" fit-w nowrap>
-						<Clickable @click="mute = !mute">
-							<Icon :name="mute ? 'volumeOff' : 'volume'" size="20" />
+						<Clickable @click="muted = !muted">
+							<Icon :name="muted ? 'volumeOff' : 'volume'" size="20" />
 						</Clickable>
 						<Box w="100%">
 							<InputRange v-model="volume" min="0" max="1" step="0.1" />
@@ -79,7 +79,7 @@ const seekTime = ref(0)
 const isSeeking = ref(false)
 const duration = ref(0)
 const volume = ref(0.25)
-const mute = ref(false)
+const muted = ref(false)
 const isReady = ref(false)
 const isMetadataLoaded = ref(false)
 const autoplay = ref(false)

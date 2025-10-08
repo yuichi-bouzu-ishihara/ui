@@ -8,9 +8,9 @@
 			<img class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl">
 		</div>
 		<TransitionFade v-if="!background && controls && !controller">
-			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:volume="volume"
-				v-model:current-time="currentTime" :mute="muted" v-bind="{ isBuffering }" :duration="videoDuration"
-				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" @mute="onMute" />
+			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:volume="volume" v-model:muted="muted"
+				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
+				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" />
 		</TransitionFade>
 		<Box v-if="isBuffering" absolute top="0" left="0" w="100%" h="100%" z-index="1">
 			<Center>
@@ -43,7 +43,6 @@ const props = defineProps({
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
 	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
 	autoplay: { type: Boolean, default: false },
-	mute: { type: Boolean, default: false },
 	cover: { type: Boolean, default: false },
 })
 
@@ -241,10 +240,6 @@ const onVolumeChange = async () => {
 	}
 }
 
-const onMute = () => {
-	muted.value = !muted.value
-}
-
 const setReady = async () => {
 	// 動画の準備が完了したらreadyイベントをemit
 	if (!isReady.value) {
@@ -346,7 +341,7 @@ watch(
 	async (newVolume) => {
 		if (vimeoPlayer) {
 			try {
-				// muted中の場合、muted状態を再設定して確実に音を止める
+				// mute中の場合、mute状態を再設定して確実に音を止める
 				if (!muted.value) {
 					await vimeoPlayer.setVolume(newVolume)
 				}
@@ -363,7 +358,7 @@ watch(
 	(newMute) => {
 		if (vimeoPlayer) {
 			vimeoPlayer.setMuted(newMute).catch((error: unknown) => {
-				console.error('Vimeo muted update error:', error)
+				console.error('Vimeo mute update error:', error)
 			})
 			if (!newMute) {
 				vimeoPlayer.setVolume(volume.value)
@@ -465,9 +460,6 @@ onMounted(async () => {
 
 	// 初期音量を設定
 	volume.value = config.value?.defaultVolume || 0.2
-
-	// 初期muted状態を設定
-	muted.value = props.mute || false
 
 	// 初期currentTimeを設定
 	currentTime.value = 0
