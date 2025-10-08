@@ -5,15 +5,14 @@
 				<Image v-if="thumbnail" class="videoPlayer-thumbnail" :src="thumbnail" cover />
 			</Box>
 			<div class="videoPlayer-filter" />
-			<video ref="player" class="videoPlayer-video" :src="src" :autoplay="autoplay" :volume="volume" :muted="muted"
-				@loadedmetadata="onReady" @play="onPlay" @pause="onPause" @ended="onEnded" @error="onError"
-				@timeupdate="onTimeUpdate" />
+			<video ref="player" class="videoPlayer-video" v-bind="{ src, autoplay, volume, muted }" @loadedmetadata="onReady"
+				@play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @timeupdate="onTimeUpdate" />
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" contain />
 			<TransitionFade v-if="controls">
 				<Box v-if="isHover" absolute top="0" left="0" w="100%" h="100%" z-index="0">
 					<VideoPlayerControls v-model:volume="volume" v-model:current-time="currentTime"
-						v-bind="{ duration, isPlaying, isBuffering, mute }" class="videoPlayer-controls" @play="play" @pause="pause"
-						@mute="onMute" />
+						v-bind="{ duration, isPlaying, isBuffering, muted }" class="videoPlayer-controls" @play="play"
+						@pause="pause" />
 				</Box>
 			</TransitionFade>
 			<Box v-if="isBuffering" absolute top="0" left="0" w="100%" h="100%" z-index="1">
@@ -26,7 +25,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from '#imports'
+import { ref } from '#imports'
 import VideoPlayerControls from './VideoPlayerControls.vue'
 import { useVideo } from '../../composables/elements/video'
 
@@ -37,11 +36,10 @@ const { config } = useVideo()
 const muted = defineModel<boolean>('muted', { default: false })
 
 // Props --------------
-const props = defineProps({
+defineProps({
 	src: { type: String, required: true },
 	thumbnail: { type: String, default: '' },
 	autoplay: { type: Boolean, default: false },
-	mute: { type: Boolean, default: false },
 	controls: { type: Boolean, default: false },
 })
 
@@ -95,17 +93,6 @@ const pause = () => {
 	player.value?.pause()
 	onPause()
 }
-
-const onMute = () => {
-	if (player.value) {
-		muted.value = !muted.value
-	}
-}
-
-// Lifecycle Hooks --------------------------------------------------
-onMounted(() => {
-	muted.value = props.mute || false
-})
 </script>
 
 <style lang="scss">

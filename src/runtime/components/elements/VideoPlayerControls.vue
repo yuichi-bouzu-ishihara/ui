@@ -19,8 +19,8 @@
 							&nbsp;/&nbsp;{{ formatTime(duration) }}
 						</Typography>
 					</Row>
-					<Clickable @click="isMute = !isMute">
-						<Icon v-if="!isMute" name="volume" size="20" color="light" />
+					<Clickable @click="muted = !muted">
+						<Icon v-if="!muted" name="volume" size="20" color="light" />
 						<Icon v-else name="volumeOff" size="20" color="light" />
 					</Clickable>
 				</Row>
@@ -33,7 +33,6 @@
 </template>
 
 <script setup lang="ts">
-import { watch, ref } from 'vue'
 import { useVideo } from '../../composables/elements/video'
 
 // Composables --------------
@@ -42,28 +41,17 @@ const { formatTime } = useVideo()
 // Models --------------
 const currentTime = defineModel<number>('current-time', { default: 0 })
 const seeking = defineModel<boolean>('seeking', { default: false })
+const muted = defineModel<boolean>('muted', { default: false })
 
 // Props --------------
-const props = defineProps({
-	mute: { type: Boolean, default: false },
+defineProps({
 	duration: { type: Number, default: 1 },
 	isPlaying: { type: Boolean, default: false },
 	isBuffering: { type: Boolean, default: true },
 })
 
 // Emits --------------
-const emit = defineEmits(['play', 'pause', 'mute'])
-
-// Data --------------
-const isMute = ref(props.mute)
-
-// Watche --------------
-watch(() => props.mute, (nv) => {
-	isMute.value = nv
-})
-watch(() => isMute.value, (nv) => {
-	emit('mute', nv)
-})
+const emit = defineEmits(['play', 'pause'])
 </script>
 
 <style lang="scss">
