@@ -15,6 +15,7 @@ import { ref, computed, watch } from 'vue'
 const props = defineProps({
 	golden: { type: Boolean, default: false }, // 黄金比
 	square: { type: Boolean, default: false }, // 正方形
+	wideScreen: { type: Boolean, default: false }, // 16:9
 	cinema: { type: Boolean, default: false }, // シネマスコープ 2.35:1
 	ultraWideGaming: { type: Boolean, default: false }, // ウルトラワイドゲーミング 32:9
 	overflow: { type: String, default: 'hidden', validator: (value: string) => ['hidden', 'visible'].includes(value) }, // 見切れ表示
@@ -30,11 +31,12 @@ const ratio = ref<string>('')
 
 // Watch ---------------------------
 watch(
-	[() => props.golden, () => props.square, () => props.cinema, () => props.ultraWideGaming, () => props.per, () => props.paper],
-	([newGolden, newSquare, newCinema, newUltraWideGaming, newPer, newPaper]) => {
+	[() => props.golden, () => props.square, () => props.wideScreen, () => props.cinema, () => props.ultraWideGaming, () => props.per, () => props.paper],
+	([newGolden, newSquare, newWideScreen, newCinema, newUltraWideGaming, newPer, newPaper]) => {
 		// 優先度を文字列で type に設定する。
 		if (newGolden) ratio.value = 'golden'
 		if (newSquare) ratio.value = 'square'
+		if (newWideScreen) ratio.value = 'wideScreen'
 		if (newCinema) ratio.value = 'cinema'
 		if (newUltraWideGaming) ratio.value = 'ultraWideGaming'
 		// ISO 用紙（A/B 系）は全て √2 のアスペクト比。要求により基本は landscape（横長）。
@@ -80,6 +82,10 @@ $cn: '.ratio'; // コンポーネントセレクタ名
 
 		&._square &-container {
 			padding-top: 100%;
+		}
+
+		&._wideScreen &-container {
+			padding-top: calc(100% * 9 / 16);
 		}
 
 		&._cinema &-container {
