@@ -3,6 +3,8 @@ export const useVideoThumbnail = () => {
 	 * base64の動画ファイルから最初のフレームをサムネイル画像として抽出する
 	 * @param base64Video - base64エンコードされた動画データ
 	 * @param options - オプション設定
+	 * @param options.quality - 画像の品質（0.0-1.0、デフォルト: 0.8）
+	 * @param options.format - 画像フォーマット（デフォルト: 'image/jpeg'）
 	 * @returns Promise<string> - base64エンコードされたサムネイル画像
 	 */
 	const extractThumbnail = async (
@@ -136,6 +138,8 @@ export const useVideoThumbnail = () => {
 	 * @param base64Video - base64エンコードされた動画データ
 	 * @param frameCount - 抽出するフレーム数
 	 * @param options - オプション設定
+	 * @param options.quality - 画像の品質（0.0-1.0、デフォルト: 0.8）
+	 * @param options.format - 画像フォーマット（デフォルト: 'image/jpeg'）
 	 * @returns Promise<string[]> - base64エンコードされたサムネイル画像の配列
 	 */
 	const extractMultipleFrames = async (
@@ -256,6 +260,8 @@ export const useVideoThumbnail = () => {
 	 * @param base64Video - base64エンコードされた動画データ
 	 * @param timeInSeconds - 抽出する時間位置（秒）
 	 * @param options - オプション設定
+	 * @param options.quality - 画像の品質（0.0-1.0、デフォルト: 0.8）
+	 * @param options.format - 画像フォーマット（デフォルト: 'image/jpeg'）
 	 * @returns Promise<string> - base64エンコードされたサムネイル画像
 	 */
 	const extractThumbnailAtTime = async (
