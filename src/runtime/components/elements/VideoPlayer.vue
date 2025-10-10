@@ -2,9 +2,11 @@
 	<Box class="videoPlayer" w="100%" relative z-index="0" @mouseover="isHover = true" @mouseleave="isHover = false">
 		<Ratio :per="9 / 16 * 100">
 			<Box class="videoPlayer-bg" absolute top="0" left="0" w="100%" h="100%" z-index="-1">
-				<Image v-if="thumbnail" class="videoPlayer-thumbnail" :src="thumbnail" cover />
+				<!-- <template v-if="thumbnail">
+					<Image class="videoPlayer-thumbnail" :src="thumbnail" cover />
+					<div class="videoPlayer-filter" />
+				</template> -->
 			</Box>
-			<div class="videoPlayer-filter" />
 			<video ref="player" class="videoPlayer-video" v-bind="{ src, autoplay, volume, muted }" @loadedmetadata="onReady"
 				@play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @timeupdate="onTimeUpdate" />
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" contain />
