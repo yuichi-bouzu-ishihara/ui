@@ -1,6 +1,6 @@
 <template>
 	<Box class="videoPlayer" w="100%" relative z-index="0" @mouseover="isHover = true" @mouseleave="isHover = false">
-		<Ratio :per="9 / 16 * 100">
+		<Ratio wide-screen>
 			<Box class="videoPlayer-bg" absolute top="0" left="0" w="100%" h="100%" z-index="-1">
 				<Image v-if="thumbnail" class="videoPlayer-thumbnail" :src="thumbnail" cover />
 			</Box>
