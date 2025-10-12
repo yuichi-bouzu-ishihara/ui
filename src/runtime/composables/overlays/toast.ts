@@ -7,12 +7,14 @@ export type PayloadToast = {
 	icon?: string // アイコン
 	duration?: number // 表示時間（ミリ秒）
 	persistent?: boolean // 自動消去しないかどうか
+	dismissible?: boolean // UIで消去可能かどうか
 }
 
 export type ToastItem = PayloadToast & {
 	id: number
 	timer?: number
 	persistent?: boolean
+	dismissible?: boolean
 }
 
 export const useToast = () => {
@@ -21,17 +23,13 @@ export const useToast = () => {
 
 	/**
 	 * Toastを表示する
-	 * @param {PayloadToast} pl - ペイロード
-	 * @param {string} message - 表示メッセージ
-	 * @param {'text'|'success'|'error'|'warning'|'info'} type - タイプ 'text' | 'success' | 'error' | 'warning' | 'info'
-	 * @param {string} icon - アイコン
-	 * @param {number} duration - 表示時間（ミリ秒）
-	 * @param {boolean} persistent - 自動消去しないかどうか
+	 * @param {PayloadToast} pl - ペイロード（message, type, icon, duration, persistent, dismissibleを含む）
 	 * @returns {number} 生成されたtoastのID
 	 */
 	const show = (pl: PayloadToast): number => {
 		const id = nextId.value++
 		const persistent = pl.persistent || false
+		const dismissible = pl.dismissible !== false // デフォルトはtrue（消去可能）
 		const duration = persistent ? 0 : (pl.duration || 3000)
 		let timer: number | undefined
 		if (!persistent) {
@@ -46,6 +44,7 @@ export const useToast = () => {
 			type: pl.type || 'text',
 			duration,
 			persistent,
+			dismissible,
 			timer,
 		})
 

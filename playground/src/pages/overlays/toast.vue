@@ -76,6 +76,18 @@
 						最後に作成したToastを消去
 					</Button>
 				</Row>
+
+				<Typography h3>
+					消去不可Toast
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="showNonDismissibleToast()">
+						消去不可Toast（重要メッセージ）
+					</Button>
+					<Button @click="showNonDismissiblePersistentToast()">
+						消去不可永続Toast
+					</Button>
+				</Row>
 			</Column>
 		</Container>
 	</Center>
@@ -133,5 +145,24 @@ const hideSpecificToast = () => {
 			type: 'warning',
 		})
 	}
+}
+
+const showNonDismissibleToast = () => {
+	show({
+		message: 'これは重要なメッセージです。バツアイコンは表示されません。',
+		type: 'error',
+		icon: 'exclamation',
+		dismissible: false,
+	})
+}
+
+const showNonDismissiblePersistentToast = () => {
+	show({
+		message: 'これは消去不可の永続Toastです。自動消去もされません。',
+		type: 'warning',
+		icon: 'exclamation',
+		persistent: true,
+		dismissible: false,
+	})
 }
 </script>

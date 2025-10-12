@@ -6,7 +6,8 @@
 				{{ message }}
 			</Typography>
 		</Row>
-		<IconButton class="toast-close" :icon="{ name: 'cross', size: 12 }" w="56" h="56" link @click="emit('close')" />
+		<IconButton v-if="dismissible" class="toast-close" :icon="{ name: 'cross', size: 12 }" w="56" h="56" link
+			@click="emit('close')" />
 	</div>
 </template>
 
@@ -23,9 +24,11 @@ const props = withDefaults(defineProps<{
 	message: string
 	type?: PayloadToast['type']
 	icon?: string
+	dismissible?: boolean
 }>(), {
 	type: 'text',
 	icon: '',
+	dismissible: true,
 })
 
 // Emits ---------------------------
@@ -35,6 +38,8 @@ const emit = defineEmits(['close'])
 const classes = computed(() => {
 	return {
 		[`_${props.type}`]: true,
+		'_dismissible': props.dismissible,
+		'_non-dismissible': !props.dismissible,
 	}
 })
 </script>
@@ -52,6 +57,10 @@ $cn: '.toast'; // コンポーネントセレクタ名
 	background-color: var(--color-text-005);
 	backdrop-filter: blur(40px);
 	pointer-events: auto;
+
+	&._non-dismissible {
+		padding: 20px;
+	}
 
 	&-icon {
 		transform: translateY(-1.2px);
