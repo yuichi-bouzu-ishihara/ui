@@ -4,18 +4,25 @@
 		<Ratio v-if="image" class="toast-image">
 			<Image :src="image.src" :alt="message" class="toast-image-inner" />
 			<div v-if="image.processing" class="toast-image-spinner">
-				<Spinner size="16" />
+				<Spinner size="16" color="var(--toast-color-text)" />
 			</div>
 		</Ratio>
 		<Row class="toast-content" gap="12" align="center" nowrap fit-w>
 			<!-- アイコンの場合 -->
-			<Icon v-if="icon" class="toast-icon" :name="icon" size="18" :color="type === 'error' ? 'danger' : 'text'" />
-			<Typography caption2 bold cap-height-baseline lineclamp="1" :color="type === 'error' ? 'danger' : 'text'">
+			<Icon v-if="icon" class="toast-icon" :name="icon" size="18"
+				:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'" />
+			<Typography caption2 bold cap-height-baseline lineclamp="1"
+				:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'">
 				{{ message }}
 			</Typography>
 		</Row>
-		<IconButton v-if="dismissible" class="toast-close" :icon="{ name: 'cross', size: 12 }" w="56" h="56" link
-			@click="emit('close')" />
+		<Clickable v-if="dismissible" class="toast-close" @click="emit('close')">
+			<Box w="56" h="56">
+				<Center>
+					<Icon name="cross" size="12" color="var(--toast-color-text)" />
+				</Center>
+			</Box>
+		</Clickable>
 	</Row>
 </template>
 
@@ -24,7 +31,7 @@ import { computed } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Icon from '../elements/Icon.vue'
 import Row from '../layout/Row.vue'
-import IconButton from '../elements/IconButton.vue'
+import Clickable from '../elements/Clickable.vue'
 import Spinner from '../elements/Spinner.vue'
 import type { PayloadToast } from '../../composables/overlays/toast'
 
@@ -64,7 +71,7 @@ $cn: '.toast'; // コンポーネントセレクタ名
 	position: relative;
 	width: 100%;
 	border-radius: 8px;
-	background-color: var(--color-background-090);
+	background-color: var(--toast-color-background);
 	backdrop-filter: blur(40px);
 	pointer-events: auto;
 	overflow: hidden;

@@ -16,6 +16,7 @@ import type { AvatarConfig } from './avatar'
 import type { LogoConfig } from './logo'
 import type { TabsConfig } from './tabs'
 import type { SheetConfig } from './sheet'
+import type { ToastConfig } from './toast'
 import type { StorageConfig } from './storage'
 import type { FormsConfig } from './forms'
 import type { DropdownMenuConfig } from './dropdown-menu'
@@ -44,6 +45,7 @@ export type UIConfig = {
 	webfont?: WebfontConfig
 	container?: ContainerConfig
 	sheet?: SheetConfig
+	toast?: ToastConfig
 	storage?: StorageConfig
 	avatar?: AvatarConfig
 	logo?: LogoConfig

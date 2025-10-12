@@ -1,4 +1,10 @@
-import { readonly, useState } from '#imports'
+import type { UIConfig } from '../../types'
+import type { ToastConfig } from '../../types/toast'
+import { useCss } from '../css'
+import { readonly, useState, useAppConfig } from '#imports'
+
+// Constants -----------------------------------------
+const DATA_VALUE = 'toast'
 
 // Types ---------------------
 export type PayloadToast = {
@@ -26,8 +32,32 @@ export type ToastItem = PayloadToast & {
 }
 
 export const useToast = () => {
+	const config = useState<ToastConfig | null>('ui-toast-config', () => null)
 	const list = useState<ToastItem[]>('ui-toast-list', () => [])
 	const nextId = useState<number>('ui-toast-next-id', () => 0)
+
+	/**
+	 * 初期化
+	 */
+	const init = () => {
+		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
+		// 設定がない場合は何もしない
+		if (!appConfig.toast) return null
+
+		// 設定を更新
+		config.value = appConfig.toast
+		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
+
+		return true
+	}
+
+	/**
+	 * 設定を更新
+	 */
+	const update = (conf: ToastConfig) => {
+		config.value = conf
+		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
+	}
 
 	/**
 	 * Toastを表示する
@@ -111,6 +141,9 @@ export const useToast = () => {
 	}
 
 	return {
+		init,
+		update,
+		config: readonly(config),
 		list: readonly(list),
 		show,
 		hide,
