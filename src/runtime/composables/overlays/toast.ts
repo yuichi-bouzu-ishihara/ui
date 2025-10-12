@@ -8,6 +8,10 @@ export type PayloadToast = {
 	duration?: number // 表示時間（ミリ秒）
 	persistent?: boolean // 自動消去しないかどうか
 	dismissible?: boolean // UIで消去可能かどうか
+	image?: {
+		src: string // 画像のURL
+		processing: boolean // 処理中かどうか
+	}
 }
 
 export type ToastItem = PayloadToast & {
@@ -15,6 +19,10 @@ export type ToastItem = PayloadToast & {
 	timer?: number
 	persistent?: boolean
 	dismissible?: boolean
+	image?: {
+		src: string
+		processing: boolean
+	}
 }
 
 export const useToast = () => {

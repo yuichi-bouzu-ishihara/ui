@@ -88,6 +88,21 @@
 						消去不可永続Toast
 					</Button>
 				</Row>
+
+				<Typography h3>
+					画像付きToast
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="showImageToast()">
+						画像付きToast
+					</Button>
+					<Button @click="showProcessingImageToast()">
+						処理中画像Toast
+					</Button>
+					<Button @click="simulateImageProcessing()">
+						画像処理シミュレーション
+					</Button>
+				</Row>
 			</Column>
 		</Container>
 	</Center>
@@ -164,5 +179,60 @@ const showNonDismissiblePersistentToast = () => {
 		persistent: true,
 		dismissible: false,
 	})
+}
+
+const showImageToast = () => {
+	show({
+		message: '画像がアップロードされました',
+		type: 'success',
+		image: {
+			src: 'https://picsum.photos/100/100?random=1',
+			processing: false,
+		},
+	})
+}
+
+const showProcessingImageToast = () => {
+	show({
+		message: '画像を処理中です...',
+		type: 'info',
+		image: {
+			src: 'https://picsum.photos/100/100?random=2',
+			processing: true,
+		},
+		persistent: true,
+		dismissible: false,
+	})
+}
+
+let processingToastId: number | null = null
+
+const simulateImageProcessing = () => {
+	// 処理中Toastを表示
+	processingToastId = show({
+		message: '画像を処理中です...',
+		type: 'info',
+		image: {
+			src: 'https://picsum.photos/100/100?random=3',
+			processing: true,
+		},
+		persistent: true,
+	})
+
+	// 3秒後に処理完了Toastに更新
+	setTimeout(() => {
+		if (processingToastId !== null) {
+			hide(processingToastId)
+		}
+		show({
+			message: '画像の処理が完了しました！',
+			type: 'success',
+			image: {
+				src: 'https://picsum.photos/100/100?random=3',
+				processing: false,
+			},
+		})
+		processingToastId = null
+	}, 3000)
 }
 </script>
