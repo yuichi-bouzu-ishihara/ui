@@ -18,6 +18,7 @@ export type PayloadToast = {
 		src: string // 画像のURL
 		processing: boolean // 処理中かどうか
 	}
+	click?: () => void // クリック時のコールバック
 }
 
 export type ToastItem = PayloadToast & {
@@ -29,6 +30,7 @@ export type ToastItem = PayloadToast & {
 		src: string
 		processing: boolean
 	}
+	click?: () => void
 }
 
 export const useToast = () => {

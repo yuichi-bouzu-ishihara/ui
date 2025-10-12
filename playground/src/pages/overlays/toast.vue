@@ -103,6 +103,21 @@
 						画像処理シミュレーション
 					</Button>
 				</Row>
+
+				<Typography h3>
+					クリック可能Toast
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="showClickableToast()">
+						クリック可能Toast
+					</Button>
+					<Button @click="showClickableImageToast()">
+						クリック可能画像Toast
+					</Button>
+					<Button @click="showClickableNonDismissibleToast()">
+						クリック可能消去不可Toast
+					</Button>
+				</Row>
 			</Column>
 		</Container>
 	</Center>
@@ -234,5 +249,55 @@ const simulateImageProcessing = () => {
 		})
 		processingToastId = null
 	}, 3000)
+}
+
+const showClickableToast = () => {
+	show({
+		message: 'このToastをクリックしてください！',
+		type: 'info',
+		icon: 'arrow-right',
+		click: () => {
+			show({
+				message: 'Toastがクリックされました！',
+				type: 'success',
+				icon: 'check',
+			})
+		},
+	})
+}
+
+const showClickableImageToast = () => {
+	show({
+		message: '画像をクリックして詳細を表示',
+		type: 'success',
+		image: {
+			src: 'https://picsum.photos/100/100?random=4',
+			processing: false,
+		},
+		click: () => {
+			show({
+				message: '画像がクリックされました！詳細ページに移動します。',
+				type: 'info',
+				icon: 'external-link',
+			})
+		},
+	})
+}
+
+const showClickableNonDismissibleToast = () => {
+	show({
+		message: 'クリック可能な消去不可Toast（重要通知）',
+		type: 'warning',
+		icon: 'exclamation',
+		persistent: true,
+		dismissible: false,
+		click: () => {
+			show({
+				message: '重要通知がクリックされました！設定ページに移動します。',
+				type: 'info',
+				icon: 'settings',
+			})
+		},
+	})
 }
 </script>

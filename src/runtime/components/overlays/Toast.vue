@@ -1,29 +1,33 @@
 <template>
-	<Row class="toast" :class="classes" align="stretch" nowrap fit-w>
-		<!-- 画像がある場合 -->
-		<Ratio v-if="image" class="toast-image">
-			<Image :src="image.src" :alt="message" class="toast-image-inner" />
-			<div v-if="image.processing" class="toast-image-spinner">
-				<Spinner size="16" color="var(--toast-color-text)" />
-			</div>
-		</Ratio>
-		<Row class="toast-content" gap="12" align="center" nowrap fit-w>
-			<!-- アイコンの場合 -->
-			<Icon v-if="icon" class="toast-icon" :name="icon" size="18"
-				:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'" />
-			<Typography caption2 bold cap-height-baseline lineclamp="1"
-				:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'">
-				{{ message }}
-			</Typography>
-		</Row>
-		<Clickable v-if="dismissible" class="toast-close" @click="emit('close')">
-			<Box w="56" h="56">
-				<Center>
-					<Icon name="cross" size="12" color="var(--toast-color-text)" />
-				</Center>
-			</Box>
+	<div class="toast" :class="classes">
+		<Clickable :disabled="!click" @click="click && click()">
+			<Row class="toast" :class="classes" align="stretch" nowrap fit-w>
+				<!-- 画像がある場合 -->
+				<Ratio v-if="image" class="toast-image">
+					<Image :src="image.src" :alt="message" class="toast-image-inner" />
+					<div v-if="image.processing" class="toast-image-spinner">
+						<Spinner size="16" color="var(--toast-color-text)" />
+					</div>
+				</Ratio>
+				<Row class="toast-content" gap="12" align="center" nowrap fit-w>
+					<!-- アイコンの場合 -->
+					<Icon v-if="icon" class="toast-icon" :name="icon" size="18"
+						:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'" />
+					<Typography caption2 bold cap-height-baseline lineclamp="1"
+						:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'">
+						{{ message }}
+					</Typography>
+				</Row>
+				<Clickable v-if="dismissible" class="toast-close" @click="emit('close')">
+					<Box w="56" h="56">
+						<Center>
+							<Icon name="cross" size="12" color="var(--toast-color-text)" />
+						</Center>
+					</Box>
+				</Clickable>
+			</Row>
 		</Clickable>
-	</Row>
+	</div>
 </template>
 
 <script setup lang="ts">
@@ -42,11 +46,13 @@ const props = withDefaults(defineProps<{
 	icon?: string
 	dismissible?: boolean
 	image?: PayloadToast['image']
+	click?: () => void
 }>(), {
 	type: 'text',
 	icon: '',
 	dismissible: true,
 	image: undefined,
+	click: undefined,
 })
 
 // Emits ---------------------------
