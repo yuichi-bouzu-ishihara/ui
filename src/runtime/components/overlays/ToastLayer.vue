@@ -2,10 +2,10 @@
 	<Container narrow class="toastLayer">
 		<Box w="100%" relative>
 			<TransitionGroup name="toast">
-				<div v-for="(toast) in list" :key="toast.id" class="toastLayer-item">
+				<template v-for="(toast) in list" :key="toast.id">
 					<Box h="10" />
-					<Toast v-bind="toast" @close="hide(toast.id)" />
-				</div>
+					<Toast class="toastLayer-item" v-bind="toast" @close="hide(toast.id)" />
+				</template>
 			</TransitionGroup>
 		</Box>
 	</Container>

@@ -345,6 +345,12 @@ export const defaultOptions = {
 			text: 'color-text',
 		},
 	},
+	toast: {
+		color: {
+			background: 'color-dark-090',
+			text: 'color-light',
+		},
+	},
 	storage: {
 		prefix: 'ui-',
 	},

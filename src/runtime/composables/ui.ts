@@ -17,6 +17,7 @@ import { useRoundProgressBar } from './elements/round-progress-bar'
 import { useTabs } from './navigation/tabs'
 import { useContainer } from './layout/container'
 import { useSheet } from './overlays/sheet'
+import { useToast } from './overlays/toast'
 import { useLogo } from './elements/logo'
 import { useAvatar } from './elements/avatar'
 import { useForms } from './forms'
@@ -63,6 +64,7 @@ const init = () => {
 	useTabs().init()
 	useContainer().init()
 	useSheet().init()
+	useToast().init()
 	useLogo().init()
 	useAvatar().init()
 	useForms().init()
