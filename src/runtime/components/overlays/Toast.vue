@@ -5,8 +5,9 @@
 				<!-- 画像がある場合 -->
 				<Ratio v-if="image" class="toast-image">
 					<Image :src="image.src" :alt="message" class="toast-image-inner" />
-					<div v-if="image.processing" class="toast-image-spinner">
-						<Spinner size="16" color="var(--toast-color-text)" />
+					<div v-if="image.processing || image.icon" class="toast-image-icon">
+						<Spinner v-if="image.processing" size="16" color="var(--toast-color-text)" />
+						<Icon v-else :name="image.icon" size="16" color="var(--toast-color-text)" />
 					</div>
 				</Ratio>
 				<Row class="toast-content" gap="12" align="center" nowrap fit-w>
@@ -104,7 +105,7 @@ $cn: '.toast'; // コンポーネントセレクタ名
 			position: absolute;
 		}
 
-		&-spinner {
+		&-icon {
 			position: absolute;
 			inset: 0;
 			background-color: rgba(black, 0.5);

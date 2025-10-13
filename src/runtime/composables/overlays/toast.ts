@@ -16,7 +16,8 @@ export type PayloadToast = {
 	dismissible?: boolean // UIで消去可能かどうか
 	image?: {
 		src: string // 画像のURL
-		processing: boolean // 処理中かどうか
+		processing?: boolean // 処理中かどうか
+		icon?: string // アイコン
 	}
 	click?: () => void // クリック時のコールバック
 }

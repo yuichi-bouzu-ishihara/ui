@@ -184,7 +184,7 @@ const showImageToast = () => {
 		type: 'success',
 		image: {
 			src: 'https://picsum.photos/100/100?random=1',
-			processing: false,
+			icon: 'check',
 		},
 	})
 }
