@@ -75,6 +75,60 @@
 				</Row>
 
 				<Typography h3>
+					Toast更新機能
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="createUpdateableToast()">
+						更新可能Toastを作成
+					</Button>
+					<Button variant="secondary" @click="updateMessage()">
+						メッセージを更新
+					</Button>
+					<Button variant="secondary" @click="updateType()">
+						タイプを更新
+					</Button>
+					<Button variant="secondary" @click="updateImage()">
+						画像を更新
+					</Button>
+				</Row>
+
+				<Typography h3>
+					デフォルトDuration設定
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="testDefaultDuration()">
+						デフォルトDurationテスト
+					</Button>
+					<Button variant="secondary" @click="setDefaultDuration(1000)">
+						1秒に設定
+					</Button>
+					<Button variant="secondary" @click="setDefaultDuration(5000)">
+						5秒に設定
+					</Button>
+					<Button variant="secondary" @click="setDefaultDuration(3000)">
+						3秒にリセット
+					</Button>
+				</Row>
+
+				<Typography h3>
+					下位置設定
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="testBottom()">
+						下位置テスト
+					</Button>
+					<Button variant="secondary" @click="setBottom('8px')">
+						8pxに設定
+					</Button>
+					<Button variant="secondary" @click="setBottom('32px')">
+						32pxに設定
+					</Button>
+					<Button variant="secondary" @click="setBottom('16px')">
+						16pxにリセット
+					</Button>
+				</Row>
+
+				<Typography h3>
 					消去不可Toast
 				</Typography>
 				<Row gap="12" wrap>
@@ -106,10 +160,12 @@
 </template>
 
 <script setup lang="ts">
-const { show, hide, hideByType, hideAll, getToastById, list } = useToast()
+const { show, hide, hideByType, hideAll, getToastById, update, updateConfig, config, list } = useToast()
 
 // 最後に作成したtoastのIDを保存
 const lastToastId = ref<number | null>(null)
+// 更新可能なtoastのIDを保存
+const updateableToastId = ref<number | null>(null)
 
 const showToastInfo = () => {
 	if (list.value.length > 0) {
@@ -184,7 +240,7 @@ const showImageToast = () => {
 		type: 'success',
 		image: {
 			src: 'https://picsum.photos/100/100?random=1',
-			processing: false,
+			icon: 'check',
 		},
 	})
 }
@@ -231,6 +287,162 @@ const simulateImageProcessing = () => {
 		})
 		processingToastId = null
 	}, 3000)
+}
+
+const createUpdateableToast = () => {
+	updateableToastId.value = show({
+		message: '更新可能なToastです',
+		type: 'info',
+		persistent: true,
+	})
+	show({
+		message: `更新可能Toastを作成しました（ID: ${updateableToastId.value}）`,
+		type: 'success',
+		icon: 'check',
+	})
+}
+
+const updateMessage = () => {
+	if (updateableToastId.value !== null) {
+		const success = update(updateableToastId.value, {
+			message: `メッセージが更新されました！時刻: ${new Date().toLocaleTimeString()}`,
+		})
+		if (success) {
+			show({
+				message: 'メッセージを更新しました',
+				type: 'success',
+				icon: 'check',
+			})
+		}
+		else {
+			show({
+				message: 'Toastが見つかりません',
+				type: 'error',
+				icon: 'exclamation',
+			})
+		}
+	}
+	else {
+		show({
+			message: '更新可能なToastがありません',
+			type: 'warning',
+			icon: 'exclamation',
+		})
+	}
+}
+
+const updateType = () => {
+	if (updateableToastId.value !== null) {
+		const types = ['text', 'success', 'error', 'warning', 'info'] as const
+		const currentToast = getToastById(updateableToastId.value)
+		const currentTypeIndex = types.indexOf(currentToast?.type || 'text')
+		const nextType = types[(currentTypeIndex + 1) % types.length]
+
+		const success = update(updateableToastId.value, {
+			type: nextType,
+			message: `タイプが${nextType}に更新されました`,
+		})
+		if (success) {
+			show({
+				message: `タイプを${nextType}に更新しました`,
+				type: 'success',
+				icon: 'check',
+			})
+		}
+	}
+	else {
+		show({
+			message: '更新可能なToastがありません',
+			type: 'warning',
+			icon: 'exclamation',
+		})
+	}
+}
+
+const updateImage = () => {
+	if (updateableToastId.value !== null) {
+		const randomImage = Math.floor(Math.random() * 10) + 1
+		const success = update(updateableToastId.value, {
+			message: '画像が更新されました',
+			image: {
+				src: `https://picsum.photos/100/100?random=${randomImage}`,
+				icon: 'image',
+			},
+		})
+		if (success) {
+			show({
+				message: '画像を更新しました',
+				type: 'success',
+				icon: 'check',
+			})
+		}
+	}
+	else {
+		show({
+			message: '更新可能なToastがありません',
+			type: 'warning',
+			icon: 'exclamation',
+		})
+	}
+}
+
+const testDefaultDuration = () => {
+	show({
+		message: 'このToastはデフォルトDurationで表示されます',
+		type: 'info',
+		icon: 'clock',
+	})
+	show({
+		message: `現在のデフォルトDuration: ${config.value?.defaultDuration || 3000}ms`,
+		type: 'success',
+		icon: 'check',
+	})
+}
+
+const setDefaultDuration = (duration: number) => {
+	updateConfig({
+		color: {
+			background: config.value?.color?.background || 'var(--color-text-005)',
+			text: config.value?.color?.text || 'var(--color-text)',
+		},
+		defaultDuration: duration,
+		bottom: config.value?.bottom || 16,
+	})
+	show({
+		message: `デフォルトDurationを${duration}msに設定しました`,
+		type: 'success',
+		icon: 'settings',
+	})
+}
+
+const testBottom = () => {
+	show({
+		message: 'このToastの下位置を確認してください',
+		type: 'info',
+		icon: 'arrow-down',
+		persistent: true,
+	})
+	show({
+		message: `現在の下位置: ${config.value?.bottom || 16}px`,
+		type: 'success',
+		icon: 'check',
+	})
+}
+
+const setBottom = (bottom: string) => {
+	updateConfig({
+		color: {
+			background: config.value?.color?.background || 'var(--color-text-005)',
+			text: config.value?.color?.text || 'var(--color-text)',
+		},
+		defaultDuration: config.value?.defaultDuration || 3000,
+		bottom,
+	})
+	show({
+		message: `下位置を${bottom}pxに設定しました`,
+		type: 'success',
+		icon: 'settings',
+	})
 }
 
 // Watches ---------------------------
