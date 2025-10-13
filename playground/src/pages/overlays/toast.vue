@@ -111,6 +111,24 @@
 				</Row>
 
 				<Typography h3>
+					下位置設定
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="testBottom()">
+						下位置テスト
+					</Button>
+					<Button variant="secondary" @click="setBottom('8px')">
+						8pxに設定
+					</Button>
+					<Button variant="secondary" @click="setBottom('32px')">
+						32pxに設定
+					</Button>
+					<Button variant="secondary" @click="setBottom('16px')">
+						16pxにリセット
+					</Button>
+				</Row>
+
+				<Typography h3>
 					消去不可Toast
 				</Typography>
 				<Row gap="12" wrap>
@@ -388,9 +406,40 @@ const setDefaultDuration = (duration: number) => {
 			text: config.value?.color?.text || 'var(--color-text)',
 		},
 		defaultDuration: duration,
+		bottom: config.value?.bottom || 16,
 	})
 	show({
 		message: `デフォルトDurationを${duration}msに設定しました`,
+		type: 'success',
+		icon: 'settings',
+	})
+}
+
+const testBottom = () => {
+	show({
+		message: 'このToastの下位置を確認してください',
+		type: 'info',
+		icon: 'arrow-down',
+		persistent: true,
+	})
+	show({
+		message: `現在の下位置: ${config.value?.bottom || 16}px`,
+		type: 'success',
+		icon: 'check',
+	})
+}
+
+const setBottom = (bottom: string) => {
+	updateConfig({
+		color: {
+			background: config.value?.color?.background || 'var(--color-text-005)',
+			text: config.value?.color?.text || 'var(--color-text)',
+		},
+		defaultDuration: config.value?.defaultDuration || 3000,
+		bottom,
+	})
+	show({
+		message: `下位置を${bottom}pxに設定しました`,
 		type: 'success',
 		icon: 'settings',
 	})

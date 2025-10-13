@@ -27,7 +27,7 @@ $cn: '.toastLayer';
 	bottom: 0;
 	left: 0;
 	right: 0;
-	padding-bottom: calc(16px + env(safe-area-inset-bottom));
+	padding-bottom: calc(var(--toast-bottom, 16px) + env(safe-area-inset-bottom));
 	display: flex;
 	flex-direction: column;
 	align-items: center;
