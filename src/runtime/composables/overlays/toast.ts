@@ -29,7 +29,8 @@ export type ToastItem = PayloadToast & {
 	dismissible?: boolean
 	image?: {
 		src: string
-		processing: boolean
+		processing?: boolean
+		icon?: string
 	}
 	click?: () => void
 }
@@ -57,7 +58,7 @@ export const useToast = () => {
 	/**
 	 * 設定を更新
 	 */
-	const update = (conf: ToastConfig) => {
+	const updateConfig = (conf: ToastConfig) => {
 		config.value = conf
 		useCss().setCssVariables(DATA_VALUE, useCss().objectToCssVariables(DATA_VALUE, config.value, ''))
 	}
@@ -144,9 +145,52 @@ export const useToast = () => {
 		return list.value.find(t => t.id === id)
 	}
 
+	/**
+	 * 特定のIDのtoastを更新する
+	 * @param {number} id - 更新するtoastのID
+	 * @param {Partial<PayloadToast>} updates - 更新するプロパティ
+	 * @returns {boolean} 更新が成功したかどうか
+	 */
+	const update = (id: number, updates: Partial<PayloadToast>): boolean => {
+		const index = list.value.findIndex(t => t.id === id)
+		if (index === -1) {
+			return false
+		}
+
+		const existingToast = list.value[index]
+
+		// タイマーをクリア（durationが変更された場合）
+		if (updates.duration !== undefined || updates.persistent !== undefined) {
+			clearTimer(id)
+		}
+
+		// 新しいタイマーを設定（persistentでない場合）
+		const persistent = updates.persistent !== undefined ? updates.persistent : existingToast.persistent
+		const duration = updates.duration !== undefined ? updates.duration : existingToast.duration
+		const finalDuration = persistent ? 0 : (duration || 3000)
+
+		let timer: number | undefined
+		if (!persistent) {
+			timer = window.setTimeout(() => {
+				hide(id)
+			}, finalDuration)
+		}
+
+		// toastを更新
+		list.value[index] = {
+			...existingToast,
+			...updates,
+			duration: finalDuration,
+			persistent,
+			timer,
+		}
+
+		return true
+	}
+
 	return {
 		init,
-		update,
+		updateConfig,
 		config: readonly(config),
 		list: readonly(list),
 		show,
@@ -154,5 +198,6 @@ export const useToast = () => {
 		hideByType,
 		hideAll,
 		getToastById,
+		update,
 	}
 }

@@ -97,8 +97,6 @@ $cn: '.toast'; // コンポーネントセレクタ名
 
 	&-image {
 		position: relative;
-		top: -2px;
-		bottom: -2px;
 		max-width: 80px;
 
 		&-inner {
