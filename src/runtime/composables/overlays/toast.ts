@@ -67,7 +67,8 @@ export const useToast = () => {
 	 * @returns {number} 生成されたtoastのID
 	 */
 	const show = (pl: PayloadToast): number => {
-		const id = nextId.value++
+		nextId.value++
+		const id = nextId.value
 		const persistent = pl.persistent || false
 		const dismissible = pl.dismissible !== false // デフォルトはtrue（消去可能）
 		const duration = persistent ? 0 : (pl.duration || 3000)
