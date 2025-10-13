@@ -6,9 +6,6 @@
 					基本のToast
 				</Typography>
 				<Row gap="12" wrap>
-					<Button @click="show({ message: 'Success' })">
-						Success
-					</Button>
 					<Button @click="show({ message: 'Success', type: 'success', icon: 'check' })">
 						Success /w Icon
 					</Button>
@@ -103,21 +100,6 @@
 						画像処理シミュレーション
 					</Button>
 				</Row>
-
-				<Typography h3>
-					クリック可能Toast
-				</Typography>
-				<Row gap="12" wrap>
-					<Button @click="showClickableToast()">
-						クリック可能Toast
-					</Button>
-					<Button @click="showClickableImageToast()">
-						クリック可能画像Toast
-					</Button>
-					<Button @click="showClickableNonDismissibleToast()">
-						クリック可能消去不可Toast
-					</Button>
-				</Row>
 			</Column>
 		</Container>
 	</Center>
@@ -127,7 +109,7 @@
 const { show, hide, hideByType, hideAll, getToastById, list } = useToast()
 
 // 最後に作成したtoastのIDを保存
-let lastToastId: number | null = null
+const lastToastId = ref<number | null>(null)
 
 const showToastInfo = () => {
 	if (list.value.length > 0) {
@@ -153,7 +135,7 @@ const testIdReturn = () => {
 		type: 'info',
 		persistent: true,
 	})
-	lastToastId = toastId
+	lastToastId.value = toastId
 	show({
 		message: `作成されたToastのID: ${toastId}`,
 		type: 'success',
@@ -161,13 +143,13 @@ const testIdReturn = () => {
 }
 
 const hideSpecificToast = () => {
-	if (lastToastId !== null) {
-		hide(lastToastId)
+	if (lastToastId.value !== null) {
+		hide(lastToastId.value)
 		show({
-			message: `ID ${lastToastId} のToastを消去しました`,
+			message: `ID ${lastToastId.value} のToastを消去しました`,
 			type: 'info',
 		})
-		lastToastId = null
+		lastToastId.value = null
 	}
 	else {
 		show({
@@ -251,53 +233,8 @@ const simulateImageProcessing = () => {
 	}, 3000)
 }
 
-const showClickableToast = () => {
-	show({
-		message: 'このToastをクリックしてください！',
-		type: 'info',
-		icon: 'arrow-right',
-		click: () => {
-			show({
-				message: 'Toastがクリックされました！',
-				type: 'success',
-				icon: 'check',
-			})
-		},
-	})
-}
-
-const showClickableImageToast = () => {
-	show({
-		message: '画像をクリックして詳細を表示',
-		type: 'success',
-		image: {
-			src: 'https://picsum.photos/100/100?random=4',
-			processing: false,
-		},
-		click: () => {
-			show({
-				message: '画像がクリックされました！詳細ページに移動します。',
-				type: 'info',
-				icon: 'external-link',
-			})
-		},
-	})
-}
-
-const showClickableNonDismissibleToast = () => {
-	show({
-		message: 'クリック可能な消去不可Toast（重要通知）',
-		type: 'warning',
-		icon: 'exclamation',
-		persistent: true,
-		dismissible: false,
-		click: () => {
-			show({
-				message: '重要通知がクリックされました！設定ページに移動します。',
-				type: 'info',
-				icon: 'settings',
-			})
-		},
-	})
-}
+// Watches ---------------------------
+watch(() => lastToastId.value, (newId) => {
+	console.log('lastToastId', newId)
+}, { immediate: true })
 </script>
