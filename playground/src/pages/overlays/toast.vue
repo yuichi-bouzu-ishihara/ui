@@ -93,6 +93,24 @@
 				</Row>
 
 				<Typography h3>
+					デフォルトDuration設定
+				</Typography>
+				<Row gap="12" wrap>
+					<Button @click="testDefaultDuration()">
+						デフォルトDurationテスト
+					</Button>
+					<Button variant="secondary" @click="setDefaultDuration(1000)">
+						1秒に設定
+					</Button>
+					<Button variant="secondary" @click="setDefaultDuration(5000)">
+						5秒に設定
+					</Button>
+					<Button variant="secondary" @click="setDefaultDuration(3000)">
+						3秒にリセット
+					</Button>
+				</Row>
+
+				<Typography h3>
 					消去不可Toast
 				</Typography>
 				<Row gap="12" wrap>
@@ -124,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-const { show, hide, hideByType, hideAll, getToastById, update, list } = useToast()
+const { show, hide, hideByType, hideAll, getToastById, update, updateConfig, config, list } = useToast()
 
 // 最後に作成したtoastのIDを保存
 const lastToastId = ref<number | null>(null)
@@ -348,6 +366,34 @@ const updateImage = () => {
 			icon: 'exclamation',
 		})
 	}
+}
+
+const testDefaultDuration = () => {
+	show({
+		message: 'このToastはデフォルトDurationで表示されます',
+		type: 'info',
+		icon: 'clock',
+	})
+	show({
+		message: `現在のデフォルトDuration: ${config.value?.defaultDuration || 3000}ms`,
+		type: 'success',
+		icon: 'check',
+	})
+}
+
+const setDefaultDuration = (duration: number) => {
+	updateConfig({
+		color: {
+			background: config.value?.color?.background || 'var(--color-text-005)',
+			text: config.value?.color?.text || 'var(--color-text)',
+		},
+		defaultDuration: duration,
+	})
+	show({
+		message: `デフォルトDurationを${duration}msに設定しました`,
+		type: 'success',
+		icon: 'settings',
+	})
 }
 
 // Watches ---------------------------

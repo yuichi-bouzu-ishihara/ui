@@ -350,6 +350,7 @@ export const defaultOptions = {
 			background: 'color-dark-090',
 			text: 'color-light',
 		},
+		defaultDuration: 10000,
 	},
 	storage: {
 		prefix: 'ui-',

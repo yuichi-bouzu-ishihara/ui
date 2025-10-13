@@ -73,7 +73,7 @@ export const useToast = () => {
 		const id = nextId.value
 		const persistent = pl.persistent || false
 		const dismissible = pl.dismissible !== false // デフォルトはtrue（消去可能）
-		const duration = persistent ? 0 : (pl.duration || 3000)
+		const duration = persistent ? 0 : (pl.duration || config.value?.defaultDuration || 3000)
 		let timer: number | undefined
 		if (!persistent) {
 			timer = window.setTimeout(() => {
@@ -167,7 +167,7 @@ export const useToast = () => {
 		// 新しいタイマーを設定（persistentでない場合）
 		const persistent = updates.persistent !== undefined ? updates.persistent : existingToast.persistent
 		const duration = updates.duration !== undefined ? updates.duration : existingToast.duration
-		const finalDuration = persistent ? 0 : (duration || 3000)
+		const finalDuration = persistent ? 0 : (duration || config.value?.defaultDuration || 3000)
 
 		let timer: number | undefined
 		if (!persistent) {
