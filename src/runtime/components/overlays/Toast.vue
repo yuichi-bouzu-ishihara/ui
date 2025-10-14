@@ -86,7 +86,7 @@ $cn: '.toast'; // コンポーネントセレクタ名
 		padding: 20px 56px 20px 20px;
 
 		&-txt {
-			margin-top: -2.8px;
+			transform: translateY(-2.0px);
 		}
 	}
 
