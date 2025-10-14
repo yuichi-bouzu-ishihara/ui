@@ -1,34 +1,32 @@
 <template>
-	<div class="toast" :class="classes">
-		<Clickable :disabled="!click" @click="click && click()">
-			<Row class="toast" :class="classes" align="stretch" nowrap fit-w>
-				<!-- 画像がある場合 -->
-				<Ratio v-if="image" class="toast-image">
-					<Image :src="image.src" :alt="message" class="toast-image-inner" />
-					<div v-if="image.processing || image.icon" class="toast-image-icon">
-						<Spinner v-if="image.processing" size="16" color="var(--toast-color-text)" />
-						<Icon v-else :name="image.icon" size="16" color="var(--toast-color-text)" />
-					</div>
-				</Ratio>
-				<Row class="toast-content" gap="12" align="center" nowrap fit-w>
-					<!-- アイコンの場合 -->
-					<Icon v-if="icon" class="toast-icon" :name="icon" size="18"
-						:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'" />
-					<Typography caption2 bold cap-height-baseline lineclamp="1"
-						:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'">
-						{{ message }}
-					</Typography>
-				</Row>
-				<Clickable v-if="dismissible" class="toast-close" @click="emit('close')">
-					<Box w="56" h="56">
-						<Center>
-							<Icon name="cross" size="12" color="var(--toast-color-text)" />
-						</Center>
-					</Box>
-				</Clickable>
+	<Clickable class="toast" :class="classes" :disabled="!click" @click="click && click()">
+		<Row class="toast" :class="classes" align="stretch" nowrap fit-w>
+			<!-- 画像がある場合 -->
+			<Ratio v-if="image" class="toast-image">
+				<Image :src="image.src" :alt="message" class="toast-image-inner" />
+				<div v-if="image.processing || image.icon" class="toast-image-icon">
+					<Spinner v-if="image.processing" size="16" color="var(--toast-color-text)" />
+					<Icon v-else :name="image.icon" size="16" color="var(--toast-color-text)" />
+				</div>
+			</Ratio>
+			<Row class="toast-content" gap="12" align="center" nowrap fit-w>
+				<!-- アイコンの場合 -->
+				<Icon v-if="icon" class="toast-icon" :name="icon" size="18"
+					:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'" />
+				<Typography class="toast-content-txt" caption2 bold cap-height-baseline unselectable lineclamp="1"
+					:color="type === 'error' ? 'danger' : 'var(--toast-color-text)'">
+					{{ message }}
+				</Typography>
 			</Row>
-		</Clickable>
-	</div>
+			<Clickable v-if="dismissible" class="toast-close" @click="emit('close')">
+				<Box w="56" h="56">
+					<Center>
+						<Icon name="cross" size="12" color="var(--toast-color-text)" />
+					</Center>
+				</Box>
+			</Clickable>
+		</Row>
+	</Clickable>
 </template>
 
 <script setup lang="ts">
@@ -80,11 +78,16 @@ $cn: '.toast'; // コンポーネントセレクタ名
 	border-radius: 8px;
 	background-color: var(--toast-color-background);
 	backdrop-filter: blur(40px);
+	box-shadow: 0px 0px 60px rgba(0, 0, 0, 0.3);
 	pointer-events: auto;
 	overflow: hidden;
 
 	&-content {
 		padding: 20px 56px 20px 20px;
+
+		&-txt {
+			margin-top: -2.8px;
+		}
 	}
 
 	&._non-dismissible &-content {
