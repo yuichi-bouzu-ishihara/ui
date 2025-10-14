@@ -3,7 +3,7 @@
 		<Row class="toast" :class="classes" align="stretch" nowrap fit-w>
 			<!-- 画像がある場合 -->
 			<Ratio v-if="image" class="toast-image">
-				<Image :src="image.src" :alt="message" class="toast-image-inner" />
+				<Image :src="image.src" :alt="message" class="toast-image-inner" cover />
 				<div v-if="image.processing || image.icon" class="toast-image-icon">
 					<Spinner v-if="image.processing" size="16" color="var(--toast-color-text)" />
 					<Icon v-else :name="image.icon" size="16" color="var(--toast-color-text)" />
