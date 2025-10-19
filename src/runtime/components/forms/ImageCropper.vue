@@ -2,7 +2,8 @@
 	<Column class="imageCropper" justify="center" gap="20" fit>
 		<Box w="100%" relative>
 			<Row justify="center" align="center">
-				<Cropper :key="`imageCropper-cropper-${changeDate}`" ref="cropper" v-model="transform" :src="value"
+				<Cropper :key="`imageCropper-cropper-${changeDate}`" ref="cropper" v-model="transform"
+					v-resize="(rect: DOMRectReadOnly) => onResize(rect)" :src="value"
 					v-bind="{ trimWidth, trimHeight, outputWidth, outputHeight }" />
 			</Row>
 			<template v-if="changeRequired && !isImageChange">
@@ -18,10 +19,10 @@
 				</Center>
 			</template>
 		</Box>
-		<template v-if="value">
+		<Box v-if="value" :w="width">
 			<InputRange v-model="transform.scale" :step="ZOOM_BTN_STEP" min="1" :max="ZOOM_MAX"
 				:disabled="changeRequired && !isImageChange" controls />
-		</template>
+		</Box>
 	</Column>
 </template>
 
@@ -70,6 +71,8 @@ const value = ref<string>(props.src)
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const cropper = ref<any>(null)
 const changeDate = ref(0)
+const width = ref<number>(0)
+const height = ref<number>(0)
 
 // Methods ---------------------
 const select = async () => {
@@ -81,7 +84,10 @@ const select = async () => {
 		emit('change', { base64: value.value, transform: transform.value })
 	}
 }
-
+const onResize = (rect: DOMRectReadOnly) => {
+	width.value = rect.width
+	height.value = rect.height
+}
 // Watch ---------------------
 watch(() => props.src, (nv, ov) => {
 	if (nv !== ov) {
