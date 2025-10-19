@@ -2,9 +2,8 @@
 	<Column class="imageCropper" justify="center" gap="20" fit>
 		<Box w="100%" relative>
 			<Row justify="center" align="center">
-				<Cropper :key="`imageCropper-cropper-${changeDate}`" ref="cropper" v-model="transform"
-					v-resize="(rect: DOMRectReadOnly) => onResize(rect)" :src="value"
-					v-bind="{ trimWidth, trimHeight, outputWidth, outputHeight }" />
+				<Cropper :key="`imageCropper-cropper-${changeDate}`" ref="cropper" v-model="transform" :src="value"
+					v-bind="{ trimWidth, trimHeight, outputWidth, outputHeight }" @resize="onResize" />
 			</Row>
 			<template v-if="changeRequired && !isImageChange">
 				<Center class="imageCropper-menu">
@@ -84,9 +83,9 @@ const select = async () => {
 		emit('change', { base64: value.value, transform: transform.value })
 	}
 }
-const onResize = (rect: DOMRectReadOnly) => {
-	width.value = rect.width
-	height.value = rect.height
+const onResize = (size: { width: number, height: number }) => {
+	width.value = size.width
+	height.value = size.height
 }
 // Watch ---------------------
 watch(() => props.src, (nv, ov) => {

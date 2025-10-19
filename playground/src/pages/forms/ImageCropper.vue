@@ -1,6 +1,6 @@
 <template>
 	<div class="pageFormsImageCropper">
-		<Container>
+		<Container wide>
 			<FileUpload v-if="!file" v-model="file" accept="image" />
 			<ImageCropper v-else-if="src" :src="src" :trim-width="528" :trim-height="264" :output-width="528"
 				:output-height="264" />

@@ -1,11 +1,11 @@
 <template>
 	<div ref="element" class="cropper" :class="classes" :style="{ width: '100%', height: `${trimHeight}px` }">
-		<div class="cropper-trim" :style="{ width: `${trimWidth}px`, height: `${trimHeight}px` }">
+		<Box v-resize="(rect: DOMRectReadOnly) => onResize(rect)" class="cropper-trim" :w="trimWidth" :h="trimHeight">
 			<div class="cropper-trim-img" :style="imageSizeStyle">
 				<Image v-if="src" :key="`cropper-trim-img-count${imageChangeDate}`" :style="imageTransformStyle" :src="src"
 					@ready="onImageReady" @error="emit('error')" />
 			</div>
-		</div>
+		</Box>
 		<div v-if="src" ref="captureEl" class="cropper-capture"
 			:style="`width: ${outputWidth || trimWidth}px; height: ${outputHeight || trimHeight}px; overflow: hidden;`">
 			<div class="cropper-capture-img" :style="captureImageSizeStyle">
@@ -44,7 +44,11 @@ export type Value = {
 const image = useImage()
 
 // Emits ---------------------
-const emit = defineEmits(['update:modelValue', 'ready', 'error'])
+const emit = defineEmits<{
+	(e: 'update:modelValue', value: Value): void
+	(e: 'ready' | 'error'): void
+	(e: 'resize', size: { width: number, height: number }): void
+}>()
 
 // Expose ---------------------
 const capture = async () => {
@@ -144,6 +148,9 @@ const adjustPosition = () => {
 const adjustScale = () => {
 	const limit = 1
 	custom.value.scale = Math.max(custom.value.scale, limit)
+}
+const onResize = (rect: DOMRectReadOnly) => {
+	emit('resize', { width: rect.width, height: rect.height })
 }
 
 // Lifecycle Hooks -----------
