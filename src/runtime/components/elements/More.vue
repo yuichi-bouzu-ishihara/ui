@@ -1,7 +1,7 @@
 <template>
 	<Box class="more" w="100%" relative>
 		<template v-if="reverse">
-			<Box v-if="!disabled" :key="`more-top-${startDate}`" v-intersect.in="{ rootMargin: '50% 0px 0px 0px' }" w="100%"
+			<Box v-if="!disabled" :key="`more-top-${startDate}`" v-intersect="{ rootMargin: '50% 0px 0px 0px' }" w="100%"
 				@intersect="onIntersect" />
 			<Box v-if="loading" w="100%" :h="loaderHeight" :pb="gap">
 				<slot name="loader">
@@ -13,8 +13,8 @@
 		</template>
 		<slot />
 		<template v-if="!reverse">
-			<Box v-if="!disabled" :key="`more-bottom-${startDate}`" v-intersect.in="{ rootMargin: '0px 0px 50% 0px' }"
-				w="100%" @intersect="onIntersect" />
+			<Box v-if="!disabled" :key="`more-bottom-${startDate}`" v-intersect="{ rootMargin: '0px 0px 50% 0px' }" w="100%"
+				@intersect="onIntersect" />
 			<Box v-if="loading" w="100%" :h="loaderHeight" :pt="gap">
 				<slot name="loader">
 					<Center>
@@ -50,9 +50,12 @@ const startDate = ref(0)
 const emit = defineEmits(['reached'])
 
 // Methods ------------------
-const onIntersect = () => {
+const onIntersect = (entry: IntersectionObserverEntry) => {
 	if (props.disabled) return
-	emit('reached')
+	// 要素が表示されたときのみイベントを発火（.inモディファイアの代替）
+	if (entry.isIntersecting) {
+		emit('reached')
+	}
 }
 
 // Watchers
