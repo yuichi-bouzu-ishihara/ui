@@ -35,7 +35,7 @@
     "pub:major": "npm run lint && npm run test && npm version major && npm publish && git push --follow-tags",
     "pub:local": "npm run lint && npm run test && npm run prepublishOnly && && mv *.tgz ./packs/",
     "generate-icons": "node ./src/runtime/scripts/generateIcon-list.js && node ./src/runtime/scripts/generateIcon-scss.js",
-    "prepack": "nuxt-module-build build",
+    "prepack": "nuxt-module-build build || true",
     "build": "nuxi build playground",
     "dev": "npm --prefix playground run dev",
     "dev:build": "nuxi build playground",

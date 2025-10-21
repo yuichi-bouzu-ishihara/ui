@@ -141,5 +141,12 @@ export default defineNuxtModule<ModuleOptions>({
 				maxAge: 60 * 60 * 24 * 365, // 1 year
 			})
 		})
+
+		// Type definitions
+		nuxt.hook('prepare:types', ({ references }) => {
+			references.push({
+				path: resolve(runtimeDir, 'types', 'vue.d.ts'),
+			})
+		})
 	},
 })
