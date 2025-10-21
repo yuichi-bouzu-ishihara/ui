@@ -50,8 +50,8 @@ const props = defineProps({
 const play = async () => {
 	if (vimeoPlayer) {
 		try {
-			await vimeoPlayer.setMuted(muted.value)
-			await vimeoPlayer.setVolume(volume.value)
+			setMuted(muted.value)
+			setVolume(volume.value)
 			await vimeoPlayer.play()
 		}
 		catch (error: unknown) {
@@ -308,6 +308,30 @@ const setThumbnail = async () => {
 	}
 }
 
+const setMuted = async (value: boolean) => {
+	if (vimeoPlayer) {
+		vimeoPlayer.setMuted(value).catch((error: unknown) => {
+			console.error('Vimeo mute update error:', error)
+		})
+		if (!value) {
+			vimeoPlayer.setVolume(volume.value)
+		}
+	}
+}
+const setVolume = async (value: number) => {
+	if (vimeoPlayer) {
+		try {
+			// mute中の場合、mute状態を再設定して確実に音を止める
+			if (!muted.value) {
+				await vimeoPlayer.setVolume(value)
+			}
+		}
+		catch (error: unknown) {
+			console.error('Vimeo volume update error:', error)
+		}
+	}
+}
+
 // Watchers ------------------------------------------------
 watch(
 	() => props.videoId,
@@ -340,32 +364,15 @@ watch(
 
 watch(
 	() => volume.value,
-	async (newVolume) => {
-		if (vimeoPlayer) {
-			try {
-				// mute中の場合、mute状態を再設定して確実に音を止める
-				if (!muted.value) {
-					await vimeoPlayer.setVolume(newVolume)
-				}
-			}
-			catch (error: unknown) {
-				console.error('Vimeo volume update error:', error)
-			}
-		}
+	(newVolume) => {
+		setVolume(newVolume)
 	},
 )
 
 watch(
 	() => muted.value,
 	(newMute) => {
-		if (vimeoPlayer) {
-			vimeoPlayer.setMuted(newMute).catch((error: unknown) => {
-				console.error('Vimeo mute update error:', error)
-			})
-			if (!newMute) {
-				vimeoPlayer.setVolume(volume.value)
-			}
-		}
+		setMuted(newMute)
 	},
 )
 
