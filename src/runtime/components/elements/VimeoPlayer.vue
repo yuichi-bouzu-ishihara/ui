@@ -111,7 +111,7 @@ const emit = defineEmits<{
 }>()
 
 // Data --------------------------------------------------
-const element = ref(null)
+const element = ref<HTMLIFrameElement | null>(null)
 const rect = ref<DOMRectReadOnly | null>(null)
 const state = ref('')
 const videoNativeWidth = ref(0)
@@ -216,6 +216,7 @@ const onSeeked = async () => {
 const onTimeUpdate = async () => {
 	// console.log('Time update')
 	// state.value = 'timeupdate'
+	if (!vimeoPlayer) return
 	try {
 		const time = await vimeoPlayer.getCurrentTime()
 		// シーク操作中でない場合のみcurrentTimeを更新
@@ -232,6 +233,7 @@ const onTimeUpdate = async () => {
 const onVolumeChange = async () => {
 	// console.log('Volume change')
 	// state.value = 'volumechange'
+	if (!vimeoPlayer) return
 	try {
 		const volume = await vimeoPlayer.getVolume()
 		emit('volumechange', { volume })
@@ -245,6 +247,7 @@ const onVolumeChange = async () => {
 const setReady = async () => {
 	// 動画の準備が完了したらreadyイベントをemit
 	if (!isReady.value) {
+		if (!vimeoPlayer) return
 		try {
 			const duration = await vimeoPlayer.getDuration()
 			videoDuration.value = duration
@@ -264,6 +267,7 @@ const setReady = async () => {
 
 // 動画の縦横サイズを取得する
 const getVideoSize = async () => {
+	if (!vimeoPlayer) return
 	try {
 		const dimensions = await Promise.all([vimeoPlayer.getVideoWidth(), vimeoPlayer.getVideoHeight()])
 		const width = dimensions[0]
@@ -336,6 +340,7 @@ const setVolume = async (value: number) => {
 watch(
 	() => props.videoId,
 	(newVideoId) => {
+		if (!vimeoPlayer) return
 		// 新しい動画がロードされる際にready状態をリセット
 		isReady.value = false
 		isEnded.value = false
@@ -426,11 +431,16 @@ watch(
 		if (nv) {
 			play()
 		}
+		else {
+			pause()
+		}
 	},
 )
 
 // Lifecycle Hooks ----------------------------------------
 onMounted(async () => {
+	await nextTick()
+	if (!element.value) return
 	/**
 	 * @see https://help.vimeo.com/hc/ja/articles/12426260232977-%E3%83%97%E3%83%AC%E3%82%A4%E3%83%A4%E3%83%BC%E3%81%AE%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
 	 */
