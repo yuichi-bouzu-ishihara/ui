@@ -21,7 +21,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import Player from '@vimeo/player'
 import { useVideo } from '../../composables/elements/video'
 import VideoPlayerControls from './VideoPlayerControls.vue'
