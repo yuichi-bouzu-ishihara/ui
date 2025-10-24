@@ -197,6 +197,7 @@ const onPlay = async () => {
 	state.value = 'play'
 	isEnded.value = false
 	updateVideoSize()
+	emit('play')
 }
 const onPlayBackRateChange = async () => {
 	// console.log('Playbackrate change')
