@@ -92,47 +92,47 @@ const pause = () => {
 	vimeoPlayer.value?.pause()
 }
 const onReady = (evt: ReadyEvent) => {
-	// console.log('ready', evt)
+	console.log('ready', evt)
 	duration.value = evt.duration
 	isReady.value = true
 }
 const onPlay = () => {
-	// console.log('play')
+	console.log('play')
 }
 const onPause = () => {
-	// console.log('pause')
+	console.log('pause')
 }
 const onEnded = () => {
-	// console.log('ended')
+	console.log('ended')
 }
 const onError = () => {
-	// console.log('error')
+	console.log('error')
 }
 const onLoaded = () => {
-	// console.log('loaded')
+	console.log('loaded')
 	isMetadataLoaded.value = true
 }
 const onBufferEnd = () => {
-	// console.log('bufferend')
+	console.log('bufferend')
 }
 const onBufferStart = () => {
-	// console.log('bufferstart')
+	console.log('bufferstart')
 }
 const onPlaybackRateChange = () => {
-	// console.log('playbackratechange')
+	console.log('playbackratechange')
 }
 const onProgress = () => {
-	// console.log('progress')
+	console.log('progress')
 }
 const onSeeked = () => {
-	// console.log('seeked')
+	console.log('seeked')
 }
 const onTimeUpdate = (evt: TimeUpdateEvent) => {
-	// console.log('timeupdate', evt)
+	console.log('timeupdate', evt)
 	seekTime.value = evt.currentTime
 }
 const onVolumeChange = (_evt: VolumeChangeEvent) => {
-	// console.log('volumechange', evt)
+	console.log('volumechange', _evt)
 }
 </script>
 
