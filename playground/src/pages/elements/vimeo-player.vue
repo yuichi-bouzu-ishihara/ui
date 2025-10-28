@@ -17,7 +17,7 @@
 					</Box>
 				</Box>
 				<Ratio golden>
-					<VimeoPlayer v-bind="{ videoId, autoplay, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
+					<VimeoPlayer v-bind="{ videoId, autoplay, loop, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
 						v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
 						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" controls contain @ready="onReady" @play="onPlay"
 						@pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
@@ -62,6 +62,7 @@
 			<Box h="20" />
 			<Row justify="center" gap="40">
 				<Switch v-model="autoplay" name="autoplay" label="Autoplay" />
+				<Switch v-model="loop" name="loop" label="Loop" />
 				<Switch v-model="cover" name="cover" label="Cover" />
 			</Row>
 		</Container>
@@ -83,6 +84,7 @@ const muted = ref(false)
 const isReady = ref(false)
 const isMetadataLoaded = ref(false)
 const autoplay = ref(false)
+const loop = ref(false)
 const cover = ref(false)
 
 const play = () => {
