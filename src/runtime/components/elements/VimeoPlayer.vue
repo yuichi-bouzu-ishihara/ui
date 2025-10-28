@@ -44,6 +44,7 @@ const props = defineProps({
 	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
 	autoplay: { type: Boolean, default: false },
 	autopause: { type: Boolean, default: true }, // 他 Vimeo Player が再生されたら自動的に停止するオプション
+	loop: { type: Boolean, default: false }, // ループ再生のオプション
 	cover: { type: Boolean, default: false },
 })
 
@@ -464,6 +465,8 @@ onMounted(async () => {
 		playsinline: true,
 		// メタデータと動画の最初の数秒をすぐに読み込むには、「auto」を使用します。
 		preload: 'auto',
+		// ループ再生のオプション
+		loop: props.loop,
 	})
 	await Promise.all([getVideoSize(), setThumbnail()])
 	updateVideoSize()
