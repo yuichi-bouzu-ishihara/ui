@@ -43,6 +43,7 @@ const props = defineProps({
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
 	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
 	autoplay: { type: Boolean, default: false },
+	autopause: { type: Boolean, default: true }, // 他 Vimeo Player が再生されたら自動的に停止するオプション
 	cover: { type: Boolean, default: false },
 })
 
@@ -453,7 +454,8 @@ onMounted(async () => {
 		showTitle: false,
 		showPortrait: false,
 		showByline: false,
-		autopause: true,
+		// 他 Vimeo Player が再生されたら自動的に停止するオプション
+		autopause: props.autopause,
 		// ローディング中の表示を制御
 		loading: 'lazy',
 		// プレイヤーの外観を制御
