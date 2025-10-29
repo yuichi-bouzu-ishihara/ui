@@ -85,7 +85,7 @@ export const useSheet = () => {
 					}
 					pl.resolve = undefined
 				}
-				list.value = list.value.filter((item, i) => i !== index)
+				list.value = list.value.filter((_item, i) => i !== index)
 				current.value = list.value[list.value.length - 1] || null
 			}
 		},
