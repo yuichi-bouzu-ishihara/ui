@@ -14,10 +14,14 @@
 				<TheDrawerDepthTest v-if="drawer('depthTest')" />
 			</DrawerLayer>
 			<SheetLayer style="z-index: 10">
-				<Nest1Sheet v-if="sheet('nest1')" />
-				<Nest2Sheet v-if="sheet('nest2')" />
-				<Nest3Sheet v-if="sheet('nest3')" />
-				<ColorSheet v-if="sheet('color')" />
+				<template v-if="sheet.list.value.length">
+					<template v-for="(item, index) in sheet.list.value">
+						<template v-if="item.component !== ''">
+							<component :is="basics[item.component]" :key="`sheetLayer-item-${item.component}-${index}`"
+								v-bind="item.props" :index="index" />
+						</template>
+					</template>
+				</template>
 			</SheetLayer>
 			<ModalLayer style="z-index: 15">
 				<TestModal v-if="modalName === 'test'" />
@@ -29,25 +33,34 @@
 	</div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import TheDrawerTest from '@/components/drawer/TheDrawerTest.vue'
 import TheDrawerDepthTest from '@/components/drawer/TheDrawerDepthTest.vue'
 import TestModal from '@/components/modal/TestModal.vue'
-import Nest1Sheet from '@/components/sheet/Nest1Sheet.vue'
-import Nest2Sheet from '@/components/sheet/Nest2Sheet.vue'
-import Nest3Sheet from '@/components/sheet/Nest3Sheet.vue'
+import NestSheet from '@/components/sheet/NestSheet.vue'
 import ColorSheet from '@/components/sheet/ColorSheet.vue'
 
+// Constans ----------------------------------------------
+// 表示する汎用モーダルコンポーネントを定義する
+const basics: Record<
+	string,
+	| typeof NestSheet
+	| typeof ColorSheet
+> = {
+	NestSheet,
+	ColorSheet,
+}
+
+// Composables -----------------------------------------------
+const sheet = useSheet()
+
+// Data -----------------------------------------------
 const pending = ref(true)
 
-const sheet = computed(() => (name) => {
-	return useSheet().list.value.some(item => item.name === name)
-})
-
+// Computed -----------------------------------------------
 const modalName = computed(() => {
 	return useModal().name.value
 })
-
 const drawer = computed(() => (name) => {
 	if (useDrawer().lefts.value.some(item => item.name === name)) {
 		return true
@@ -58,6 +71,7 @@ const drawer = computed(() => (name) => {
 	return false
 })
 
+// Lifecycle -----------------------------------------------
 onMounted(async () => {
 	pending.value = true
 	try {

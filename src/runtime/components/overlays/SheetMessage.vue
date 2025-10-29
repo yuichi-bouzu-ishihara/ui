@@ -1,5 +1,6 @@
 <template>
-	<Sheet class="sheetMessage" :name="NAME" close v-bind="{ title, full, wide, narrow }" @close="close(NAME, false)">
+	<Sheet class="sheetMessage" close v-bind="{ ...$attrs, title, full, wide, narrow }"
+		@close="close($attrs.index as number, false)">
 		<SheetContainer>
 			<Column justify="center" align="end" gap="20">
 				<template v-if="icon">
@@ -13,7 +14,7 @@
 				</template>
 				<template v-if="buttonName">
 					<Box w="100%" mt="12" mb="-8">
-						<Button w="100%" @click="close(NAME, true)">
+						<Button w="100%" @click="close($attrs.index as number, true)">
 							{{ buttonName }}
 						</Button>
 					</Box>
@@ -24,7 +25,6 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useSheet } from '../../composables/overlays/sheet'
 import Box from '../layout/Box.vue'
 import Column from '../layout/Column.vue'
@@ -34,69 +34,18 @@ import Icon from '../elements/Icon.vue'
 import Sheet from './Sheet.vue'
 import SheetContainer from './SheetContainer.vue'
 
-// Constants ---------------------------
-const NAME = 'message'
-
 // Composables ---------------------------
-const { getOptions, close, color } = useSheet()
+const { close, color } = useSheet()
 
-// Computed -----------------------------------------------
-const options = computed(() => getOptions(NAME))
-const title = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('title' in options.value) {
-			return options.value.title as string
-		}
-	}
-	return ''
-})
-const icon = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('icon' in options.value) {
-			return options.value.icon as string
-		}
-	}
-	return ''
-})
-const content = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('content' in options.value) {
-			return options.value.content as string
-		}
-	}
-	return ''
-})
-const buttonName = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('buttonName' in options.value) {
-			return options.value.buttonName as string
-		}
-	}
-	return ''
-})
-const full = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('full' in options.value) {
-			return options.value.full as boolean
-		}
-	}
-	return false
-})
-const wide = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('wide' in options.value) {
-			return options.value.wide as boolean
-		}
-	}
-	return false
-})
-const narrow = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('narrow' in options.value) {
-			return options.value.narrow as boolean
-		}
-	}
-	return false
+// Props -----------------------------------------------
+defineProps({
+	title: { type: String, default: '' },
+	icon: { type: String, default: '' },
+	content: { type: String, default: '' },
+	buttonName: { type: String, default: '' },
+	full: { type: Boolean, default: false },
+	wide: { type: Boolean, default: false },
+	narrow: { type: Boolean, default: false },
 })
 </script>
 

@@ -3,8 +3,12 @@
 		<div class="sheetLayer-inner">
 			<TransitionGroup name="sheet" @after-leave="afterLeave">
 				<template v-if="list.length">
-					<SheetDevMenu v-if="list.some(item => item.name === 'devMenu')" />
-					<SheetMessage v-if="list.some(item => item.name === 'message')" />
+					<template v-for="(item, index) in list">
+						<template v-if="item.component !== ''">
+							<component :is="basics[item.component]" :key="`sheetLayer-inner-item-${item.component}-${index}`"
+								v-bind="item.props" :index="index" />
+						</template>
+					</template>
 					<slot />
 				</template>
 			</TransitionGroup>
@@ -23,6 +27,17 @@ import TransitionFade from '../transition/TransitionFade.vue'
 import SheetMessage from './SheetMessage.vue'
 import SheetDevMenu from './SheetDevMenu.vue'
 import Backdrop from './Backdrop.vue'
+
+// Constans ----------------------------------------------
+// 表示する汎用モーダルコンポーネントを定義する
+const basics: Record<
+	string,
+	| typeof SheetMessage
+	| typeof SheetDevMenu
+> = {
+	SheetMessage,
+	SheetDevMenu,
+}
 
 // Stores & Composables ---------------------------
 const { close, list, isOpen, setIsOpen } = useSheet()

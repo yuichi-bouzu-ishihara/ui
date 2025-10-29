@@ -79,7 +79,7 @@ const currentPageName = ref('/')
 const menus = ref<Menu[]>([])
 
 const handleShowMenu = () => {
-	useSheet().open({ name: 'devMenu' })
+	useSheet().open({ component: 'SheetDevMenu' })
 }
 
 // Watch --------------------
