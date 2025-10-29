@@ -10,7 +10,7 @@ import type { Component } from 'vue'
 
 // Types ---------------------
 export type Payload = {
-	component: string | Component // 入力時はコンポーネント型も受け付ける
+	component: Component // コンポーネント型のみ（stringを削除）
 	props?: { [key: string]: unknown } | null
 }
 
@@ -27,14 +27,9 @@ const DATA_VALUE = 'sheet'
 // グローバルなコンポーネントマップ（複数のbasicsを統合）
 const globalComponentMap = new Map<Component, string>()
 
-// コンポーネント型から名前を取得
-const getComponentName = (component: string | Component): string => {
-	// 文字列の場合はそのまま返す
-	if (typeof component === 'string') {
-		return component
-	}
-
-	// コンポーネント型の場合、グローバルマップから検索
+// コンポーネント型から名前を取得（Componentのみ受け付ける）
+const getComponentName = (component: Component): string => {
+	// グローバルマップから検索
 	const name = globalComponentMap.get(component)
 	if (name) {
 		return name
@@ -98,7 +93,7 @@ export const useSheet = () => {
 
 		/**
 		 * 指定したシートを表示する
-		 * @param {Payload} pl - ペイロード（componentは文字列またはコンポーネント型）
+		 * @param {Payload} pl - ペイロード（componentはコンポーネント型のみ）
 		 * @returns {Promise<unknown>} シートの結果
 		 */
 		open: (pl: Payload): Promise<unknown> => {
@@ -118,7 +113,7 @@ export const useSheet = () => {
 
 		/**
 		 * シートを閉じる
-		 * @param {string | 'all'} component - シートの名前
+		 * @param {number | 'all'} index - シートのインデックス。'all' の場合はすべて閉じる
 		 * @param {unknown} result - シートの結果
 		 */
 		close: async (index: number | 'all', result: unknown = true) => {

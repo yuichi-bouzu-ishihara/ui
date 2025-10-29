@@ -46,7 +46,7 @@
 import SheetMessage, { type Props as SheetMessageProps } from '../../../../src/runtime/components/overlays/SheetMessage.vue'
 import NestSheet, { type Props as NestSheetProps } from '@/components/sheet/NestSheet.vue'
 
-const open = async (component: string | Component, props: Record<string, unknown>) => {
+const open = async (component: Component, props: Record<string, unknown>) => {
 	const result = await useSheet().open({ component, props })
 	console.log(result)
 }
