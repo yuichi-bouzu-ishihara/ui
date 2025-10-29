@@ -76,6 +76,7 @@ const header = useHeader()
 
 // Props -----------------------
 const props = defineProps({
+	index: { type: Number, default: 0 }, // このシートの SheetLayer 内でのインデックス
 	name: { type: String, default: '' },
 	title: { type: String, default: '' },
 	leftIcon: { type: String, default: '' },
@@ -105,6 +106,9 @@ const classes = computed(() => {
 		_narrow: props.narrow,
 		_deep: depth.value !== 0,
 	}
+})
+const depth = computed(() => {
+	return list.value.length - (props.index + 1)
 })
 const backgroundColor = computed(() => {
 	let str = ''
@@ -143,12 +147,6 @@ const variables = computed(() => {
 	}
 	obj['--sheet-top-space'] = `${topSpace.value}px`
 	return obj
-})
-const index = computed(() => {
-	return list.value.findIndex(item => item.name === props.name)
-})
-const depth = computed(() => {
-	return list.value.length - (index.value + 1)
 })
 // 階層を深く見せるスタイル
 const depthStyle = computed(() => {

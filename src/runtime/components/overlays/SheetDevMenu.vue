@@ -1,6 +1,6 @@
 <template>
-	<Sheet class="sheetDevMenu" :name="NAME" title="Menu" :left-icon="hasIndex ? 'grid2' : ''" close
-		@left-icon-click="handleLeftIconClick" @close="close(NAME, false)">
+	<Sheet class="sheetDevMenu" title="Menu" :left-icon="hasIndex ? 'grid2' : ''" close
+		@left-icon-click="handleLeftIconClick" @close="close($attrs.index as number, false)">
 		<div class="sheetDevMenu-list">
 			<template v-for="(item, index) in menus" :key="`global-${index}`">
 				<DevMenu v-if="item.name !== 'Index'" class="devHeader-menus-inner-list-item" v-bind="item" />
@@ -18,10 +18,7 @@ import DevMenu from '../dev/DevMenu.vue'
 import type { DevMenu as Menu } from '../dev/interfaces'
 import Sheet from './Sheet.vue'
 
-// Constants ---------------------------
-const NAME = 'devMenu'
-
-// Stores & Composables ---------------------------
+// Composables ---------------------------
 const { close } = useSheet()
 const route = useRoute()
 const router = useRouter()

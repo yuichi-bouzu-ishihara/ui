@@ -9,8 +9,8 @@ import { useState, useAppConfig, readonly } from '#imports'
 
 // Types ---------------------
 export type Payload = {
-	name: string // コンポーネント名
-	options?: { [key: string]: unknown } | null // オプション
+	component: string // コンポーネント名
+	props?: { [key: string]: unknown } | null // コンポーネントのプロパティ
 }
 type PayloadWithResolve = Payload & { resolve?: (value: unknown) => void }
 
@@ -69,34 +69,34 @@ export const useSheet = () => {
 
 		/**
 		 * シートを閉じる
-		 * @param {string | 'all'} name - シートの名前
+		 * @param {string | 'all'} component - シートの名前
 		 * @param {unknown} result - シートの結果
 		 */
-		close: async (name: string | 'all', result: unknown = true) => {
-			if (name === 'all') {
+		close: async (index: number | 'all', result: unknown = true) => {
+			if (index === 'all') {
 				list.value = []
 				current.value = null
 			}
 			else {
-				const pl = list.value.find(item => item.name === name)
+				const pl = list.value[index]
 				if (pl) {
 					if (pl.resolve) {
 						pl.resolve(result)
 					}
 					pl.resolve = undefined
 				}
-				list.value = list.value.filter(item => item.name !== name)
+				list.value = list.value.filter((item, i) => i !== index)
 				current.value = list.value[list.value.length - 1] || null
 			}
 		},
 
 		/**
 		 * name に一致するシートのオプションを取得する
-		 * @param {string} name - シートの名前
+		 * @param {string} component - シートの名前
 		 * @returns {unknown | null} シートのオプション
 		 */
-		getOptions: (name: string) => {
-			return list.value.find(item => item.name === name)?.options
+		getProps: (component: string) => {
+			return list.value.find(item => item.component === component)?.props
 		},
 
 		setIsOpen: (value: boolean) => {
