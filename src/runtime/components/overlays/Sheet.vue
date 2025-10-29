@@ -4,7 +4,8 @@
 			<div class="sheet-inner">
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
-						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto" :color="backgroundColor">
+						<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height" class="sheet-inner-item-content"
+							w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box sticky top="0" w="100%" z-index="1">
 									<Container no-padding full>
@@ -28,7 +29,7 @@
 									</Container>
 								</Box>
 							</template>
-							<Box w="100%" relative z-index="0" :h="contentHeight > 0 ? 'calc(100% - 72px)' : 'auto'">
+							<Box w="100%" relative z-index="0" :h="contentHeight > 0 ? 'calc(100% - var(--header-height))' : 'auto'">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
 									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
