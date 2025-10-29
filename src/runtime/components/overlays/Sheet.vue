@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useSlots } from 'vue'
+import { computed, ref, useSlots, watch } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Box from '../layout/Box.vue'
 import Center from '../layout/Center.vue'
