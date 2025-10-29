@@ -18,7 +18,7 @@
 				</Row>
 				<Row justify="center" :gap="[8, 8]">
 					<Button
-						@click="open('nest1', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />Text Content is here.<br />Please Test Message.<br /><br />', full: true, center: false, icon: 'edit', buttonName: 'OK' })">
+						@click="open('nest1', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.<br /><br />', full: true, center: true, buttonName: 'OK' })">
 						Nest Test
 					</Button>
 				</Row>
