@@ -6,23 +6,65 @@ import { useCss } from '../css'
 import type { UIConfig } from '../../types'
 import type { SheetConfig } from '../../types/sheet'
 import { useState, useAppConfig, readonly } from '#imports'
+import type { Component } from 'vue'
 
 // Types ---------------------
 export type Payload = {
-	component: string // コンポーネント名
-	props?: { [key: string]: unknown } | null // コンポーネントのプロパティ
+	component: string | Component // 入力時はコンポーネント型も受け付ける
+	props?: { [key: string]: unknown } | null
 }
-type PayloadWithResolve = Payload & { resolve?: (value: unknown) => void }
+
+// 内部保存用（componentは常にstring）
+type InternalPayload = {
+	component: string // 内部では常に文字列
+	props?: { [key: string]: unknown } | null
+	resolve?: (value: unknown) => void
+}
 
 // Constants -----------------------------------------
 const DATA_VALUE = 'sheet'
+
+// グローバルなコンポーネントマップ（複数のbasicsを統合）
+const globalComponentMap = new Map<Component, string>()
+
+// コンポーネント型から名前を取得
+const getComponentName = (component: string | Component): string => {
+	// 文字列の場合はそのまま返す
+	if (typeof component === 'string') {
+		return component
+	}
+
+	// コンポーネント型の場合、グローバルマップから検索
+	const name = globalComponentMap.get(component)
+	if (name) {
+		return name
+	}
+
+	// フォールバック: Vue 3の__nameプロパティを試す
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	if ((component as any).__name) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return (component as any).__name
+	}
+
+	// 最後のフォールバック: nameプロパティを試す
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	if ((component as any).name) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		return (component as any).name
+	}
+
+	// 見つからない場合は空文字を返す（エラーになる可能性がある）
+	console.warn('Sheet component name not found. Make sure to register components with setComponents().')
+	return ''
+}
 
 // シートを操作する関数を返す
 export const useSheet = () => {
 	const isOpen = useState<boolean>('ui-sheet-isOpen', () => false) // シートが開かれているかどうか
 	const scrollY = useState<number>('ui-sheet-scrollY', () => 0) // スクロール位置を保持する
-	const list = useState<PayloadWithResolve[]>('ui-sheet-list', () => []) // シートのリストを保持する
-	const current = useState<PayloadWithResolve | null>('ui-sheet-current', () => null) // 現在表示中のシートを保持する
+	const list = useState<InternalPayload[]>('ui-sheet-list', () => []) // シートのリストを保持する
+	const current = useState<InternalPayload | null>('ui-sheet-current', () => null) // 現在表示中のシートを保持する
 	const config = useState<SheetConfig | null>('ui-sheet-config', () => null)
 
 	return {
@@ -56,14 +98,21 @@ export const useSheet = () => {
 
 		/**
 		 * 指定したシートを表示する
-		 * @param {Payload} pl - ペイロード
+		 * @param {Payload} pl - ペイロード（componentは文字列またはコンポーネント型）
 		 * @returns {Promise<unknown>} シートの結果
 		 */
 		open: (pl: Payload): Promise<unknown> => {
 			isOpen.value = true
 			return new Promise((rsv) => {
-				current.value = { ...pl, resolve: rsv as (value: unknown) => void }
-				list.value.push({ ...pl, resolve: rsv as (value: unknown) => void })
+				// コンポーネント型から名前を解決（必ず文字列になる）
+				const componentName = getComponentName(pl.component)
+				const payloadWithResolve: InternalPayload = {
+					component: componentName, // 文字列
+					props: pl.props,
+					resolve: rsv as (value: unknown) => void,
+				}
+				current.value = payloadWithResolve
+				list.value.push(payloadWithResolve)
 			})
 		},
 
@@ -104,6 +153,13 @@ export const useSheet = () => {
 		},
 		setScrollY: (y: number) => {
 			scrollY.value = y
+		},
+
+		// コンポーネントマップを登録する関数
+		setComponents: (components: Record<string, Component>) => {
+			Object.entries(components).forEach(([name, component]) => {
+				globalComponentMap.set(component, name)
+			})
 		},
 
 		isOpen: readonly(isOpen),

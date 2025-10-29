@@ -17,8 +17,13 @@
 					</Button>
 				</Row>
 				<Row justify="center" :gap="[8, 8]">
-					<Button
-						@click="open('NestSheet', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.<br /><br />', full: true, center: true, buttonName: 'OK' })">
+					<Button @click="open(NestSheet, {
+						title: 'Title',
+						content: 'Text Content is here.<br />Please Test Message.<br /><br />',
+						full: true,
+						center: true,
+						buttonName: 'OK',
+					} as NestSheetProps)">
 						Nest Test
 					</Button>
 				</Row>
@@ -33,8 +38,11 @@
 	</div>
 </template>
 
-<script setup>
-const open = async (component, props) => {
+<script setup lang="ts">
+import NestSheet from '@/components/sheet/NestSheet.vue'
+import type { Props as NestSheetProps } from '@/components/sheet/NestSheet.vue'
+
+const open = async (component: string | Component, props: Record<string, unknown>) => {
 	const result = await useSheet().open({ component, props })
 	console.log(result)
 }

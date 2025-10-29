@@ -76,6 +76,7 @@ onMounted(async () => {
 	pending.value = true
 	try {
 		await useUI().init()
+		sheet.setComponents(basics)
 	}
 	catch (e) {
 		console.error(e)

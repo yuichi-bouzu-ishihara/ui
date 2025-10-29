@@ -37,6 +37,19 @@
 </template>
 
 <script setup lang="ts">
+import type { Component } from 'vue'
+import NestSheet from './NestSheet.vue'
+
+export type Props = {
+	title?: string
+	icon?: string
+	content?: string
+	full?: boolean
+	wide?: boolean
+	narrow?: boolean
+	center?: boolean
+}
+
 // Constants ---------------------------
 const NAME = 'nest1'
 
@@ -44,14 +57,14 @@ const NAME = 'nest1'
 const { open, close, list } = useSheet()
 
 // Props -----------------------------------------------
-const props = defineProps({
-	title: { type: String, default: '' },
-	icon: { type: String, default: '' },
-	content: { type: String, default: '' },
-	full: { type: Boolean, default: false },
-	wide: { type: Boolean, default: false },
-	narrow: { type: Boolean, default: false },
-	center: { type: Boolean, default: false },
+const props = withDefaults(defineProps<Props>(), {
+	title: '',
+	icon: '',
+	content: '',
+	full: false,
+	wide: false,
+	narrow: false,
+	center: false,
 })
 
 // Data -----------------------------------------------
@@ -62,13 +75,13 @@ const mountedTime = ref(0)
 // Methods -----------------------------------------------
 const nest = () => {
 	open({
-		component: 'NestSheet',
+		component: NestSheet as unknown as Component,
 		props: {
 			title: `Nest -index: ${list.value.length - 1}-`,
 			full: true,
 			center: true,
 			content: text.value,
-		},
+		} as Props,
 	})
 }
 const addContent = () => {
