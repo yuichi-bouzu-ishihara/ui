@@ -94,6 +94,7 @@ const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click'])
 
 // Data -----------------------------------------------
 const contentHeight = ref(0)
+const isContentOverflow = ref(false)
 
 // Computed -----------------------------------------------
 const classes = computed(() => {
@@ -134,7 +135,7 @@ const container = computed(() => ({
 }))
 const variables = computed(() => {
 	const obj: Record<string, string> = {}
-	if (props.full && useViewport().height.value > (contentHeight.value + Number(topSpace.value))) {
+	if (props.full && !isContentOverflow.value) {
 		obj['--sheet-inner-height'] = '100vh'
 	}
 	else {
@@ -168,6 +169,16 @@ const depthStyle = computed(() => {
 const topSpace = computed(() => {
 	return header.config.value ? Number(header.config.value.height.replace('px', '')) / 2 : 0
 })
+
+// Watch -----------------------------------------------
+watch(() => contentHeight.value, (newVal) => {
+	if (newVal > (useViewport().height.value - Number(topSpace.value))) {
+		isContentOverflow.value = true
+	}
+	else {
+		isContentOverflow.value = false
+	}
+}, { immediate: true })
 </script>
 
 <style lang="scss">
