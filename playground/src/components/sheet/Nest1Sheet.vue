@@ -5,24 +5,34 @@
 				close
 			</Button>
 		</template>
-		<SheetContainer>
-			<Column justify="center" align="end" gap="20">
-				<template v-if="icon">
-					<Icon class="nest1Sheet-icon" :name="icon" size="56" color="text" />
-				</template>
-				<template v-if="content">
-					<Typography font-size="18" bold center>
-						<!-- eslint-disable-next-line vue/no-v-html -->
-						<span v-html="content" />
-					</Typography>
-				</template>
-				<Box w="100%" mt="12" mb="-8">
+		<Column justify="center" gap="20">
+			<Icon v-if="icon" class="nest1Sheet-icon" :name="icon" size="56" color="text" />
+			<Container wide>
+				<Box relative>
+					<Box v-if="!isImageReady" w="100%" h="200">
+						<SkeletonShape w="100%" h="100%" />
+					</Box>
+					<Image src="https://picsum.photos/1000/200" @ready="isImageReady = true" />
+				</Box>
+			</Container>
+			<Container v-if="content">
+				<Typography font-size="18" bold center>
+					<!-- eslint-disable-next-line vue/no-v-html -->
+					<span v-html="content" />
+				</Typography>
+			</Container>
+			<Container>
+				<Column justify="center" gap="8">
+					<Button w="100%" @click="addContent">
+						Add Content
+					</Button>
 					<Button w="100%" @click="nest">
 						Nest -2-
 					</Button>
-				</Box>
-			</Column>
-		</SheetContainer>
+				</Column>
+			</Container>
+		</Column>
+		<Box h="40" />
 	</Sheet>
 </template>
 
@@ -32,6 +42,10 @@ const NAME = 'nest1'
 
 // Stores & Composables ---------------------------
 const { open, getOptions, close } = useSheet()
+
+// Data -----------------------------------------------
+const content = ref('')
+const isImageReady = ref(false)
 
 // Computed -----------------------------------------------
 const options = computed(() => getOptions(NAME))
@@ -49,15 +63,7 @@ const icon = computed(() => {
 			return options.value.icon as string
 		}
 	}
-	return ''
-})
-const content = computed(() => {
-	if (options.value && typeof options.value === 'object') {
-		if ('content' in options.value) {
-			return options.value.content as string
-		}
-	}
-	return ''
+	return 'info'
 })
 const full = computed(() => {
 	if (options.value && typeof options.value === 'object') {
@@ -103,4 +109,16 @@ const nest = () => {
 		},
 	})
 }
+const addContent = () => {
+	content.value += content.value
+}
+
+// Lifecycle -----------------------------------------------
+onMounted(() => {
+	if (options.value && typeof options.value === 'object') {
+		if ('content' in options.value) {
+			content.value = options.value.content as string
+		}
+	}
+})
 </script>
