@@ -56,6 +56,7 @@ import TransitionFade from '../transition/TransitionFade.vue'
 import TransitionPopover from '../transition/TransitionPopover.vue'
 import DevMenu from './DevMenu.vue'
 import type { DevMenu as Menu } from './interfaces'
+import SheetDevMenu from '../overlays/SheetDevMenu.vue'
 
 const route = useRoute()
 
@@ -79,7 +80,7 @@ const currentPageName = ref('/')
 const menus = ref<Menu[]>([])
 
 const handleShowMenu = () => {
-	useSheet().open({ component: 'SheetDevMenu' })
+	useSheet().open({ component: SheetDevMenu as unknown as Component })
 }
 
 // Watch --------------------

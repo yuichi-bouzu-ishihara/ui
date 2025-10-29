@@ -34,18 +34,28 @@ import Icon from '../elements/Icon.vue'
 import Sheet from './Sheet.vue'
 import SheetContainer from './SheetContainer.vue'
 
+// Types ---------------------------
+export type Props = {
+	title?: string
+	icon?: string
+	content?: string
+	buttonName?: string
+	full?: boolean
+	wide?: boolean
+	narrow?: boolean
+}
 // Composables ---------------------------
 const { close, color } = useSheet()
 
 // Props -----------------------------------------------
-defineProps({
-	title: { type: String, default: '' },
-	icon: { type: String, default: '' },
-	content: { type: String, default: '' },
-	buttonName: { type: String, default: '' },
-	full: { type: Boolean, default: false },
-	wide: { type: Boolean, default: false },
-	narrow: { type: Boolean, default: false },
+withDefaults(defineProps<Props>(), {
+	title: '',
+	icon: '',
+	content: '',
+	buttonName: '',
+	full: false,
+	wide: false,
+	narrow: false,
 })
 </script>
 
