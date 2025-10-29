@@ -3,8 +3,12 @@
 		<Container>
 			<Column gap="40">
 				<Row justify="center" :gap="[8, 8]">
-					<Button
-						@click="open('SheetMessage', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' })">
+					<Button @click="open(SheetMessage, {
+						title: 'Title',
+						content: 'Text Content is here.<br />Please Test Message.',
+						icon: 'edit',
+						buttonName: 'OK',
+					} as SheetMessageProps)">
 						SheetMessage
 					</Button>
 					<Button
@@ -39,8 +43,8 @@
 </template>
 
 <script setup lang="ts">
-import NestSheet from '@/components/sheet/NestSheet.vue'
-import type { Props as NestSheetProps } from '@/components/sheet/NestSheet.vue'
+import SheetMessage, { type Props as SheetMessageProps } from '../../../../src/runtime/components/overlays/SheetMessage.vue'
+import NestSheet, { type Props as NestSheetProps } from '@/components/sheet/NestSheet.vue'
 
 const open = async (component: string | Component, props: Record<string, unknown>) => {
 	const result = await useSheet().open({ component, props })
