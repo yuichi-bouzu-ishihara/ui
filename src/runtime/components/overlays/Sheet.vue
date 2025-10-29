@@ -29,7 +29,7 @@
 									</Container>
 								</Box>
 							</template>
-							<Box w="100%" relative z-index="0" :h="contentHeight > 0 ? 'calc(100% - var(--header-height))' : 'auto'">
+							<Box w="100%" relative z-index="0" h="calc(100% - var(--header-height))">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
 									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
@@ -66,11 +66,13 @@ import IconMenu from '../navigation/IconMenu.vue'
 import { useSheet } from '../../composables/overlays/sheet'
 import { useBreakPoint } from '../../composables/break-point'
 import { useViewport } from '../../composables/viewport'
+import { useHeader } from '../../composables/navigation/header'
 
 // Composables -----------------------
 const sheet = useSheet()
 const { list } = sheet
 const slots = useSlots()
+const header = useHeader()
 
 // Props -----------------------
 const props = defineProps({
@@ -103,7 +105,6 @@ const classes = computed(() => {
 		_deep: depth.value !== 0,
 	}
 })
-
 const backgroundColor = computed(() => {
 	let str = ''
 	if (props.color.background === '') {
@@ -132,16 +133,15 @@ const container = computed(() => ({
 	wide: useBreakPoint().baseAbove() ? props.wide : false,
 }))
 const variables = computed(() => {
-	if (props.full && useViewport().height.value > contentHeight.value) {
-		return {
-			'--sheet-inner-height': '100vh',
-		}
+	const obj: Record<string, string> = {}
+	if (props.full && useViewport().height.value > (contentHeight.value + Number(topSpace.value))) {
+		obj['--sheet-inner-height'] = '100vh'
 	}
 	else {
-		return {
-			'--sheet-inner-height': 'auto',
-		}
+		obj['--sheet-inner-height'] = 'auto'
 	}
+	obj['--sheet-top-space'] = `${topSpace.value}px`
+	return obj
 })
 const index = computed(() => {
 	return list.value.findIndex(item => item.name === props.name)
@@ -164,6 +164,9 @@ const depthStyle = computed(() => {
 	else {
 		return {}
 	}
+})
+const topSpace = computed(() => {
+	return header.config.value ? Number(header.config.value.height.replace('px', '')) / 2 : 0
 })
 </script>
 
@@ -197,7 +200,7 @@ $footnote-padding-vertical: 24;
 		justify-content: center;
 		min-height: 100%;
 		height: auto;
-		padding-top: calc(var(--header-height) / 2);
+		padding-top: var(--sheet-top-space);
 		// padding-bottom: calc(var(--header-height) / 2);
 		transform-style: preserve-3d; // 子要素に preserve-3d がある場合に表示がバグる不具合を回避する
 
@@ -206,7 +209,7 @@ $footnote-padding-vertical: 24;
 
 			&-content {
 				padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
-				height: calc(var(--sheet-inner-height) - var(--header-height) / 2);
+				height: calc(var(--sheet-inner-height) - var(--sheet-top-space));
 				border-radius: #{var.$border-radius-xlarge}px;
 
 				&-header {
