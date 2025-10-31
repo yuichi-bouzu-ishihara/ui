@@ -12,7 +12,8 @@
 										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title, pagenation }" blur
 											:background="backgroundColor" :color="textColor">
 											<template #left>
-												<IconMenu v-if="leftIcon" :icon="leftIcon" size="18" :color="textColor"
+												<IconMenu v-if="back" icon="arrowLeft" size="18" :color="textColor" @click="emit('back')" />
+												<IconMenu v-else-if="leftIcon" :icon="leftIcon" size="18" :color="textColor"
 													@click="emit('left-icon-click')" />
 												<slot v-else name="header-left" />
 											</template>
@@ -83,7 +84,8 @@ const props = defineProps({
 	pagenation: { type: Object as PropType<PagenationProps | null>, default: null },
 	leftIcon: { type: String, default: '' },
 	rightIcon: { type: String, default: '' },
-	close: { type: Boolean, default: false },
+	close: { type: Boolean, default: false }, // 右に閉じるボタンを表示する
+	back: { type: Boolean, default: false }, // 左に戻るボタンを表示する
 	full: { type: Boolean, default: false }, // 幅を狭くする ※breakpoint base 以上で有効、それ以下は無視される。
 	wide: { type: Boolean, default: false }, // 幅を広くする ※breakpoint base 以上で有効、それ以下は無視される。
 	narrow: { type: Boolean, default: false }, // 幅を狭くする ※breakpoint base 以上で有効、それ以下は無視される。
@@ -93,7 +95,7 @@ const props = defineProps({
 })
 
 // Emits -----------------------
-const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click'])
+const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click', 'back'])
 
 // Data -----------------------------------------------
 const contentHeight = ref(0)

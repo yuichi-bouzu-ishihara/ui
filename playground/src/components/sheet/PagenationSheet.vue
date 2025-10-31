@@ -1,11 +1,7 @@
 <template>
-	<Sheet class="nest1Sheet" full center :title="currentStep.title"
-		:pagenation="{ current: stepCount + 1, total: stepList.length }">
-		<template #header-right>
-			<Button xsmall rounded @click="close($attrs.index as number, false)">
-				close
-			</Button>
-		</template>
+	<Sheet class="nest1Sheet" full center close :back="stepCount > 0" :title="currentStep.title"
+		:pagenation="{ current: stepCount + 1, total: stepList.length }" @close="close($attrs.index as number, false)"
+		@back="stepCount--">
 		<Column v-if="currentStep" justify="center" gap="20">
 			<Icon :name="currentStep.icon" size="56" color="text" />
 			<Typography body bold center>
