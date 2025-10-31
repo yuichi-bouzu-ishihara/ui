@@ -12,14 +12,16 @@
 										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title, pagenation }" blur
 											:background="backgroundColor" :color="textColor">
 											<template #left>
-												<IconMenu v-if="back" icon="arrowLeft" size="18" :color="textColor" @click="emit('back')" />
-												<IconMenu v-else-if="leftIcon" :icon="leftIcon" size="18" :color="textColor"
+												<IconUI v-if="back" :icon="{ name: 'arrowLeft', size: 18, color: textColor }"
+													@click="emit('back')" />
+												<IconUI v-else-if="leftIcon" :icon="{ name: leftIcon, size: 18, color: textColor }"
 													@click="emit('left-icon-click')" />
 												<slot v-else name="header-left" />
 											</template>
 											<template #right>
-												<IconMenu v-if="close" icon="cross" size="18" :color="textColor" @click="emit('close')" />
-												<IconMenu v-else-if="rightIcon" :icon="rightIcon" :color="textColor"
+												<IconUI v-if="close" :icon="{ name: 'cross', size: 18, color: textColor }"
+													@click="emit('close')" />
+												<IconUI v-else-if="rightIcon" :icon="{ name: rightIcon, size: 18, color: textColor }"
 													@click="emit('right-icon-click')" />
 												<slot v-else name="header-right" />
 											</template>
@@ -63,7 +65,7 @@ import Center from '../layout/Center.vue'
 import Column from '../layout/Column.vue'
 import Container from '../layout/Container.vue'
 import SlotHeader from '../navigation/SlotHeader.vue'
-import IconMenu from '../navigation/IconMenu.vue'
+import IconUI from '../navigation/IconUI.vue'
 import type { Props as PagenationProps } from '../navigation/Pagenation.vue'
 import { useSheet } from '../../composables/overlays/sheet'
 import { useBreakPoint } from '../../composables/break-point'
