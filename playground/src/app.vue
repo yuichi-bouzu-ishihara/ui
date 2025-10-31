@@ -38,6 +38,7 @@ import TheDrawerTest from '@/components/drawer/TheDrawerTest.vue'
 import TheDrawerDepthTest from '@/components/drawer/TheDrawerDepthTest.vue'
 import TestModal from '@/components/modal/TestModal.vue'
 import NestSheet from '@/components/sheet/NestSheet.vue'
+import PagenationSheet from '@/components/sheet/PagenationSheet.vue'
 import ColorSheet from '@/components/sheet/ColorSheet.vue'
 
 // Constans ----------------------------------------------
@@ -45,9 +46,11 @@ import ColorSheet from '@/components/sheet/ColorSheet.vue'
 const basics: Record<
 	string,
 	| typeof NestSheet
+	| typeof PagenationSheet
 	| typeof ColorSheet
 > = {
 	NestSheet,
+	PagenationSheet,
 	ColorSheet,
 }
 

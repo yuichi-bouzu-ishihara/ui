@@ -2,7 +2,7 @@
   <div class="pageNavigationIconMenu">
     <Container narrow>
       <Center>
-        <IconMenu v-bind="{ to, icon, size, scale, color, notice }" />
+        <IconUI v-bind="{ to, icon }" />
       </Center>
     </Container>
   </div>
@@ -10,11 +10,7 @@
 
 <script setup>
 const to = ref('')
-const icon = ref('add')
-const size = ref('32')
-const scale = ref('1')
-const color = ref('dark')
-const notice = ref(true)
+const icon = ref({ name: 'check', size: 32 })
 </script>
 
 <style lang="scss"></style>

@@ -12,11 +12,11 @@
 						SheetMessage
 					</Button>
 					<Button
-						@click="open('SheetMessage', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', full: true, icon: 'edit', buttonName: 'OK' })">
+						@click="open(SheetMessage, { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', full: true, icon: 'edit', buttonName: 'OK' })">
 						FullSheet
 					</Button>
 					<Button
-						@click="open('SheetMessage', { title: 'Title', content: 'Text Content is here.', wide: true, icon: 'edit', buttonName: 'OK' })">
+						@click="open(SheetMessage, { title: 'Title', content: 'Text Content is here.', wide: true, icon: 'edit', buttonName: 'OK' })">
 						WideSheet
 					</Button>
 				</Row>
@@ -32,8 +32,13 @@
 					</Button>
 				</Row>
 				<Row justify="center" :gap="[8, 8]">
+					<Button @click="open(PagenationSheet)">
+						Pagenation
+					</Button>
+				</Row>
+				<Row justify="center" :gap="[8, 8]">
 					<Button
-						@click="open('ColorSheet', { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' })">
+						@click="open(ColorSheet, { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' })">
 						ColorSheet
 					</Button>
 				</Row>
@@ -45,8 +50,10 @@
 <script setup lang="ts">
 import SheetMessage, { type Props as SheetMessageProps } from '../../../../src/runtime/components/overlays/SheetMessage.vue'
 import NestSheet, { type Props as NestSheetProps } from '@/components/sheet/NestSheet.vue'
+import PagenationSheet from '@/components/sheet/PagenationSheet.vue'
+import ColorSheet from '@/components/sheet/ColorSheet.vue'
 
-const open = async (component: Component, props: Record<string, unknown>) => {
+const open = async (component: Component, props: Record<string, unknown> = {}) => {
 	const result = await useSheet().open({ component, props })
 	console.log(result)
 }
