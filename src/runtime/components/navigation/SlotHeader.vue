@@ -11,16 +11,19 @@
 				</Box>
 			</div>
 			<Box class="slotHeader-inner-center" :max-w="maxWidth" h="100%">
-				<Center>
+				<Column justify="center" align="center" gap="12" fit-h>
 					<template v-if="title">
-						<Typography body bold center :color="color">
+						<Typography body bold center cap-height-baseline :color="color">
 							{{ title }}
 						</Typography>
 					</template>
 					<template v-else>
 						<slot name="center" />
 					</template>
-				</Center>
+					<template v-if="pagenation">
+						<Pagenation :current="pagenation.current" :total="pagenation.total" />
+					</template>
+				</Column>
 			</Box>
 			<div class="slotHeader-inner-right">
 				<Row justify="end" align="center" nowrap fit>
@@ -41,6 +44,8 @@ import Typography from '../elements/Typography.vue'
 import Row from '../layout/Row.vue'
 import Box from '../layout/Box.vue'
 import Center from '../layout/Center.vue'
+import Column from '../layout/Column.vue'
+import Pagenation, { type Props as PagenationProps } from './Pagenation.vue'
 import { useCss } from '../../composables/css'
 
 // Constants --------------------------------------------------
@@ -50,6 +55,7 @@ const UI_SIZE = 64
 // Props --------------------------------------------------
 defineProps({
 	title: { type: String, default: '' },
+	pagenation: { type: Object as PropType<PagenationProps | null>, default: null },
 	background: { type: String, default: 'background' },
 	color: { type: String, default: 'text' },
 	blur: { type: Boolean, default: false },

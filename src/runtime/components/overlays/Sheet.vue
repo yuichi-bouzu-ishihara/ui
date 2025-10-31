@@ -9,7 +9,7 @@
 							<template v-if="isHeader">
 								<Box sticky top="0" w="100%" z-index="1">
 									<Container no-padding full>
-										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title }" blur
+										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title, pagenation }" blur
 											:background="backgroundColor" :color="textColor">
 											<template #left>
 												<IconMenu v-if="leftIcon" :icon="leftIcon" size="18" :color="textColor"
@@ -63,6 +63,7 @@ import Column from '../layout/Column.vue'
 import Container from '../layout/Container.vue'
 import SlotHeader from '../navigation/SlotHeader.vue'
 import IconMenu from '../navigation/IconMenu.vue'
+import type { Props as PagenationProps } from '../navigation/Pagenation.vue'
 import { useSheet } from '../../composables/overlays/sheet'
 import { useBreakPoint } from '../../composables/break-point'
 import { useViewport } from '../../composables/viewport'
@@ -79,6 +80,7 @@ const props = defineProps({
 	index: { type: Number, default: 0 }, // このシートの SheetLayer 内でのインデックス
 	name: { type: String, default: '' },
 	title: { type: String, default: '' },
+	pagenation: { type: Object as PropType<PagenationProps | null>, default: null },
 	leftIcon: { type: String, default: '' },
 	rightIcon: { type: String, default: '' },
 	close: { type: Boolean, default: false },

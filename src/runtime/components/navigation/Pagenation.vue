@@ -5,9 +5,15 @@
 </template>
 
 <script setup lang="ts">
+// Types --------------------------------------------------
+export type Props = {
+	current?: number
+	total?: number
+}
+
 // Props --------------------------------------------------
-defineProps({
-	current: { type: Number, default: 0 },
-	total: { type: Number, default: 0 },
+withDefaults(defineProps<Props>(), {
+	current: 0,
+	total: 0,
 })
 </script>
