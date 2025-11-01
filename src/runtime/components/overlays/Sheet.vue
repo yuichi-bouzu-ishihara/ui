@@ -77,6 +77,7 @@ const sheet = useSheet()
 const { list } = sheet
 const slots = useSlots()
 const header = useHeader()
+const viewport = useViewport()
 
 // Props -----------------------
 const props = defineProps({
@@ -175,8 +176,8 @@ const topSpace = computed(() => {
 })
 
 // Watch -----------------------------------------------
-watch(() => contentHeight.value, (newVal) => {
-	if (newVal > (useViewport().height.value - Number(topSpace.value))) {
+watch(() => [viewport.height.value, contentHeight.value], () => {
+	if (contentHeight.value > (viewport.height.value - Number(topSpace.value))) {
 		isContentOverflow.value = true
 	}
 	else {
