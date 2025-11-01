@@ -199,7 +199,7 @@ const getAllowedFileTypes = () => {
 	// 重複を除去
 	const uniqueTypes = [...new Set(readableTypes)]
 
-	return uniqueTypes.length > 0 ? `許可されている形式: ${uniqueTypes.join(', ')}` : ''
+	return uniqueTypes.length > 0 ? uniqueTypes.join(', ') : ''
 }
 
 // エラー時のテキスト生成関数
@@ -216,7 +216,7 @@ const getErrorDescription = () => {
 	}
 
 	const baseMessage = errorMessage.value || 'ファイルの形式を確認してください'
-	const allowedTypes = getAllowedFileTypes()
+	const allowedTypes = `許可されている形式: ${getAllowedFileTypes()}`
 
 	if (allowedTypes && errorMessage.value?.includes('無効なファイル形式')) {
 		return `${baseMessage}。<br>${allowedTypes}`
