@@ -43,7 +43,7 @@
 							<template v-if="footnote">
 								<div class="sheet-inner-item-content-footnote">
 									<Center>
-										<Typography caption2 bold center color="text060">
+										<Typography footnote center :color="textColor">
 											{{ footnote }}
 										</Typography>
 									</Center>
