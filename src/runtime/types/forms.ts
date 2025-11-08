@@ -1,3 +1,5 @@
+import type { ButtonSize } from './button'
+
 export type FormsConfig = {
 	checkbox: {
 		rectSize: string
@@ -59,5 +61,17 @@ export type FormsConfig = {
 		barBackgroundColor: string
 		handleSize: string
 		barHeight: string
+	}
+	radioPanel: {
+		backgroundColor: string
+		textColor: string
+		checked: {
+			backgroundColor: string
+			textColor: string
+		}
+		large: ButtonSize
+		medium: ButtonSize
+		small: ButtonSize
+		xsmall: ButtonSize
 	}
 }

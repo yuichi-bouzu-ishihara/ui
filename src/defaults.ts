@@ -413,6 +413,42 @@ export const defaultOptions = {
 			barBackgroundColor: 'color-text-010',
 			barHeight: '4px',
 		},
+		radioPanel: {
+			backgroundColor: 'color-text-005',
+			textColor: 'color-text',
+			checked: {
+				backgroundColor: 'color-text',
+				textColor: 'color-background',
+			},
+			large: {
+				textSize: '15px',
+				height: '48px',
+				paddingH: '14.5px',
+				radius: '3px',
+				textAdjustTop: '-6.8px',
+			},
+			medium: {
+				textSize: '13px',
+				height: '44px',
+				paddingH: '10.75px',
+				radius: '3px',
+				textAdjustTop: '-6px',
+			},
+			small: {
+				textSize: '12px',
+				height: '36px',
+				paddingH: '9.25px',
+				radius: '3px',
+				textAdjustTop: '-4.8px',
+			},
+			xsmall: {
+				textSize: '11px',
+				height: '32px',
+				paddingH: '7.5px',
+				radius: '3px',
+				textAdjustTop: '-2.8px',
+			},
+		},
 	},
 	dropdownMenu: {
 		backgroundColor: 'color-dark-090',
