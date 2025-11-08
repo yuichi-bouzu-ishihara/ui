@@ -1,7 +1,12 @@
 <template>
 	<div class="pageFormsRadioPanel">
 		<Container>
-			<RadioPanel v-model="value" name="radioPanelTest" :options="LIST" split="5" gap="8" title="Radio Panel" />
+			<Column gap="56">
+				<RadioPanel v-model="value" large name="radioPanelTest" :options="LIST" split="5" gap="8" title="Large" />
+				<RadioPanel v-model="value" name="radioPanelTest" :options="LIST" split="5" gap="8" title="Medium" />
+				<RadioPanel v-model="value" small name="radioPanelTest" :options="LIST" split="5" gap="8" title="Small" />
+				<RadioPanel v-model="value" xsmall name="radioPanelTest" :options="LIST" split="5" gap="8" title="XSmall" />
+			</Column>
 		</Container>
 	</div>
 </template>
