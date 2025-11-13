@@ -66,6 +66,7 @@ const props = defineProps({
 	overflow: { type: Boolean, default: false }, // 見切れを非表示にする
 	bgBlur: { type: Boolean, default: false }, // 背景ぼかしを有効にする
 	inlineBlock: { type: Boolean, default: false }, // インラインブロック
+	innerCenter: { type: Boolean, default: false }, // コンテンツを中央に配置する
 })
 
 // Computed ---------------------------------
@@ -96,6 +97,7 @@ const classes = computed(() => {
 		_animation: props.animation,
 		_bgBlur: props.bgBlur,
 		_inlineBlock: props.inlineBlock,
+		_innerCenter: props.innerCenter,
 		...(props.disabled && { _disabled: true }),
 	}
 })
@@ -387,6 +389,13 @@ $cn: 'box'; // コンポーネントクラス名
 	// 背景ぼかし
 	&._bgBlur {
 		backdrop-filter: var.$backdrop-filter;
+	}
+
+	// コンテンツを中央に配置する
+	&._innerCenter {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	// Color
