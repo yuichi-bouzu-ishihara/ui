@@ -396,6 +396,9 @@ $cn: 'box'; // コンポーネントクラス名
 		display: flex;
 		justify-content: center;
 		align-items: center;
+		width: 100%;
+		height: 100%;
+		min-height: inherit;
 	}
 
 	// Color
