@@ -147,6 +147,9 @@ export default defineNuxtModule<ModuleOptions>({
 			references.push({
 				path: resolve(runtimeDir, 'types', 'vue.d.ts'),
 			})
+			references.push({
+				path: resolve(runtimeDir, 'types', 'global.d.ts'),
+			})
 		})
 	},
 })

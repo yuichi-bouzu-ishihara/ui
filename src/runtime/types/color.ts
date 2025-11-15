@@ -15,3 +15,8 @@ export type ColorConfig = {
 	accent: string
 	[key: string]: string | Record<string, string | Record<string, string>> // 自由な入力を許可
 }
+
+export type CustomColor = {
+	background: string
+	text: string
+}
