@@ -12,6 +12,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+
 // Props ------------------------------------------------------------
 const props = defineProps({
 	stroke: { type: [Number, String], default: 2 }, // 線の太さ px
