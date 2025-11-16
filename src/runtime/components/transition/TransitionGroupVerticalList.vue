@@ -9,6 +9,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
+
 // Props --------------
 const props = defineProps({
 	enterFrom: { type: String, default: 'translateX(40px)' },
