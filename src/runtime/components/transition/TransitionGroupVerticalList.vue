@@ -1,7 +1,7 @@
 <template>
 	<ClientOnly>
 		<div :style="variables">
-			<TransitionGroup name="transitionGropuVerticalList" appear>
+			<TransitionGroup name="transitionGropuVerticalList" v-bind="{ appear }">
 				<slot />
 			</TransitionGroup>
 		</div>
@@ -13,6 +13,7 @@ import { computed } from 'vue'
 
 // Props --------------
 const props = defineProps({
+	appear: { type: Boolean, default: false },
 	enterFrom: { type: String, default: 'translateX(40px)' },
 	leaveTo: { type: String, default: 'translateX(-80px)' },
 })
