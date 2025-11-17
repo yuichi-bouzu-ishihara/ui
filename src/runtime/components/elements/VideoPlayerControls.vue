@@ -10,15 +10,17 @@
 		</Box>
 		<Box class="videoPlayerControls-footer" absolute bottom="0" left="0" right="0" p="0 20px 24px">
 			<Column gap="12">
-				<Row justify="between" align="center" nowrap>
-					<Row nowrap>
-						<Typography font-size="12" bold cap-height-baseline color="light">
-							{{ formatTime(currentTime || 0) }}
-						</Typography>
-						<Typography font-size="12" bold cap-height-baseline color="light-060">
-							&nbsp;/&nbsp;{{ formatTime(duration) }}
-						</Typography>
-					</Row>
+				<Row justify="between" align="end" nowrap>
+					<Box pb="4">
+						<Row nowrap>
+							<Typography font-size="12" bold cap-height-baseline color="light">
+								{{ formatTime(currentTime || 0) }}
+							</Typography>
+							<Typography font-size="12" bold cap-height-baseline color="light-060">
+								&nbsp;/&nbsp;{{ formatTime(duration) }}
+							</Typography>
+						</Row>
+					</Box>
 					<Column justify="center" gap="8" @mouseleave="isHoverMute = false">
 						<TransitionFade>
 							<Box v-if="isHoverMute && !muted" h="80">
