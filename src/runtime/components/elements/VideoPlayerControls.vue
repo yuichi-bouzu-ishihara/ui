@@ -42,9 +42,10 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useVideo } from '../../composables/elements/video'
 import InputRange from '../forms/InputRange.vue'
 import InputRangeVertical from '../forms/InputRangeVertical.vue'
-import { useVideo } from '../../composables/elements/video'
 import Box from '../layout/Box.vue'
 import Column from '../layout/Column.vue'
 import Row from '../layout/Row.vue'
