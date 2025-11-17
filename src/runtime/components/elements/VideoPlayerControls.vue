@@ -19,10 +19,19 @@
 							&nbsp;/&nbsp;{{ formatTime(duration) }}
 						</Typography>
 					</Row>
-					<Clickable @click="muted = !muted">
-						<Icon v-if="!muted" name="volume" size="20" color="light" />
-						<Icon v-else name="volumeOff" size="20" color="light" />
-					</Clickable>
+					<Column justify="center" gap="8" @mouseleave="isHoverMute = false">
+						<TransitionFade>
+							<Box v-if="isHoverMute && !muted" h="80">
+								<InputRangeVertical v-model="volume" :min="0" :max="1" :step="0.01" :color="{
+									handle: 'var(--color-light)', bar: 'var(--color-light)', barBackground: 'var(--color-light-020)',
+								}" handle-size="12" />
+							</Box>
+						</TransitionFade>
+						<Clickable @mouseover="isHoverMute = true" @click="muted = !muted">
+							<Icon v-if="!muted" name="volume" size="20" color="light" />
+							<Icon v-else name="volumeOff" size="20" color="light" />
+						</Clickable>
+					</Column>
 				</Row>
 				<InputRange v-model="currentTime" :min="0" :max="duration || 1" :step="0.01" :color="{
 					handle: 'var(--color-light)', bar: 'var(--color-light)', barBackground: 'var(--color-light-020)',
@@ -33,7 +42,16 @@
 </template>
 
 <script setup lang="ts">
+import InputRange from '../forms/InputRange.vue'
+import InputRangeVertical from '../forms/InputRangeVertical.vue'
 import { useVideo } from '../../composables/elements/video'
+import Box from '../layout/Box.vue'
+import Column from '../layout/Column.vue'
+import Row from '../layout/Row.vue'
+import Typography from '../elements/Typography.vue'
+import Icon from '../elements/Icon.vue'
+import Clickable from '../elements/Clickable.vue'
+import TransitionFade from '../transition/TransitionFade.vue'
 
 // Composables --------------
 const { formatTime } = useVideo()
@@ -42,6 +60,7 @@ const { formatTime } = useVideo()
 const currentTime = defineModel<number>('current-time', { default: 0 })
 const seeking = defineModel<boolean>('seeking', { default: false })
 const muted = defineModel<boolean>('muted', { default: false })
+const volume = defineModel<number>('volume', { default: 0.5 })
 
 // Props --------------
 defineProps({
@@ -52,6 +71,9 @@ defineProps({
 
 // Emits --------------
 const emit = defineEmits(['play', 'pause'])
+
+// Data --------------
+const isHoverMute = ref(false)
 </script>
 
 <style lang="scss">
