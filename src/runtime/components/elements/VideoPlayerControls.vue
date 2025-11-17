@@ -32,6 +32,19 @@
 							<Icon v-else name="volumeOff" size="20" color="light" />
 						</Clickable>
 					</Column>
+					<Column justify="center" gap="8" @mouseleave="isHoverMute = false">
+						<TransitionFade>
+							<Box v-if="isHoverMute && !muted" h="80">
+								<InputRangeVertical v-model="volume" :min="0" :max="1" :step="0.01" :color="{
+									handle: 'var(--color-light)', bar: 'var(--color-light)', barBackground: 'var(--color-light-020)',
+								}" handle-size="12" />
+							</Box>
+						</TransitionFade>
+						<Clickable @mouseover="isHoverMute = true" @click="muted = !muted">
+							<Icon v-if="!muted" name="volume" size="20" color="light" />
+							<Icon v-else name="volumeOff" size="20" color="light" />
+						</Clickable>
+					</Column>
 				</Row>
 				<InputRange v-model="currentTime" :min="0" :max="duration || 1" :step="0.01" :color="{
 					handle: 'var(--color-light)', bar: 'var(--color-light)', barBackground: 'var(--color-light-020)',
@@ -42,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import InputRange from '../forms/InputRange.vue'
 import InputRangeVertical from '../forms/InputRangeVertical.vue'
 import { useVideo } from '../../composables/elements/video'

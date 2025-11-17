@@ -23,11 +23,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
 import Player from '@vimeo/player'
-import { useVideo } from '../../composables/elements/video'
 import VideoPlayerControls from './VideoPlayerControls.vue'
-
-// Composables --------------
-const { config } = useVideo()
 
 // Model --------------------------------------------------
 const volume = defineModel<number>('volume', { default: 0.2 })
@@ -482,9 +478,6 @@ onMounted(async () => {
 	vimeoPlayer.on('seeked', onSeeked)
 	vimeoPlayer.on('timeupdate', onTimeUpdate)
 	vimeoPlayer.on('volumechange', onVolumeChange)
-
-	// 初期音量を設定
-	volume.value = config.value?.defaultVolume || 0.2
 
 	// 初期currentTimeを設定
 	currentTime.value = 0
