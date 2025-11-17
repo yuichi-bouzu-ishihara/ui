@@ -1,20 +1,21 @@
 <template>
-	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="inputRange" :class="classes" :style="customColorStyle">
-		<Draggable v-model="handlePosition" class="inputRange-handle" :style="handleStyle" disabled-y>
-			<div class="inputRange-handle-inner" />
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="inputRangeVertical" :class="classes" :style="customColorStyle"
+		h="100%">
+		<Draggable v-model="handlePosition" class="inputRangeVertical-handle" :style="handleStyle" disabled-x>
+			<div class="inputRangeVertical-handle-inner" />
 		</Draggable>
-		<Row justify="center" align="center" nowrap>
+		<Column justify="center" align="center" fit-h>
 			<template v-if="controls">
-				<IconButton v-resize="(r: DOMRectReadOnly) => controlRect = r" :icon="{ name: 'minus', size: 16 }" link small
-					v-bind="{ disabled }" @click="decrementValue" />
+				<IconButton v-resize="(r: DOMRectReadOnly) => controlRect = r" :icon="{ name: 'plus', size: 16 }" link small
+					v-bind="{ disabled }" @click="incrementValue" />
 			</template>
-			<Box v-resize="(rect: DOMRectReadOnly) => updateBar(rect)" class="inputRange-slider">
-				<div class="inputRange-slider-bar" :style="{ transform: `scaleX(${normalizedValue})` }" />
+			<Box v-resize="(rect: DOMRectReadOnly) => updateBar(rect)" class="inputRangeVertical-slider">
+				<div class="inputRangeVertical-slider-bar" :style="{ transform: `scaleY(${normalizedValue})` }" />
 			</Box>
 			<template v-if="controls">
-				<IconButton :icon="{ name: 'plus', size: 16 }" link small v-bind="{ disabled }" @click="incrementValue" />
+				<IconButton :icon="{ name: 'minus', size: 16 }" link small v-bind="{ disabled }" @click="decrementValue" />
 			</template>
-		</Row>
+		</Column>
 	</Box>
 </template>
 
@@ -25,7 +26,7 @@ import { useRangeInput } from '../../composables/forms/useRangeInput'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
 import Box from '../layout/Box.vue'
-import Row from '../layout/Row.vue'
+import Column from '../layout/Column.vue'
 import IconButton from '../elements/IconButton.vue'
 import Draggable from '../gesture/Draggable.vue'
 import type { Position } from '../gesture/Draggable.vue'
@@ -58,6 +59,9 @@ const rect = ref<DOMRectReadOnly | null>(null)
 const controlRect = ref<DOMRectReadOnly | null>(null)
 const handlePosition = ref<Position>({ x: 0, y: 0 })
 const width = ref(0)
+const height = ref(0)
+const top = ref(0)
+const left = ref(0)
 
 // 共通ロジックを使用
 const {
@@ -67,7 +71,7 @@ const {
 	updatePosition,
 	incrementValue,
 	decrementValue,
-} = useRangeInput(props, emit, handlePosition, width)
+} = useRangeInput(props, emit, handlePosition, height)
 
 // Computed -------------------------------------------
 const classes = computed(() => {
@@ -87,9 +91,9 @@ const handleSize = computed(() => {
 	return config.value?.range.handleSize ?? HANDLE_SIZE
 })
 const handleStyle = computed(() => {
-	const adjustControlWidth = `${controlRect.value?.width ?? 0}px`
-	const top = `calc(50% - ${handleSize.value} / 2)`
-	const left = `calc(${adjustControlWidth} - ${handleSize.value} / 2)`
+	const adjustControlHeight = `${controlRect.value?.height ?? 0}px`
+	const top = `calc(${adjustControlHeight} - ${handleSize.value} / 2)`
+	const left = `calc(50% - ${handleSize.value} / 2)`
 	return {
 		width: handleSize.value,
 		height: handleSize.value,
@@ -122,14 +126,17 @@ const customColorStyle = computed(() => {
 
 // Methods ---------------------
 const handleChangePosition = () => {
-	changePosition(false) // 水平方向
+	changePosition(true) // 垂直方向
 }
 const updateBar = (rect: DOMRectReadOnly) => {
 	width.value = rect.width
+	height.value = rect.height
+	top.value = rect.top
+	left.value = rect.left
 	handleUpdatePosition()
 }
 const handleUpdatePosition = () => {
-	updatePosition(false) // 水平方向
+	updatePosition(true) // 垂直方向
 }
 
 // Lifecycle Hooks ---------------------
@@ -146,7 +153,7 @@ onMounted(async () => {
 @use '../../scss/_variables.scss' as var;
 @use '../../scss/_mixins.scss' as mix;
 @use '../../scss/_functions.scss' as func;
-$cn: '.inputRange'; // コンポーネントセレクタ名
+$cn: '.inputRangeVertical'; // コンポーネントセレクタ名
 
 #{$cn} {
 	position: relative;
@@ -154,7 +161,7 @@ $cn: '.inputRange'; // コンポーネントセレクタ名
 
 	&-slider {
 		position: relative;
-		height: var(--forms-range-bar-height);
+		width: var(--forms-range-bar-height);
 		border-radius: var.$border-radius-full;
 		backdrop-filter: blur(40px);
 		overflow: hidden;
@@ -164,7 +171,7 @@ $cn: '.inputRange'; // コンポーネントセレクタ名
 		&-bar {
 			width: 100%;
 			height: 100%;
-			transform-origin: left center;
+			transform-origin: center bottom;
 			background-color: var(--forms-range-bar-color);
 		}
 	}
