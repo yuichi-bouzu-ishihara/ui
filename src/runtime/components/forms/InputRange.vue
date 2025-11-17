@@ -21,6 +21,8 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useForms } from '../../composables/forms'
 import { useRangeInput } from '../../composables/forms/useRangeInput'
+import { useCss } from '../../composables/css'
+import { useNumber } from '../../composables/number'
 import Box from '../layout/Box.vue'
 import Row from '../layout/Row.vue'
 import IconButton from '../elements/IconButton.vue'
@@ -32,6 +34,8 @@ const HANDLE_SIZE = '16px'
 
 // Composables ---------------------
 const { config } = useForms()
+const { getSize } = useCss()
+const { isPureNumber } = useNumber()
 
 // Props ---------------------
 const props = defineProps({
@@ -41,6 +45,7 @@ const props = defineProps({
 	step: { type: [Number, String], default: 1 },
 	disabled: { type: Boolean, default: false },
 	controls: { type: Boolean, default: false },
+	handleSize: { type: [Number, String], default: '' }, // ハンドルのサイズ
 	color: { type: Object, default: () => ({ handle: '', bar: '', barBackground: '' }) }, // ハンドル、バー、バー背景の色を直接指定
 })
 
@@ -72,6 +77,14 @@ const classes = computed(() => {
 	}
 })
 const handleSize = computed(() => {
+	// props で指定されている場合はそれを使用
+	if (props.handleSize) {
+		if (isPureNumber(String(props.handleSize))) {
+			return getSize(Number(props.handleSize))
+		}
+		return String(props.handleSize)
+	}
+	// 設定から取得
 	return config.value?.range.handleSize ?? HANDLE_SIZE
 })
 const handleStyle = computed(() => {

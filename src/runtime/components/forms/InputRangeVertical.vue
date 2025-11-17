@@ -6,7 +6,8 @@
 		</Draggable>
 		<Column justify="center" align="center" fit-h>
 			<template v-if="controls">
-				<IconButton :icon="{ name: 'plus', size: 16 }" link small v-bind="{ disabled }" @click="incrementValue" />
+				<IconButton v-resize="(r: DOMRectReadOnly) => controlRect = r" :icon="{ name: 'plus', size: 16 }" link small
+					v-bind="{ disabled }" @click="incrementValue" />
 			</template>
 			<Box v-resize="(rect: DOMRectReadOnly) => updateBar(rect)" class="inputRangeVertical-slider">
 				<div class="inputRangeVertical-slider-bar" :style="{ transform: `scaleY(${normalizedValue})` }" />
@@ -22,6 +23,8 @@
 import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { useForms } from '../../composables/forms'
 import { useRangeInput } from '../../composables/forms/useRangeInput'
+import { useCss } from '../../composables/css'
+import { useNumber } from '../../composables/number'
 import Box from '../layout/Box.vue'
 import Column from '../layout/Column.vue'
 import IconButton from '../elements/IconButton.vue'
@@ -33,6 +36,8 @@ const HANDLE_SIZE = '16px'
 
 // Composables ---------------------
 const { config } = useForms()
+const { getSize } = useCss()
+const { isPureNumber } = useNumber()
 
 // Props ---------------------
 const props = defineProps({
@@ -42,6 +47,7 @@ const props = defineProps({
 	step: { type: [Number, String], default: 1 },
 	disabled: { type: Boolean, default: false },
 	controls: { type: Boolean, default: false },
+	handleSize: { type: [Number, String], default: '' }, // ハンドルのサイズ
 	color: { type: Object, default: () => ({ handle: '', bar: '', barBackground: '' }) }, // ハンドル、バー、バー背景の色を直接指定
 })
 
@@ -50,6 +56,7 @@ const emit = defineEmits(['update:modelValue'])
 
 // Data ---------------------
 const rect = ref<DOMRectReadOnly | null>(null)
+const controlRect = ref<DOMRectReadOnly | null>(null)
 const handlePosition = ref<Position>({ x: 0, y: 0 })
 const width = ref(0)
 const height = ref(0)
@@ -73,13 +80,20 @@ const classes = computed(() => {
 	}
 })
 const handleSize = computed(() => {
+	// props で指定されている場合はそれを使用
+	if (props.handleSize) {
+		if (isPureNumber(String(props.handleSize))) {
+			return getSize(Number(props.handleSize))
+		}
+		return String(props.handleSize)
+	}
+	// 設定から取得
 	return config.value?.range.handleSize ?? HANDLE_SIZE
 })
 const handleStyle = computed(() => {
-	const t = props.controls ? `${handleSize.value} * 2 + ${width.value}px` : '0px'
-	const l = props.controls ? handleSize.value : '2px'
-	const top = `calc((${width.value}px - ${handleSize.value}) / 2 + ${t})`
-	const left = `calc((${width.value}px - ${handleSize.value}) / 2 + ${l})`
+	const adjustControlHeight = `${controlRect.value?.height ?? 0}px`
+	const top = `calc(${adjustControlHeight} - ${handleSize.value} / 2)`
+	const left = `calc(50% - ${handleSize.value} / 2)`
 	return {
 		width: handleSize.value,
 		height: handleSize.value,

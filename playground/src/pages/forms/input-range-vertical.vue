@@ -61,6 +61,17 @@
 							{{ Math.floor(value5) }}
 						</Typography>
 					</Column>
+					<Column justify="center" align="center" gap="8" fit-h>
+						<Typography caption1 bold center>
+							Large Handle (24px)
+						</Typography>
+						<Box style="height: 300px;">
+							<InputRangeVertical v-model="value6" min="0" max="100" controls :handle-size="24" />
+						</Box>
+						<Typography title3 center>
+							{{ Math.floor(value6) }}
+						</Typography>
+					</Column>
 				</Row>
 			</Column>
 		</Container>
@@ -73,6 +84,7 @@ const value2 = ref(50)
 const value3 = ref(70)
 const value4 = ref(40)
 const value5 = ref(25)
+const value6 = ref(60)
 </script>
 
 <style lang="scss"></style>
