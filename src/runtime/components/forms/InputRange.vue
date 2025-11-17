@@ -5,7 +5,8 @@
 		</Draggable>
 		<Row justify="center" align="center" nowrap>
 			<template v-if="controls">
-				<IconButton :icon="{ name: 'minus', size: 16 }" link small v-bind="{ disabled }" @click="decrementValue" />
+				<IconButton v-resize="(r: DOMRectReadOnly) => controlRect = r" :icon="{ name: 'minus', size: 16 }" link small
+					v-bind="{ disabled }" @click="decrementValue" />
 			</template>
 			<Box v-resize="(rect: DOMRectReadOnly) => updateBar(rect)" class="inputRange-slider">
 				<div class="inputRange-slider-bar" :style="{ transform: `scaleX(${normalizedValue})` }" />
@@ -54,11 +55,9 @@ const emit = defineEmits(['update:modelValue'])
 
 // Data ---------------------
 const rect = ref<DOMRectReadOnly | null>(null)
+const controlRect = ref<DOMRectReadOnly | null>(null)
 const handlePosition = ref<Position>({ x: 0, y: 0 })
 const width = ref(0)
-const height = ref(0)
-const top = ref(0)
-const left = ref(0)
 
 // 共通ロジックを使用
 const {
@@ -88,10 +87,9 @@ const handleSize = computed(() => {
 	return config.value?.range.handleSize ?? HANDLE_SIZE
 })
 const handleStyle = computed(() => {
-	const t = props.controls ? '18px' : '2px'
-	const l = props.controls ? '36px' : '0px'
-	const top = `calc((${height.value}px - ${handleSize.value}) / 2 + ${t})`
-	const left = `calc((${height.value}px - ${handleSize.value}) / 2 + ${l})`
+	const adjustControlWidth = `${controlRect.value?.width ?? 0}px`
+	const top = `calc(50% - ${handleSize.value} / 2)`
+	const left = `calc(${adjustControlWidth} - ${handleSize.value} / 2)`
 	return {
 		width: handleSize.value,
 		height: handleSize.value,
@@ -128,8 +126,6 @@ const handleChangePosition = () => {
 }
 const updateBar = (rect: DOMRectReadOnly) => {
 	width.value = rect.width
-	top.value = rect.top
-	left.value = rect.left
 	handleUpdatePosition()
 }
 const handleUpdatePosition = () => {
