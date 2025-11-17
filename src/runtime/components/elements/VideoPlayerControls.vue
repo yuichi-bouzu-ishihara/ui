@@ -42,6 +42,7 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import InputRange from '../forms/InputRange.vue'
 import InputRangeVertical from '../forms/InputRangeVertical.vue'
 import { useVideo } from '../../composables/elements/video'
