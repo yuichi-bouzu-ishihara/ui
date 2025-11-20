@@ -26,7 +26,7 @@
     "src/runtime/assets"
   ],
   "scripts": {
-    "version": "changelogen --release 2>&1 | tee .changelog-output.txt",
+    "version": "changelogen --no-github-release 2>&1 | tee .changelog-output.txt",
     "prepublishOnly": "npm run prepack ",
     "show-release-notes": "echo '\n\n=== Release Notes ===' && cat .changelog-output.txt && rm .changelog-output.txt",
     "pub:patch": "npm run lint && npm version patch && npm publish && git push --follow-tags && npm run show-release-notes",
