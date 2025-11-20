@@ -1,6 +1,6 @@
 <template>
-	<Box class="page" :class="{ _center: center }" :h="height" :pt="topSpace" :pb="bottomSpace">
-		<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height" class="page-inner">
+	<Box class="page" :inner-center="center" :h="height" :pt="topSpace" :pb="bottomSpace">
+		<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height" w="100%">
 			<slot />
 		</Box>
 	</Box>
@@ -12,7 +12,7 @@ import { useViewport } from '../../composables/viewport'
 
 // Props ------------------------------------------------------
 const props = defineProps({
-	center: { type: Boolean, default: true }, // コンテンツを中央に配置するかどうか
+	center: { type: Boolean, default: false }, // コンテンツを中央に配置するかどうか
 	topSpace: { type: [Number, String], default: 0 }, // 上部のスペース
 	bottomSpace: { type: [Number, String], default: 0 }, // 下部のスペース
 })
@@ -30,17 +30,3 @@ const height = computed(() => {
 	}
 })
 </script>
-
-<style lang="scss">
-.page {
-	&._center {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
-	.page-inner {
-		width: 100%;
-	}
-}
-</style>
