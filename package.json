@@ -4,7 +4,7 @@
   "description": "bouzu UI",
   "repository": {
     "type": "git",
-    "url": "git@github.com:yuichi-bouzu-ishihara/ui.git"
+    "url": "git+ssh://git@github.com/yuichi-bouzu-ishihara/ui.git"
   },
   "license": "MIT",
   "type": "module",
