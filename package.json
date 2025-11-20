@@ -38,7 +38,7 @@
     "dev": "npm --prefix playground run dev",
     "dev:build": "nuxi build playground",
     "dev:prepare": "nuxt-module-build build --stub && nuxt-module-build prepare && nuxi prepare playground",
-    "release": "npm run lint && npm run test && npm run prepack && changelogen --release && npm publish && git push --follow-tags",
+    "release": "npm run lint && npm run test && npm run prepack && changelogen --release 2>&1 | tee .changelog-output.txt && npm publish && git push --follow-tags && echo '\n\n=== Release Notes ===' && cat .changelog-output.txt && rm .changelog-output.txt",
     "release:local": "npm run lint && npm pack && mv *.tgz ./packs/",
     "start": "npm --prefix playground run start",
     "docker-build": "NODE_OPTIONS=--max-old-space-size=4096 NODE_ENV=production nuxt build && npm --prefix playground run build",
