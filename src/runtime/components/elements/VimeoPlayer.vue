@@ -44,6 +44,8 @@ const props = defineProps({
 	loop: { type: Boolean, default: false }, // ループ再生のオプション
 	cover: { type: Boolean, default: false },
 	debug: { type: Array as PropType<string[]>, default: () => [] },
+	bufferTimeout: { type: Number, default: 3000 }, // bufferstart後のbufferend待機時間（ミリ秒）
+	progressTimeout: { type: Number, default: 3000 }, // progress後のplay待機時間（ミリ秒）
 })
 
 // Expose methods --------------------------------------------------
@@ -127,8 +129,10 @@ const emit = defineEmits<{
 	metadataloaded: []
 	bufferend: []
 	bufferstart: []
+	buffererror: []
 	playbackratechange: []
 	progress: []
+	looperror: []
 	seeked: []
 	seeking: []
 	timeupdate: [event?: TimeUpdateEvent]
@@ -160,6 +164,9 @@ const isSeeking = ref(false) // 外部からのシーク操作中かどうか
 const isHover = ref(false) // ホバー状態かどうか
 const isBuffering = ref(false) // バッファリング中かどうか
 const previousState = ref('') // 前回のstate
+const bufferStartCount = ref(0) // bufferstartの発生回数
+const bufferTimeoutTimer = ref<NodeJS.Timeout | null>(null) // bufferstart後のタイムアウトタイマー
+const progressTimeoutTimer = ref<NodeJS.Timeout | null>(null) // progress後のタイムアウトタイマー
 
 // Computed -----------------------------------------------
 const classes = computed(() => {
@@ -198,6 +205,12 @@ const onBufferEnd = async () => {
 	// state.value = 'bufferend'
 	isBuffering.value = false
 	emit('bufferend')
+
+	// タイマーをクリア
+	if (bufferTimeoutTimer.value) {
+		clearTimeout(bufferTimeoutTimer.value)
+		bufferTimeoutTimer.value = null
+	}
 }
 const onBufferStart = async () => {
 	if (shouldDebug('bufferstart')) {
@@ -205,7 +218,25 @@ const onBufferStart = async () => {
 	}
 	// state.value = 'bufferstart'
 	isBuffering.value = true
+	bufferStartCount.value++
 	emit('bufferstart')
+
+	// 2回目以降のbufferstartのみタイムアウト監視を開始
+	if (bufferStartCount.value > 1) {
+		// タイマーをクリア（既存のタイマーがある場合）
+		if (bufferTimeoutTimer.value) {
+			clearTimeout(bufferTimeoutTimer.value)
+		}
+
+		// タイムアウト監視を開始
+		bufferTimeoutTimer.value = setTimeout(() => {
+			if (shouldDebug('buffererror')) {
+				console.warn('Buffer timeout: bufferend not fired after bufferstart')
+			}
+			emit('buffererror')
+			bufferTimeoutTimer.value = null
+		}, props.bufferTimeout)
+	}
 }
 const onEnded = async () => {
 	if (shouldDebug('ended')) {
@@ -248,6 +279,12 @@ const onPlay = async () => {
 	isEnded.value = false
 	updateVideoSize()
 	emit('play')
+
+	// タイマーをクリア
+	if (progressTimeoutTimer.value) {
+		clearTimeout(progressTimeoutTimer.value)
+		progressTimeoutTimer.value = null
+	}
 }
 const onPlayBackRateChange = async () => {
 	if (shouldDebug('playbackratechange')) {
@@ -262,6 +299,23 @@ const onProgress = async () => {
 	}
 	// state.value = 'progress'
 	emit('progress')
+
+	// 再生中でない場合、タイムアウト監視を開始
+	if (state.value !== 'play') {
+		// タイマーをクリア（既存のタイマーがある場合）
+		if (progressTimeoutTimer.value) {
+			clearTimeout(progressTimeoutTimer.value)
+		}
+
+		// タイムアウト監視を開始
+		progressTimeoutTimer.value = setTimeout(() => {
+			if (shouldDebug('looperror')) {
+				console.warn('Progress timeout: play not fired after progress')
+			}
+			emit('looperror')
+			progressTimeoutTimer.value = null
+		}, props.progressTimeout)
+	}
 }
 const onSeeked = async () => {
 	if (shouldDebug('seeked')) {
@@ -466,6 +520,7 @@ watch(
 		isReady.value = false
 		isEnded.value = false
 		videoDuration.value = 0
+		bufferStartCount.value = 0
 
 		vimeoPlayer
 			.loadVideo(newVideoId)
@@ -633,6 +688,16 @@ onBeforeUnmount(() => {
 		vimeoPlayer.off('cuepoint', onCuePoint)
 		vimeoPlayer.off('chapterchange', onChapterChange)
 		vimeoPlayer.destroy()
+	}
+
+	// タイマーをクリア
+	if (bufferTimeoutTimer.value) {
+		clearTimeout(bufferTimeoutTimer.value)
+		bufferTimeoutTimer.value = null
+	}
+	if (progressTimeoutTimer.value) {
+		clearTimeout(progressTimeoutTimer.value)
+		progressTimeoutTimer.value = null
 	}
 })
 
