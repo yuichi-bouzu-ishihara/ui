@@ -12,7 +12,8 @@
 				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
 				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" />
 		</TransitionFade>
-		<Box v-if="isBuffering" absolute top="0" left="0" w="100%" h="100%" z-index="1">
+		<Box v-if="!background && controls && !controller && isBuffering" absolute top="0" left="0" w="100%" h="100%"
+			z-index="1">
 			<Center>
 				<Spinner size="40" color="light" />
 			</Center>
@@ -21,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, type PropType } from 'vue'
 import Player from '@vimeo/player'
 import VideoPlayerControls from './VideoPlayerControls.vue'
 
@@ -42,6 +43,7 @@ const props = defineProps({
 	autopause: { type: Boolean, default: true }, // 他 Vimeo Player が再生されたら自動的に停止するオプション
 	loop: { type: Boolean, default: false }, // ループ再生のオプション
 	cover: { type: Boolean, default: false },
+	debug: { type: Array as PropType<string[]>, default: () => [] },
 })
 
 // Expose methods --------------------------------------------------
@@ -92,6 +94,31 @@ export type VolumeChangeEvent = {
 	volume: number
 }
 
+export type FullscreenChangeEvent = {
+	fullscreen: boolean
+}
+
+export type QualityChangeEvent = {
+	quality: string
+}
+
+export type TextTrackChangeEvent = {
+	kind: string | null
+	label: string | null
+	language: string | null
+}
+
+export type CuePointEvent = {
+	data: unknown
+	id: string
+	time: number
+}
+
+export type ChapterChangeEvent = {
+	startTime: number
+	title: string
+}
+
 const emit = defineEmits<{
 	play: []
 	pause: []
@@ -103,8 +130,15 @@ const emit = defineEmits<{
 	playbackratechange: []
 	progress: []
 	seeked: []
+	seeking: []
 	timeupdate: [event?: TimeUpdateEvent]
 	volumechange: [event?: VolumeChangeEvent]
+	fullscreenchange: [event?: FullscreenChangeEvent]
+	qualitychange: [event?: QualityChangeEvent]
+	texttrackchange: [event?: TextTrackChangeEvent]
+	cuechange: []
+	cuepoint: [event?: CuePointEvent]
+	chapterchange: [event?: ChapterChangeEvent]
 	ready: [event: ReadyEvent]
 }>()
 
@@ -153,31 +187,45 @@ const styles = computed(() => {
 })
 
 // Methods ------------------------------------------------
+const shouldDebug = (eventName: string): boolean => {
+	return props.debug.includes('all') || props.debug.includes(eventName)
+}
+
 const onBufferEnd = async () => {
-	// console.log('Buffer end')
+	if (shouldDebug('bufferend')) {
+		console.log('Buffer end')
+	}
 	// state.value = 'bufferend'
 	isBuffering.value = false
 	emit('bufferend')
 }
 const onBufferStart = async () => {
-	// console.log('Buffer start')
+	if (shouldDebug('bufferstart')) {
+		console.log('Buffer start')
+	}
 	// state.value = 'bufferstart'
 	isBuffering.value = true
 	emit('bufferstart')
 }
 const onEnded = async () => {
-	// console.log('Ended')
+	if (shouldDebug('ended')) {
+		console.log('Ended')
+	}
 	state.value = 'ended'
 	isEnded.value = true
 	emit('ended')
 }
 const onError = async () => {
-	// console.log('Error')
+	if (shouldDebug('error')) {
+		console.log('Error')
+	}
 	state.value = 'error'
 	emit('error')
 }
 const onLoaded = async () => {
-	// console.log('Loaded')
+	if (shouldDebug('loaded')) {
+		console.log('Loaded')
+	}
 	// state.value = 'loaded'
 	emit('metadataloaded')
 	await setReady()
@@ -186,34 +234,46 @@ const onLoaded = async () => {
 	}
 }
 const onPause = async () => {
-	// console.log('Pause')
+	if (shouldDebug('pause')) {
+		console.log('Pause')
+	}
 	state.value = 'pause'
 	emit('pause')
 }
 const onPlay = async () => {
-	// console.log('Play')
+	if (shouldDebug('play')) {
+		console.log('Play')
+	}
 	state.value = 'play'
 	isEnded.value = false
 	updateVideoSize()
 	emit('play')
 }
 const onPlayBackRateChange = async () => {
-	// console.log('Playbackrate change')
+	if (shouldDebug('playbackratechange')) {
+		console.log('Playbackrate change')
+	}
 	// state.value = 'playbackratechange'
 	emit('playbackratechange')
 }
 const onProgress = async () => {
-	// console.log('progress')
+	if (shouldDebug('progress')) {
+		console.log('progress')
+	}
 	// state.value = 'progress'
 	emit('progress')
 }
 const onSeeked = async () => {
-	// console.log('Seeked')
+	if (shouldDebug('seeked')) {
+		console.log('Seeked')
+	}
 	// state.value = 'seeked'
 	emit('seeked')
 }
 const onTimeUpdate = async () => {
-	// console.log('Time update')
+	if (shouldDebug('timeupdate')) {
+		console.log('Time update')
+	}
 	// state.value = 'timeupdate'
 	if (!vimeoPlayer) return
 	try {
@@ -230,7 +290,9 @@ const onTimeUpdate = async () => {
 	}
 }
 const onVolumeChange = async () => {
-	// console.log('Volume change')
+	if (shouldDebug('volumechange')) {
+		console.log('Volume change')
+	}
 	// state.value = 'volumechange'
 	if (!vimeoPlayer) return
 	try {
@@ -241,6 +303,66 @@ const onVolumeChange = async () => {
 		console.error('Vimeo volume error:', error)
 		emit('volumechange')
 	}
+}
+const onSeeking = async () => {
+	if (shouldDebug('seeking')) {
+		console.log('Seeking')
+	}
+	// state.value = 'seeking'
+	emit('seeking')
+}
+const onFullscreenChange = async (data: { fullscreen: boolean }) => {
+	if (shouldDebug('fullscreenchange')) {
+		console.log('Fullscreen change', data)
+	}
+	// state.value = 'fullscreenchange'
+	emit('fullscreenchange', { fullscreen: data.fullscreen })
+}
+const onQualityChange = async (data: { quality: string }) => {
+	if (shouldDebug('qualitychange')) {
+		console.log('Quality change', data)
+	}
+	// state.value = 'qualitychange'
+	emit('qualitychange', { quality: data.quality })
+}
+const onTextTrackChange = async (data: { kind: string | null, label: string | null, language: string | null }) => {
+	if (shouldDebug('texttrackchange')) {
+		console.log('Text track change', data)
+	}
+	// state.value = 'texttrackchange'
+	emit('texttrackchange', {
+		kind: data.kind,
+		label: data.label,
+		language: data.language,
+	})
+}
+const onCueChange = async () => {
+	if (shouldDebug('cuechange')) {
+		console.log('Cue change')
+	}
+	// state.value = 'cuechange'
+	emit('cuechange')
+}
+const onCuePoint = async (data: { data: unknown, id: string, time: number }) => {
+	if (shouldDebug('cuepoint')) {
+		console.log('Cue point', data)
+	}
+	// state.value = 'cuepoint'
+	emit('cuepoint', {
+		data: data.data,
+		id: data.id,
+		time: data.time,
+	})
+}
+const onChapterChange = async (data: { startTime: number, title: string }) => {
+	if (shouldDebug('chapterchange')) {
+		console.log('Chapter change', data)
+	}
+	// state.value = 'chapterchange'
+	emit('chapterchange', {
+		startTime: data.startTime,
+		title: data.title,
+	})
 }
 
 const setReady = async () => {
@@ -476,8 +598,15 @@ onMounted(async () => {
 	vimeoPlayer.on('playbackratechange', onPlayBackRateChange)
 	vimeoPlayer.on('progress', onProgress)
 	vimeoPlayer.on('seeked', onSeeked)
+	vimeoPlayer.on('seeking', onSeeking)
 	vimeoPlayer.on('timeupdate', onTimeUpdate)
 	vimeoPlayer.on('volumechange', onVolumeChange)
+	vimeoPlayer.on('fullscreenchange', onFullscreenChange)
+	vimeoPlayer.on('qualitychange', onQualityChange)
+	vimeoPlayer.on('texttrackchange', onTextTrackChange)
+	vimeoPlayer.on('cuechange', onCueChange)
+	vimeoPlayer.on('cuepoint', onCuePoint)
+	vimeoPlayer.on('chapterchange', onChapterChange)
 
 	// 初期currentTimeを設定
 	currentTime.value = 0
@@ -494,8 +623,15 @@ onBeforeUnmount(() => {
 		vimeoPlayer.off('playbackratechange', onPlayBackRateChange)
 		vimeoPlayer.off('progress', onProgress)
 		vimeoPlayer.off('seeked', onSeeked)
+		vimeoPlayer.off('seeking', onSeeking)
 		vimeoPlayer.off('timeupdate', onTimeUpdate)
 		vimeoPlayer.off('volumechange', onVolumeChange)
+		vimeoPlayer.off('fullscreenchange', onFullscreenChange)
+		vimeoPlayer.off('qualitychange', onQualityChange)
+		vimeoPlayer.off('texttrackchange', onTextTrackChange)
+		vimeoPlayer.off('cuechange', onCueChange)
+		vimeoPlayer.off('cuepoint', onCuePoint)
+		vimeoPlayer.off('chapterchange', onChapterChange)
 		vimeoPlayer.destroy()
 	}
 })
