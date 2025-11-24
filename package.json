@@ -21,6 +21,10 @@
     "./composables": {
       "types": "./dist/runtime/composables/index.d.ts",
       "import": "./dist/runtime/composables/index.js"
+    },
+    "./classes": {
+      "types": "./dist/runtime/classes/index.d.ts",
+      "import": "./dist/runtime/classes/index.js"
     }
   },
   "main": "./dist/module.mjs",
