@@ -327,7 +327,7 @@ $perview: var(--per-view);
 
 		&-inner {
 			font-size: inherit;
-			opacity: 0.3;
+			opacity: 0.4;
 		}
 
 		&-required {
