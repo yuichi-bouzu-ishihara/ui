@@ -255,7 +255,7 @@ $field-padding-bottom: 0.36em;
 			opacity: 0.4;
 		}
 
-		&-required {
+		#{$cn}-label-required {
 			line-height: 1;
 			color: var(--color-danger);
 			vertical-align: middle;
