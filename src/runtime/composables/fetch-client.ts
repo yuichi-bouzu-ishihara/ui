@@ -10,7 +10,7 @@ export interface FetchOptions {
 	signal?: AbortSignal
 }
 
-export function useFetchClient() {
+export const useFetchClient = () => {
 	const error = useState<Error | null>('ui-fetch-client-error', () => null)
 	const processing = useState<boolean>('ui-fetch-client-processing', () => false)
 
