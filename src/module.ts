@@ -151,10 +151,5 @@ export default defineNuxtModule<ModuleOptions>({
 				path: resolve(runtimeDir, 'types', 'global.d.ts'),
 			})
 		})
-
-		// 明示的 import 用の Alias を作成
-		// これにより import { useA } from '#module-a/composables' が可能になります
-		// 注意: この方法は Module A が Nuxt コンテキスト内で動いている時のみ有効です
-		nuxt.options.alias['#module-a/composables'] = resolve(runtimeDir, 'composables')
 	},
 })
