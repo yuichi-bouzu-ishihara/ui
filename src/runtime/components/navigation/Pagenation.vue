@@ -3,7 +3,8 @@
 		<Clickable v-for="i in total" :key="i" :disabled="disabled || i === current" @click="handleClick(i)"
 			@mouseover="!disabled && (hoverIndex = i)" @mouseleave="!disabled && (hoverIndex = 0)">
 			<Box p="4">
-				<Box w="6" h="6" r="circle" :color="i === current || hoverIndex === i ? 'text' : 'text-030'" />
+				<Box w="6" h="6" r="circle" :opacity="i === current || hoverIndex === i ? 1 : 0.3" animation
+					v-bind="{ color }" />
 			</Box>
 		</Clickable>
 	</Row>
@@ -20,6 +21,7 @@ export type Props = {
 	current?: number
 	total?: number
 	disabled?: boolean
+	color?: string
 }
 
 // Props --------------------------------------------------
@@ -27,6 +29,7 @@ withDefaults(defineProps<Props>(), {
 	current: 0,
 	total: 0,
 	disabled: false,
+	color: 'text',
 })
 
 // Emits --------------------------------------------------
