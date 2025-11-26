@@ -44,6 +44,9 @@ const props = defineProps({
 	// Border Radius - 角丸
 	r: { type: [Number, String], default: '' }, // 角丸, full = 9999px, circle = 100%
 
+	// Opacity - 不透明度
+	opacity: { type: [Number, String], default: 1 }, // 不透明度
+
 	// Position - 位置
 	relative: { type: Boolean, default: false },
 	absolute: { type: Boolean, default: false },
@@ -334,6 +337,7 @@ const styles = computed(() => {
 		...(inset.value('bottom') !== '' && { bottom: inset.value('bottom') }),
 		...(inset.value('left') !== '' && { left: inset.value('left') }),
 		...(props.zIndex !== '' && { zIndex: props.zIndex }),
+		...(props.opacity !== 1 && { opacity: props.opacity }),
 	}
 
 	// hex、rgb、rgba のカラーが設定されている場合は、background-color を設定する
