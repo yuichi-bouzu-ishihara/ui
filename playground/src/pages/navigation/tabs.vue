@@ -17,6 +17,7 @@ const list = ref([
 	{
 		name: 'Menu1',
 		current: true,
+		notice: true,
 		click: () => {
 			list.value.forEach((item) => {
 				item.current = item.name === 'Menu1'
@@ -26,6 +27,7 @@ const list = ref([
 	{
 		name: 'Menu2',
 		current: false,
+		notice: true,
 		click: () => {
 			list.value.forEach((item) => {
 				item.current = item.name === 'Menu2'
@@ -41,6 +43,7 @@ const iconList = ref([
 			size: 18,
 		},
 		current: true,
+		notice: true,
 		click: () => {
 			handleIconClick(0)
 		},

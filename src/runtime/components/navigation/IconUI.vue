@@ -4,10 +4,8 @@
 			<Icon class="iconUI-inner-icon"
 				:style="{ transform: `scale(${mergeIcon.scale})`, opacity: isCurrent || hover ? 1 : 0.6 }"
 				:name="mergeIcon.name" v-bind="{ color: mergeIcon.color, size: mergeIcon.size }" />
-			<template v-if="notice">
-				<Box r="circle" color="primary" w="4" h="4" absolute :bottom="baseAbove() ? 'auto' : -8"
-					:top="baseAbove() ? -12 : 'auto'" left="0" right="0" ml="auto" mr="auto" />
-			</template>
+			<NoticeIcon v-if="notice" absolute :bottom="baseAbove() ? 'auto' : -8" :top="baseAbove() ? -12 : 'auto'" left="0"
+				right="0" ml="auto" mr="auto" />
 		</component>
 	</Box>
 </template>
@@ -19,6 +17,7 @@ import { useBreakPoint } from '../../composables/break-point'
 import BasicLink from '../elements/BasicLink.vue'
 import Box from '../layout/Box.vue'
 import Icon from '../elements/Icon.vue'
+import NoticeIcon from './NoticeIcon.vue'
 
 // Types --------------------------------------------------
 type Icon = {
