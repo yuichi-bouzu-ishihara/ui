@@ -4,22 +4,20 @@
 			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
 				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
 				@click="tab.click && tab.click()">
-				<Row justify="center" align="start" gap="8" fit-h>
-					<template v-if="tab.icon">
-						<Icon :name="tab.icon.name" :size="tab.icon.size || 16" />
-					</template>
-					<template v-else-if="tab.name">
-						<Typography v-bind="typography" bold center unselectable cap-height-baseline lineclamp="1">
-							{{ tab.name }}
-						</Typography>
-					</template>
+				<Row justify="center" align="center" gap="6" fit-h>
+					<Icon v-if="tab.icon" :name="tab.icon.name" :size="tab.icon.size || 16" />
+					<Typography v-else-if="tab.name" v-bind="typography" bold center unselectable cap-height-baseline
+						lineclamp="1">
+						{{ tab.name }}
+					</Typography>
+					<Box v-if="tab.notice" mr="-8">
+						<NoticeIcon v-if="tab.notice" />
+					</Box>
 				</Row>
 			</component>
 		</Row>
-		<template v-if="activeIndex !== -1">
-			<div v-if="rect && itemRectList[activeIndex]" class="tabs-bar"
-				:style="`transform: translateX(${itemRectList[activeIndex].left - rect.left}px); width: ${itemRectList[activeIndex].width}px`" />
-		</template>
+		<div v-if="activeIndex !== -1 && rect && itemRectList[activeIndex]" class="tabs-bar"
+			:style="`transform: translateX(${itemRectList[activeIndex].left - rect.left}px); width: ${itemRectList[activeIndex].width}px`" />
 	</Box>
 </template>
 
@@ -28,6 +26,7 @@ import { computed, toRefs, ref, watch, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
+import NoticeIcon from './NoticeIcon.vue'
 import Typography from '../elements/Typography.vue'
 import BasicLink from '../elements/BasicLink.vue'
 import Row from '../layout/Row.vue'
@@ -43,6 +42,7 @@ export type TabsItem = {
 	path?: string // パス
 	icon?: Icon // アイコン
 	current?: boolean // 現在選択されているか
+	notice?: boolean // 通知があるか
 }
 
 // Composables ------------------------------------------------------------
