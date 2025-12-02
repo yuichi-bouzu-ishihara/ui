@@ -332,6 +332,8 @@ export const defaultOptions = {
 		barColor: 'color-text', // バーの色 e.g. color-light, color-dark
 		barBackgroundHeight: '0.5px', // バーの背景の高さ e.g. 44px
 		barBackgroundColor: 'color-text-020', // バーの背景色 e.g. color-light, color-dark
+		itemPaddingTop: '0', // アイテムの上部パディング e.g. 4px
+		itemPaddingBottom: '8px', // アイテムの下部パディング e.g. 4px
 	},
 	container: {
 		base: '560px', // 幅未設定時。iPhone Max に合わせる。

@@ -140,6 +140,8 @@ $border-height: 0.5; // ボーダーの高さ
 		&-list {
 			&-item {
 				height: 100%;
+				padding-top: var(--tabs-item-padding-top);
+				padding-bottom: var(--tabs-item-padding-bottom);
 				cursor: pointer;
 				transition: var.$transition-base;
 				opacity: 0.6;
