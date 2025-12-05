@@ -6,17 +6,13 @@
 		<TransitionAcordion>
 			<Box v-if="message || description" w="100%">
 				<Box h="8" />
-				<template v-if="message">
-					<Typography caption3 color="danger">
-						{{ message }}
-					</Typography>
-				</template>
-				<template v-else-if="description">
-					<Typography caption3 color="text-060">
-						<!-- eslint-disable-next-line vue/no-v-html -->
-						<span v-html="description" />
-					</Typography>
-				</template>
+				<Typography v-if="message" class="fieldFooter-txt" caption3 color="danger">
+					{{ message }}
+				</Typography>
+				<Typography v-else-if="description" class="fieldFooter-txt" caption3 color="text-060">
+					<!-- eslint-disable-next-line vue/no-v-html -->
+					<span v-html="description" />
+				</Typography>
 			</Box>
 		</TransitionAcordion>
 	</div>
@@ -80,6 +76,10 @@ $cn: '.fieldFooter'; // コンポーネントセレクタ名
 			&-inner {
 				background-color: var(--color-danger);
 			}
+		}
+
+		&-txt {
+			text-align: inherit;
 		}
 	}
 
