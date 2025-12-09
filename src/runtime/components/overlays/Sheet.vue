@@ -153,6 +153,7 @@ const variables = computed(() => {
 		obj['--sheet-inner-height'] = 'auto'
 	}
 	obj['--sheet-top-space'] = `${topSpace.value}px`
+	obj['--sheet-bottom-space'] = `${bottomSpace.value}px`
 	return obj
 })
 // 階層を深く見せるスタイル
@@ -173,6 +174,14 @@ const depthStyle = computed(() => {
 })
 const topSpace = computed(() => {
 	return header.config.value ? Number(header.config.value.height.replace('px', '')) / 2 : 0
+})
+const bottomSpace = computed(() => {
+	if (props.full) {
+		return 0
+	}
+	else {
+		return topSpace.value
+	}
 })
 
 // Watch -----------------------------------------------
@@ -217,6 +226,7 @@ $footnote-padding-vertical: 24;
 		min-height: 100%;
 		height: auto;
 		padding-top: var(--sheet-top-space);
+		padding-bottom: var(--sheet-bottom-space);
 		// padding-bottom: calc(var(--header-height) / 2);
 		transform-style: preserve-3d; // 子要素に preserve-3d がある場合に表示がバグる不具合を回避する
 
@@ -244,11 +254,6 @@ $footnote-padding-vertical: 24;
 				}
 			}
 		}
-	}
-
-	&._full &-inner,
-	&._wide &-inner {
-		padding-bottom: 0;
 	}
 
 	&._deep {
