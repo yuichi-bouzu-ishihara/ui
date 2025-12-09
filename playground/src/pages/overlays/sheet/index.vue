@@ -6,7 +6,7 @@
 					<Button @click="open(SheetMessage, {
 						title: 'Title',
 						content: 'Text Content is here.<br />Please Test Message.',
-						icon: 'edit',
+						icon: 'check',
 						buttonName: 'OK',
 					} as SheetMessageProps)">
 						SheetMessage
