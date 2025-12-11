@@ -12,13 +12,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, type PropType } from 'vue'
 
 // Props ------------------------------------------------------------
 const props = defineProps({
 	stroke: { type: [Number, String], default: 2 }, // 線の太さ px
 	focus: { type: Boolean, default: false }, // フォーカスされているかどうか
-	color: { type: Object as () => CustomColor, default: null },
+	color: { type: Object as PropType<CustomColor>, default: null },
 })
 
 // Emits ------------------------------------------------------------
