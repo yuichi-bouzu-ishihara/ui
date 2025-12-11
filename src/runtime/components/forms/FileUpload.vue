@@ -1,28 +1,31 @@
 <template>
-	<div class="fileUpload" :class="{ _invalid: isInvalid, _loading: isLoading }">
-		<Clickable ref="dropAreaRef" class="fileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
+	<div class="fileUpload" :class="{ _invalid: isInvalid, _loading: isLoading }" :style="variables">
+		<Clickable class="fileUpload-ui" :class="{ _dragover: isDragOver }" @click="onUpload">
 			<Ratio>
 				<Column justify="center" gap="12">
 					<Icon v-if="fileStatus === 'idle' && mergedIcon.idle" :name="mergedIcon.idle.name"
-						:size="mergedIcon.idle.size || ICON_SIZE" />
+						:size="mergedIcon.idle.size || ICON_SIZE" :color="color.text" />
 					<template v-else-if="fileStatus === 'loading' && mergedIcon.loading">
-						<Spinner v-if="mergedIcon.loading.name === 'spinner'" :size="mergedIcon.loading.size || ICON_SIZE" />
-						<Icon v-else :name="mergedIcon.loading.name" :size="mergedIcon.loading.size || ICON_SIZE" />
+						<Spinner v-if="mergedIcon.loading.name === 'spinner'" :size="mergedIcon.loading.size || ICON_SIZE"
+							:color="color.text" />
+						<Icon v-else :name="mergedIcon.loading.name" :size="mergedIcon.loading.size || ICON_SIZE"
+							:color="color.text" />
 					</template>
 					<Icon v-else-if="fileStatus === 'success' && mergedIcon.success" name="checkCircleLine"
 						:size="mergedIcon.success.size || ICON_SIZE" color="success" />
 					<Icon v-else-if="fileStatus === 'error' && mergedIcon.error" name="exclamation"
 						:size="mergedIcon.error.size || ICON_SIZE" color="danger" />
 					<Typography v-if="getStatusText" caption1 extrabold center cap-height-baseline
-						:color="isInvalid ? 'danger' : 'text'">
+						:color="isInvalid ? 'danger' : color.text">
 						<!-- eslint-disable-next-line vue/no-v-html -->
 						<span v-html="getStatusText" />
 					</Typography>
-					<Typography v-if="getDescriptionText" caption1 center cap-height-baseline
-						:color="isInvalid ? 'danger' : 'text-060'">
-						<!-- eslint-disable-next-line vue/no-v-html -->
-						<span v-html="getDescriptionText" />
-					</Typography>
+					<Box v-if="getDescriptionText" :opacity="isInvalid ? 1 : 0.6">
+						<Typography caption1 center cap-height-baseline :color="isInvalid ? 'danger' : color.text">
+							<!-- eslint-disable-next-line vue/no-v-html -->
+							<span v-html="getDescriptionText" />
+						</Typography>
+					</Box>
 				</Column>
 			</Ratio>
 		</Clickable>
@@ -93,10 +96,10 @@ const props = defineProps({
 	label: { type: Object as PropType<StatusText>, default: () => ({}) },
 	description: { type: Object as PropType<StatusText>, default: () => ({}) },
 	maxSize: { type: Number, default: 5 * 1024 * 1024 }, // デフォルト5MB
+	color: { type: Object as PropType<CustomColor>, default: () => ({ text: 'var(--color-text)', background: 'var(--color-background)' }) },
 })
 
 // Data ----------
-const dropAreaRef = ref<HTMLElement>()
 const isDragOver = ref(false)
 const isInvalid = ref(false)
 const isLoading = ref(false)
@@ -109,6 +112,10 @@ const metadataError = ref<string | null>(null)
 const isMetadataLoading = ref(false)
 
 // Computed ----------
+const variables = computed(() => ({
+	'--custom-color-text': props.color.text,
+	'--custom-color-background': props.color.background,
+}))
 const defaultIcon = computed(() => ({
 	idle: { name: 'upload' },
 	loading: { name: 'spinner' },
@@ -428,26 +435,68 @@ $cn: '.fileUpload';
 
 #{$cn} {
 	&-ui {
+		position: relative;
 		width: 100%;
 		height: 100%;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		border: 1px dashed var(--color-text-020);
-		border-radius: #{var.$border-radius-medium}px;
 		padding: var(--container-min-side-space);
 		transition: var.$transition-base;
 		cursor: pointer;
 
-		&:hover {
-			border-color: var(--color-text-060);
+		&._dragover {
+			transform: scale(1.02);
 		}
 
-		&._dragover {
-			border-color: var(--color-text-060);
-			background-color: var(--color-text-005);
-			transform: scale(1.02);
+		&::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background-color: var(--custom-color-text);
+			opacity: 0.0;
+		}
+
+		&._dragover::before {
+			opacity: 0.05;
+		}
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border: 1px dashed var(--custom-color-text);
+			border-radius: #{var.$border-radius-medium}px;
+			opacity: 0.2;
+			transition: var.$transition-base;
+		}
+
+		&:hover::after {
+			opacity: 0.6;
+		}
+
+		&._dragover::after {
+			opacity: 0.6;
+		}
+	}
+
+	&._invalid {
+		#{$cn}-ui::after {
+			border-color: var(--color-danger);
+			opacity: 0.6;
+		}
+	}
+
+	&._loading {
+		#{$cn}-ui::before {
+			background-color: var(--custom-color-text);
+			opacity: 0.05;
+		}
+
+		#{$cn}-ui::after {
+			border-color: var(--custom-color-text);
+			opacity: 0.6;
 		}
 	}
 
@@ -457,27 +506,6 @@ $cn: '.fileUpload';
 		align-items: center;
 		gap: 8px;
 		margin-top: 8px;
-	}
-
-	&-fileInfo {
-		margin-top: 8px;
-		padding: 8px 12px;
-		background-color: var(--color-text-005);
-		border-radius: #{var.$border-radius-small}px;
-		border: 1px solid var(--color-text-020);
-	}
-
-	&._invalid {
-		#{$cn}-ui {
-			border-color: var(--color-danger-060);
-		}
-	}
-
-	&._loading {
-		#{$cn}-ui {
-			border-color: var(--color-text-060);
-			background-color: var(--color-text-005);
-		}
 	}
 }
 </style>
