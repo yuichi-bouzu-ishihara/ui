@@ -5,7 +5,8 @@
 				:icon="{ success: { name: 'checkCircleLine' }, error: { name: 'exclamation' } }"
 				:label="{ idle: 'ファイルを選択してください。', loading: '', success: 'ファイルの読み込みが完了しました。' }"
 				:description="{ idle: '5GB以内の .jpg .jpeg .png .mp4 のファイルを選択してください。', loading: '', success: '' }"
-				:max-size="5 * 1024 * 1024" @metadata-loaded="handleMetadataLoaded" @metadata-error="handleMetadataError"
+				:max-size="5 * 1024 * 1024" :color="{ text: '#00ffff', background: '#ff00ff' }"
+				@metadata-loaded="handleMetadataLoaded" @metadata-error="handleMetadataError"
 				@metadata-loading="handleMetadataLoading" />
 			<template v-if="selectedFile">
 				<Image v-if="isImage" v-bind="{ src }" />
