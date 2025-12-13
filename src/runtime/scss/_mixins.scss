@@ -106,7 +106,12 @@
 
 // 色を返すmixin
 @mixin color-var($priority, $tint: "") {
-	$css-var: if($tint == "", var(--color-#{$priority}), var(--color-#{$priority}-#{$tint}));
+	$css-var: null;
+	@if $tint == "" {
+		$css-var: var(--color-#{$priority});
+	} @else {
+		$css-var: var(--color-#{$priority}-#{$tint});
+	}
 	@content ($css-var);
 }
 
