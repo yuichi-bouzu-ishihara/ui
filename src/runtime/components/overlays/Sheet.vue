@@ -8,7 +8,7 @@
 							w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box sticky top="0" w="100%" z-index="1">
-									<Container v-bind="{ full, wide, narrow }">
+									<Container v-bind="container">
 										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title, pagenation }" blur
 											:background="backgroundColor" :color="textColor">
 											<template #left>
@@ -41,13 +41,13 @@
 								</Column>
 							</Box>
 							<template v-if="footnote">
-								<div class="sheet-inner-item-content-footnote">
+								<Container v-bind="container">
 									<Center>
 										<Typography footnote center :color="textColor">
 											{{ footnote }}
 										</Typography>
 									</Center>
-								</div>
+								</Container>
 							</template>
 						</Box>
 					</Container>
@@ -202,8 +202,6 @@ watch(() => [viewport.height.value, contentHeight.value], () => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.sheet'; // コンポーネントセレクタ名
 
-$footnote-padding-vertical: 24;
-
 #{$cn} {
 	position: relative;
 	width: 100%;
@@ -240,8 +238,6 @@ $footnote-padding-vertical: 24;
 				border-radius: #{var.$border-radius-xlarge}px;
 
 				&-header {
-					padding-left: calc(var(--container-min-side-space) - 4px);
-					padding-right: calc(var(--container-min-side-space) - 4px);
 					border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
 				}
 
@@ -250,7 +246,8 @@ $footnote-padding-vertical: 24;
 				}
 
 				&-footnote {
-					padding: func.get-size($footnote-padding-vertical) var(--container-min-side-space);
+					padding-top: 24px;
+					padding-bottom: 24px;
 					border-radius: 0 0 #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px;
 				}
 			}
