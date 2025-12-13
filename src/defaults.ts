@@ -336,10 +336,22 @@ export const defaultOptions = {
 		itemPaddingBottom: '8px', // アイテムの下部パディング e.g. 4px
 	},
 	container: {
-		base: '560px', // 幅未設定時。iPhone Max に合わせる。
-		wide: '1080px', // 幅広設定。ヘッダーの左右UIを考慮して、120pxずつ余裕を持
-		narrow: `${360 + 16 * 2}px`, // 幅狭い設定時。 Android の小さい幅、iPhone SE に合わせる。
-		minSideSpace: '16px',
+		base: {
+			width: '560px', // 幅未設定時。iPhone Max に合わせる。
+			sideSpace: '16px',
+		},
+		wide: {
+			width: '1080px', // 幅広設定。ヘッダーの左右UIを考慮して、120pxずつ余裕を持
+			sideSpace: '16px',
+		},
+		narrow: {
+			width: `${360 + 16 * 2}px`, // 幅狭い設定時。 Android の小さい幅、iPhone SE に合わせる。
+			sideSpace: '16px',
+		},
+		full: {
+			width: '100%',
+			sideSpace: '16px',
+		},
 	},
 	sheet: {
 		color: {

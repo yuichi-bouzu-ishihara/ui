@@ -58,23 +58,29 @@ $cn: '.container'; // コンポーネントセレクタ名
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		max-width: 100%;
-		width: var(--container-base);
-		padding-right: var(--container-min-side-space);
-		padding-left: var(--container-min-side-space);
+		width: var(--container-base-width);
+		padding-right: var(--container-base-side-space);
+		padding-left: var(--container-base-side-space);
 		margin-right: auto;
 		margin-left: auto;
 
 		&._full {
 			max-width: 100%;
 			width: 100%;
+			padding-right: var(--container-full-side-space);
+			padding-left: var(--container-full-side-space);
 		}
 
 		&._wide {
-			width: var(--container-wide);
+			width: var(--container-wide-width);
+			padding-right: var(--container-wide-side-space);
+			padding-left: var(--container-wide-side-space);
 		}
 
 		&._narrow {
-			width: var(--container-narrow);
+			width: var(--container-narrow-width);
+			padding-right: var(--container-narrow-side-space);
+			padding-left: var(--container-narrow-side-space);
 		}
 
 		&._noPadding {
