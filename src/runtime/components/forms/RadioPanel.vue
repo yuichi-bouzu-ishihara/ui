@@ -111,20 +111,22 @@ const freeOption = computed(() => {
 // Watch ------------------
 // valueの外部からの変更を監視（初期値の設定など）
 watch(() => value.value, (newValue) => {
-	// valueがoptionsのいずれかのvalueと一致する場合
+	// 現在Freeが選択されている場合は、valueが他のオプションのvalueと一致しても
+	// selectedOptionValueを変更しない（Free選択を維持する）
+	if (isCurrentFree.value && freeOption.value) {
+		// 自由入力モードの場合、valueをfreeValueに反映
+		if (newValue >= freeOption.value.min && newValue <= freeOption.value.max) {
+			freeValue.value = newValue
+		}
+		return
+	}
+
+	// Freeが選択されていない場合のみ、valueがoptionsのいずれかのvalueと一致するかチェック
 	const matchingOption = props.options.find(option => option.value === newValue)
 	if (matchingOption) {
 		selectedOptionValue.value = newValue
 		if (matchingOption.free) {
 			freeValue.value = matchingOption.free.default ?? matchingOption.free.min
-		}
-	}
-	// valueがoptionsのいずれとも一致しない場合、自由入力モードの可能性がある
-	// この場合は、自由入力可能なオプションを探す
-	else if (isCurrentFree.value && freeOption.value) {
-		// 自由入力モードの場合、valueをfreeValueに反映
-		if (newValue >= freeOption.value.min && newValue <= freeOption.value.max) {
-			freeValue.value = newValue
 		}
 	}
 }, { immediate: true })
