@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, type PropType } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Row from '../layout/Row.vue'
 import Box from '../layout/Box.vue'
@@ -94,12 +94,12 @@ $transition-base: var.$transition-base;
 
 		&-left {
 			position: absolute;
-			left: var(--container-min-side-space);
+			left: 0;
 		}
 
 		&-right {
 			position: absolute;
-			right: var(--container-min-side-space);
+			right: 0;
 		}
 	}
 }

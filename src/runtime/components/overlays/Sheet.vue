@@ -8,21 +8,21 @@
 							w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box sticky top="0" w="100%" z-index="1">
-									<Container no-padding full>
+									<Container v-bind="{ full, wide, narrow }">
 										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title, pagenation }" blur
 											:background="backgroundColor" :color="textColor">
 											<template #left>
 												<IconUI v-if="back" :icon="{ name: 'arrowLeft', size: 18, color: textColor }"
-													@click="emit('back')" />
+													:box="{ w: 36, h: 36 }" @click="emit('back')" />
 												<IconUI v-else-if="leftIcon" :icon="{ name: leftIcon, size: 18, color: textColor }"
-													@click="emit('left-icon-click')" />
+													:box="{ w: 36, h: 36 }" @click="emit('left-icon-click')" />
 												<slot v-else name="header-left" />
 											</template>
 											<template #right>
 												<IconUI v-if="close" :icon="{ name: 'cross', size: 18, color: textColor }"
-													@click="emit('close')" />
+													:box="{ w: 36, h: 36 }" @click="emit('close')" />
 												<IconUI v-else-if="rightIcon" :icon="{ name: rightIcon, size: 18, color: textColor }"
-													@click="emit('right-icon-click')" />
+													:box="{ w: 36, h: 36 }" @click="emit('right-icon-click')" />
 												<slot v-else name="header-right" />
 											</template>
 											<template #center>

@@ -2,22 +2,24 @@
 	<Box class="devHeader" color="background080" bg-blur>
 		<!-- eslint-disable-next-line no-irregular-whitespace -->
 		<Container full no-padding>
-			<SlotHeader>
-				<template #left>
-					<slot name="left" />
-				</template>
-				<template #center>
-					<Typography body bold>
-						<Row class="devHeader-title" gap="8" justify="center" align="center" @click="handleShowMenu">
-							{{ currentPageName }}
-							<Icon name="arrowDown" size="10" color="text" />
-						</Row>
-					</Typography>
-				</template>
-				<template #right>
-					<Icon v-if="close" name="cross" size="20" @click="emit('close')" />
-				</template>
-			</SlotHeader>
+			<Container full>
+				<SlotHeader>
+					<template #left>
+						<slot name="left" />
+					</template>
+					<template #center>
+						<Typography body bold>
+							<Row class="devHeader-title" gap="8" justify="center" align="center" @click="handleShowMenu">
+								{{ currentPageName }}
+								<Icon name="arrowDown" size="10" color="text" />
+							</Row>
+						</Typography>
+					</template>
+					<template #right>
+						<Icon v-if="close" name="cross" size="20" @click="emit('close')" />
+					</template>
+				</SlotHeader>
+			</Container>
 			<TransitionFade>
 				<Backdrop v-show="showMenu" class="devHeader-overlay" soft @click="showMenu = false" />
 			</TransitionFade>
