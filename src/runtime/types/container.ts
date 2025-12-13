@@ -1,6 +1,10 @@
+export type ContainerSizeConfig = {
+	width: string
+	sideSpace: string
+}
 export type ContainerConfig = {
-	base: string // ベースサイズ
-	wide: string // 幅広サイズ
-	narrow: string // 幅狭サイズ
-	minSideSpace: string // コンテンツの左右のスペース
+	narrow: ContainerSizeConfig
+	base: ContainerSizeConfig
+	wide: ContainerSizeConfig
+	full: ContainerSizeConfig
 }
