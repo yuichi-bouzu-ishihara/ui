@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useSlots, watch } from 'vue'
+import { computed, ref, useSlots, watch, type PropType } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Box from '../layout/Box.vue'
 import Center from '../layout/Center.vue'
@@ -78,6 +78,7 @@ const { list } = sheet
 const slots = useSlots()
 const header = useHeader()
 const viewport = useViewport()
+const { baseAbove } = useBreakPoint()
 
 // Props -----------------------
 const props = defineProps({
@@ -140,9 +141,9 @@ const textColor = computed(() => {
 const isHeader = computed(() => props.title || props.close || props.leftIcon || props.rightIcon || !!slots['header-left'] || !!slots['header-right'] || !!slots['header-center'])
 const isScroll = computed(() => /* useSheetsStore().scrollY > 0 */ false)
 const container = computed(() => ({
-	narrow: useBreakPoint().baseAbove() ? props.narrow : false,
-	full: useBreakPoint().baseAbove() ? props.full : true,
-	wide: useBreakPoint().baseAbove() ? props.wide : false,
+	narrow: baseAbove() ? props.narrow : false,
+	full: baseAbove() ? props.full : true,
+	wide: baseAbove() ? props.wide : false,
 }))
 const variables = computed(() => {
 	const obj: Record<string, string> = {}
@@ -176,7 +177,7 @@ const topSpace = computed(() => {
 	return header.config.value ? Number(header.config.value.height.replace('px', '')) / 2 : 0
 })
 const bottomSpace = computed(() => {
-	if (props.full) {
+	if (props.full || !baseAbove()) {
 		return 0
 	}
 	else {
