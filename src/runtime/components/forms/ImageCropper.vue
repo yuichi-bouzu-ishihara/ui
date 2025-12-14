@@ -51,7 +51,7 @@ defineExpose({ capture })
 
 // Constants ---------------------
 const ZOOM_MAX = 3
-const ZOOM_BTN_STEP = 0.25
+const ZOOM_BTN_STEP = 0.01
 
 // Props ------------------
 const props = defineProps({

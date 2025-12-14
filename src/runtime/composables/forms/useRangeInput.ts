@@ -28,6 +28,24 @@ export function useRangeInput(
 	handlePosition: Ref<Position>,
 	dimension: Ref<number>, // 水平方向の場合は width、垂直方向の場合は height
 ) {
+	// stepに合わせて値を丸めるヘルパー関数
+	const snapToStep = (val: number): number => {
+		const min = Number(String(props.min))
+		const max = Number(String(props.max))
+		const step = Number(String(props.step))
+
+		// stepが0以下の場合は丸めない
+		if (step <= 0) {
+			return Math.min(Math.max(val, min), max)
+		}
+
+		// minからの距離をstepで割って、最も近いstepに丸める
+		const stepped = Math.round((val - min) / step) * step + min
+
+		// minとmaxの範囲内に収める
+		return Math.min(Math.max(stepped, min), max)
+	}
+
 	// 値の計算と正規化
 	const value = computed({
 		get: () => {
@@ -43,10 +61,17 @@ export function useRangeInput(
 			) {
 				emit('update:modelValue', newValue)
 			}
-			return newValue
+			// stepに合わせて丸める
+			const snappedValue = snapToStep(newValue)
+			if (snappedValue !== newValue) {
+				emit('update:modelValue', snappedValue)
+			}
+			return snappedValue
 		},
 		set: (value: number) => {
-			emit('update:modelValue', value)
+			// stepに合わせて丸めてから更新
+			const snappedValue = snapToStep(value)
+			emit('update:modelValue', snappedValue)
 		},
 	})
 
@@ -67,11 +92,22 @@ export function useRangeInput(
 		const min = Number(String(props.min))
 		const max = Number(String(props.max))
 		const range = max - min
-		const newValue = normalizedPosition * range + min
+		const rawValue = normalizedPosition * range + min
+
+		// stepに合わせて値を丸める
+		const snappedValue = snapToStep(rawValue)
+
 		// 値を更新
-		value.value = newValue
+		value.value = snappedValue
+
+		// 丸められた値に対応する位置を再計算
+		const normalizedSnappedValue = (snappedValue - min) / (max - min)
+		const snappedPosition = isVertical
+			? (1 - normalizedSnappedValue) * dimension.value
+			: normalizedSnappedValue * dimension.value
+
 		// 0 以上 dimension 以下に制限
-		const clampedPosition = Math.min(Math.max(position, 0), dimension.value)
+		const clampedPosition = Math.min(Math.max(snappedPosition, 0), dimension.value)
 		if (isVertical) {
 			handlePosition.value.y = clampedPosition
 		}
@@ -96,11 +132,17 @@ export function useRangeInput(
 
 	// ステップを考慮した値の増減
 	const incrementValue = () => {
-		value.value += Number(props.step)
+		const max = Number(String(props.max))
+		const step = Number(String(props.step))
+		const newValue = Math.min(value.value + step, max)
+		value.value = snapToStep(newValue)
 	}
 
 	const decrementValue = () => {
-		value.value -= Number(props.step)
+		const min = Number(String(props.min))
+		const step = Number(String(props.step))
+		const newValue = Math.max(value.value - step, min)
+		value.value = snapToStep(newValue)
 	}
 
 	return {

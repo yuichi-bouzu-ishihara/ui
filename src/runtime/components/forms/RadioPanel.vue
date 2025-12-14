@@ -1,27 +1,36 @@
 <template>
-	<Column class="radioPanel" :class="classes" gap="16">
+	<div class="radioPanel" :class="classes">
 		<Typography v-if="title" v-bind="typography" cap-height-baseline>
 			{{ title }}
 		</Typography>
+		<Box h="16" />
 		<Row v-bind="{ split, gap }">
 			<label v-for="option in options" :key="`radioPanel-item-${option.value}`" class="radioPanel-item"
-				:class="{ _checked: value === option.value }">
-				<input type="radio" :value="option.value" :checked="value === option.value"
-					@change="handleChange(option.value)">
+				:class="{ _checked: selectedOptionValue === option.value }">
+				<input type="radio" :value="option.value" :checked="selectedOptionValue === option.value"
+					@click="change(option.value)">
 				<Typography class="radioPanel-item-text" v-bind="typography" center cap-height-baseline
-					:color="value === option.value ? 'background' : 'text'">
+					:color="selectedOptionValue === option.value ? 'background' : 'text'">
 					{{ option.label }}
 				</Typography>
 			</label>
 		</Row>
-	</Column>
+		<TransitionAcordion>
+			<Box v-if="isCurrentFree && freeOption">
+				<Box h="20" />
+				<Box>
+					<InputRange v-model="freeValue" :min="freeOption.min" :max="freeOption.max" :step="freeOption.step" />
+				</Box>
+				<Box h="6" />
+			</Box>
+		</TransitionAcordion>
+	</div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useForms } from '../../composables/forms'
 import Typography from '../elements/Typography.vue'
-import Column from '../layout/Column.vue'
 import Row from '../layout/Row.vue'
 
 // Composables ---------------------------
@@ -31,6 +40,12 @@ const { config } = useForms()
 type Option = {
 	value: number
 	label: string
+	free?: {
+		min: number
+		max: number
+		step: number
+		default: number
+	}
 }
 
 // Models ------------------
@@ -49,6 +64,12 @@ const props = defineProps({
 	small: { type: Boolean, default: false },
 	xsmall: { type: Boolean, default: false },
 })
+
+// Data ------------------
+// 選択されたオプションのvalueを保持
+const selectedOptionValue = ref<number>(0)
+// 自由入力の値を保持
+const freeValue = ref<number>(0)
 
 // Computed ------------------
 const classes: object = computed(() => {
@@ -77,10 +98,61 @@ const typography = computed(() => {
 		nowrap: true,
 	}
 })
+// 現在選択されているオプションが自由入力可能かどうか
+const isCurrentFree = computed(() => {
+	const option = props.options.find(option => option.value === selectedOptionValue.value)
+	return !!option?.free
+})
+// 自由入力の設定
+const freeOption = computed(() => {
+	return props.options.find(option => option.value === selectedOptionValue.value)?.free
+})
+
+// Watch ------------------
+// valueの外部からの変更を監視（初期値の設定など）
+watch(() => value.value, (newValue) => {
+	// 現在Freeが選択されている場合は、valueが他のオプションのvalueと一致しても
+	// selectedOptionValueを変更しない（Free選択を維持する）
+	if (isCurrentFree.value && freeOption.value) {
+		// 自由入力モードの場合、valueをfreeValueに反映
+		if (newValue >= freeOption.value.min && newValue <= freeOption.value.max) {
+			freeValue.value = newValue
+		}
+		return
+	}
+
+	// Freeが選択されていない場合のみ、valueがoptionsのいずれかのvalueと一致するかチェック
+	const matchingOption = props.options.find(option => option.value === newValue)
+	if (matchingOption) {
+		selectedOptionValue.value = newValue
+		if (matchingOption.free) {
+			freeValue.value = matchingOption.free.default ?? matchingOption.free.min
+		}
+	}
+}, { immediate: true })
+
+// 自由入力の値が変更されたら、valueを更新
+watch(() => freeValue.value, (newFreeValue) => {
+	if (isCurrentFree.value) {
+		value.value = newFreeValue
+	}
+})
 
 // Methods ------------------
-const handleChange = (val: number) => {
-	value.value = val
+const change = (val: number) => {
+	selectedOptionValue.value = val
+
+	const currentOption = props.options.find(option => option.value === val)
+	if (currentOption?.free) {
+		// 自由入力モードの場合、default値または現在のfreeValueを使用
+		const defaultValue = currentOption.free.default ?? currentOption.free.min
+		freeValue.value = defaultValue
+		value.value = defaultValue
+	}
+	else {
+		// 通常のオプションの場合、そのvalueを設定
+		value.value = val
+	}
 }
 </script>
 
