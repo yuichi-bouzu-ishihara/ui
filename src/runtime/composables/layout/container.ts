@@ -29,10 +29,10 @@ export const useContainer = () => {
 
 	return {
 		init,
-		base: config.value ? readonly(config.value).base : '',
-		wide: config.value ? readonly(config.value).wide : '',
-		narrow: config.value ? readonly(config.value).narrow : '',
-		full: config.value ? readonly(config.value).full : '',
+		base: config.value ? readonly(config.value).base : null,
+		wide: config.value ? readonly(config.value).wide : null,
+		narrow: config.value ? readonly(config.value).narrow : null,
+		full: config.value ? readonly(config.value).full : null,
 		minSideSpace: config.value ? readonly(config.value).base.sideSpace : '',
 	}
 }

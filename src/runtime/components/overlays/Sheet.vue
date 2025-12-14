@@ -8,9 +8,9 @@
 							w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box sticky top="0" w="100%" z-index="1">
-									<Container v-bind="container">
-										<SlotHeader class="sheet-inner-item-content-header" v-bind="{ title, pagenation }" blur
-											:background="backgroundColor" :color="textColor">
+									<Container class="sheet-inner-item-content-header" v-bind="container" no-padding>
+										<SlotHeader v-bind="{ title, pagenation }" blur :background="backgroundColor" :color="textColor"
+											:style="{ padding: `0 ${containerSideSpace}` }">
 											<template #left>
 												<IconUI v-if="back" :icon="{ name: 'arrowLeft', size: 18, color: textColor }"
 													:box="{ w: 36, h: 36 }" @click="emit('back')" />
@@ -71,6 +71,7 @@ import { useSheet } from '../../composables/overlays/sheet'
 import { useBreakPoint } from '../../composables/break-point'
 import { useViewport } from '../../composables/viewport'
 import { useHeader } from '../../composables/navigation/header'
+import { useContainer } from '../../composables/layout/container'
 
 // Composables -----------------------
 const sheet = useSheet()
@@ -145,6 +146,20 @@ const container = computed(() => ({
 	full: baseAbove() ? props.full : true,
 	wide: baseAbove() ? props.wide : false,
 }))
+const containerSideSpace = computed(() => {
+	if (container.value.narrow) {
+		return useContainer().narrow?.sideSpace || 0
+	}
+	else if (container.value.wide) {
+		return useContainer().wide?.sideSpace || 0
+	}
+	else if (container.value.full) {
+		return useContainer().full?.sideSpace || 0
+	}
+	else {
+		return useContainer().base?.sideSpace || 0
+	}
+})
 const variables = computed(() => {
 	const obj: Record<string, string> = {}
 	if (props.full && !isContentOverflow.value) {
