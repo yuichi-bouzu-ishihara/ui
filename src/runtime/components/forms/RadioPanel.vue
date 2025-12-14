@@ -16,7 +16,7 @@
 			</label>
 		</Row>
 		<TransitionAcordion>
-			<Box v-if="isCurrentFree && freeOption" pr="8" pl="8">
+			<Box v-if="isCurrentFree && freeOption">
 				<Box h="20" />
 				<Box>
 					<InputRange v-model="freeValue" :min="freeOption.min" :max="freeOption.max" :step="freeOption.step" />
