@@ -2,18 +2,27 @@
 	<div class="pageFormsRadioPanel">
 		<Container>
 			<Column gap="56">
-				<RadioPanel v-model="value" large name="radioPanelTest" :options="LIST" split="5" gap="8" title="Large" />
-				<RadioPanel v-model="value" large name="radioPanelTestFree" :options="LIST_INCLUDE_FEE" split="5" gap="8"
-					title="Large" />
-				<RadioPanel v-model="value" name="radioPanelTest" :options="LIST" split="5" gap="8" title="Medium" />
-				<RadioPanel v-model="value" small name="radioPanelTest" :options="LIST" split="5" gap="8" title="Small" />
-				<RadioPanel v-model="value" xsmall name="radioPanelTest" :options="LIST" split="5" gap="8" title="XSmall" />
+				<Column gap="8">
+					<RadioPanel v-model="value" large name="radioPanelTest" :options="LIST" split="5" gap="8" title="Size" />
+					<RadioPanel v-model="value" name="radioPanelTest" :options="LIST" split="5" gap="8" />
+					<RadioPanel v-model="value" small name="radioPanelTest" :options="LIST" split="5" gap="8" />
+					<RadioPanel v-model="value" xsmall name="radioPanelTest" :options="LIST" split="5" gap="8" />
+				</Column>
+				<RadioPanel v-model="value" name="radioPanelTestFree" :options="LIST_INCLUDE_FEE" split="5" gap="8"
+					@checked-free="console.log('checked-free')" @unchecked-free="console.log('unchecked-free')">
+					<template #before-free-input>
+						<Typography body center bold>
+							¥{{ joinComma(value) }}
+						</Typography>
+					</template>
+				</RadioPanel>
 			</Column>
 		</Container>
 	</div>
 </template>
 
 <script setup>
+const { joinComma } = useNumber()
 const value = ref(2)
 const LIST = [
 	{ value: 1, label: '1' },

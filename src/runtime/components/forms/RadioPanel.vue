@@ -1,9 +1,11 @@
 <template>
 	<div class="radioPanel" :class="classes">
-		<Typography v-if="title" v-bind="typography" cap-height-baseline>
-			{{ title }}
-		</Typography>
-		<Box h="16" />
+		<div v-if="title">
+			<Typography v-bind="typography" cap-height-baseline>
+				{{ title }}
+			</Typography>
+			<Box h="16" />
+		</div>
 		<Row v-bind="{ split, gap }">
 			<label v-for="option in options" :key="`radioPanel-item-${option.value}`" class="radioPanel-item"
 				:class="{ _checked: selectedOptionValue === option.value }">
@@ -18,8 +20,10 @@
 		<TransitionAcordion>
 			<Box v-if="isCurrentFree && freeOption">
 				<Box h="20" />
-				<Box>
-					<InputRange v-model="freeValue" :min="freeOption.min" :max="freeOption.max" :step="freeOption.step" />
+				<slot name="before-free-input" />
+				<Box ml="-8" mr="-8">
+					<InputRange v-model="freeValue" controls :min="freeOption.min" :max="freeOption.max"
+						:step="freeOption.step" />
 				</Box>
 				<Box h="6" />
 			</Box>
@@ -64,6 +68,9 @@ const props = defineProps({
 	small: { type: Boolean, default: false },
 	xsmall: { type: Boolean, default: false },
 })
+
+// Emits ------------------
+const emit = defineEmits(['checked-free', 'unchecked-free'])
 
 // Data ------------------
 // 選択されたオプションのvalueを保持
@@ -148,10 +155,12 @@ const change = (val: number) => {
 		const defaultValue = currentOption.free.default ?? currentOption.free.min
 		freeValue.value = defaultValue
 		value.value = defaultValue
+		emit('checked-free')
 	}
 	else {
 		// 通常のオプションの場合、そのvalueを設定
 		value.value = val
+		emit('unchecked-free')
 	}
 }
 </script>

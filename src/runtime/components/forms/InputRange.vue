@@ -6,13 +6,14 @@
 		<Row justify="center" align="center" nowrap>
 			<template v-if="controls">
 				<IconButton v-resize="(r: DOMRectReadOnly) => controlRect = r" :icon="{ name: 'minus', size: 16 }" link small
-					v-bind="{ disabled }" @click="decrementValue" />
+					:disabled="disabled || value <= Number(min)" @click="decrementValue" />
 			</template>
 			<Box v-resize="(rect: DOMRectReadOnly) => updateBar(rect)" class="inputRange-slider">
 				<div class="inputRange-slider-bar" :style="{ transform: `scaleX(${normalizedValue})` }" />
 			</Box>
 			<template v-if="controls">
-				<IconButton :icon="{ name: 'plus', size: 16 }" link small v-bind="{ disabled }" @click="incrementValue" />
+				<IconButton :icon="{ name: 'plus', size: 16 }" link small :disabled="disabled || value >= Number(max)"
+					@click="incrementValue" />
 			</template>
 		</Row>
 	</Box>
