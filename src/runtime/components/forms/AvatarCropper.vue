@@ -23,7 +23,7 @@ import Column from '../layout/Column.vue'
 
 // Constants ---------------------
 const ZOOM_MAX = 3
-const ZOOM_BTN_STEP = 0.25
+const ZOOM_BTN_STEP = 0.01
 const TRANSFORM_DEFAULT = { position: { x: 0, y: 0 }, scale: 1 }
 
 // Props ------------------
