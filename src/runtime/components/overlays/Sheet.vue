@@ -254,6 +254,7 @@ $cn: '.sheet'; // コンポーネントセレクタ名
 
 				&-header {
 					border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
+					overflow: hidden;
 				}
 
 				&-main {
