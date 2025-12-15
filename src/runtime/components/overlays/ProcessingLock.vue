@@ -18,8 +18,9 @@
 						</template>
 					</Center>
 				</Box>
-				<Typography caption2 color="light" center bold>
-					{{ message }}
+				<Typography caption2 color="light" center bold linebreak>
+					<!-- eslint-disable-next-line vue/no-v-html -->
+					<span v-html="message" />
 				</Typography>
 			</Column>
 		</Box>
