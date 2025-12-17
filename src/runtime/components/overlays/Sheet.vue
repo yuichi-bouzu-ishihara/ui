@@ -40,15 +40,15 @@
 									</Box>
 								</Column>
 							</Box>
-							<template v-if="footnote">
+							<Box v-if="footnote" p="16" opacity="0.6">
 								<Container v-bind="container">
 									<Center>
-										<Typography footnote center :color="textColor">
+										<Typography footnote center cap-height-baseline :color="textColor">
 											{{ footnote }}
 										</Typography>
 									</Center>
 								</Container>
-							</template>
+							</Box>
 						</Box>
 					</Container>
 				</div>
