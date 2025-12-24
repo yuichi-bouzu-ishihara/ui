@@ -1,0 +1,30 @@
+# Cursor Rules for Honoo Project
+
+## Language Settings
+- All communication, documentation, and AI-generated content must be in Japanese (日本語)
+- Pull request descriptions, commit messages, and code comments should be written in Japanese
+- When generating PR descriptions, use clear and professional Japanese
+- Code comments should be in Japanese unless the codebase convention requires otherwise
+
+## PR Description Guidelines
+- PRのタイトルと説明は日本語で記述する
+- 変更内容を明確に説明する
+- 技術的な詳細も日本語で説明する
+- 関連するIssueやタスクへの言及も日本語で行う
+
+## Commit Message Guidelines
+- コミットメッセージは日本語で記述する
+- 変更の目的と内容を簡潔に説明する
+
+## Code Style
+- Follow the existing codebase patterns and conventions
+- Maintain consistency with Vue 3 Composition API patterns used in this project
+- Use TypeScript for type safety
+
+## Workflow and Thinking Process
+- Always use Serena tools for code analysis, symbol search, and codebase exploration
+- Before making changes, use Serena's semantic search and symbol tools to understand the codebase structure
+- Use Serena's symbolic tools (find_symbol, get_symbols_overview, etc.) instead of reading entire files when possible
+- Leverage Serena's intelligent code reading capabilities to work efficiently and avoid unnecessary file reads
+- When exploring code, start with high-level overviews using Serena tools before diving into specific implementations
+
