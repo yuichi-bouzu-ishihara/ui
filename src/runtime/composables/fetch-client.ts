@@ -67,8 +67,9 @@ export const useFetchClient = () => {
 				// URLの作成 クエリ + キャッシュ
 				if (options.query) {
 					url += `?${options.query}`
-					if (options.cache) {
-						url += `&${timestampCache(options.cache)}`
+					const cacheParam = timestampCache(options.cache)
+					if (cacheParam) {
+						url += `&${cacheParam}`
 					}
 				}
 
