@@ -2,8 +2,9 @@
 	<div class="textarea" :class="classes">
 		<div class="textarea-inner" :data-value="autoheight ? text : ''" :style="{ maxHeight }">
 			<textarea :id="getId" ref="fieldEl" v-model="text" v-focus="focus" class="textarea-inner-field"
-				:placeholder="placeholderText" v-bind="{ name, readonly, rows }" @input="handleInput" @keydown="handleKeydown"
-				@focus="handleFocus" @blur="handleBlur" @mouseover="isHover = true" @mouseleave="isHover = false" />
+				:placeholder="placeholderText" v-bind="{ name, readonly, rows, disabled }" @input="handleInput"
+				@keydown="handleKeydown" @focus="handleFocus" @blur="handleBlur" @mouseover="isHover = true"
+				@mouseleave="isHover = false" />
 		</div>
 		<Typography v-if="label" tag="label" :for="getId" class="textarea-label">
 			<span class="textarea-label-inner">{{ label
@@ -37,6 +38,7 @@ const props = defineProps({
 	maxRows: { type: [Number, String], default: null }, // 最大行数
 	required: { type: Boolean, default: false },
 	readonly: { type: Boolean, default: false },
+	disabled: { type: Boolean, default: false }, // 無効化
 	focus: { type: Boolean, default: false }, // フォーカスをあてる。 Page mounted 後に true にするとフォーカスがあたる。
 	nowrap: { type: Boolean, default: false }, // 改行を許可しない
 	noBorder: { type: Boolean, default: false }, // ボーダーを表示しない
@@ -72,6 +74,7 @@ const classes = computed(() => {
 		_input: text.value.length, // 入力があれば
 		_noLabel: !props.label, // ラベルがなければ
 		_readonly: props.readonly, // 読み取り専用
+		_disabled: props.disabled, // 無効化
 		_maxHeight: props.maxRows ? true : false, // 最大行数が設定されているかどうか
 	}
 })
@@ -182,76 +185,35 @@ onMounted(async () => {
 @use '../../scss/_functions.scss' as func;
 $cn: '.textarea'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		position: relative;
+#{$cn} {
+	position: relative;
+	width: 100%;
+	padding-top: 14px;
+
+	&-inner {
 		width: 100%;
-		padding-top: 14px;
+		text-align: inherit;
+		white-space: pre-wrap;
+		word-break: break-all;
 
-		&-inner {
-			width: 100%;
-			text-align: inherit;
-			white-space: pre-wrap;
-			word-break: break-all;
+		// 自動で width と height を伸ばす施策 /////////////
+		// 参考：https://css-tricks.com/auto-growing-inputs-textareas/
+		display: inline-grid;
+		vertical-align: top;
+		align-items: stretch;
+		position: relative;
+		color: var(--color-text);
 
-			// 自動で width と height を伸ばす施策 /////////////
-			// 参考：https://css-tricks.com/auto-growing-inputs-textareas/
-			display: inline-grid;
-			vertical-align: top;
-			align-items: stretch;
-			position: relative;
-			color: var(--color-text);
+		&::after,
+		&-field {
+			// textarea スタイル初期化
+			appearance: none;
+			border: none;
+			outline: none;
+			background: none;
+			padding: 0;
+			resize: none; // リサイズ不可
 
-			&::after,
-			&-field {
-				// textarea スタイル初期化
-				appearance: none;
-				border: none;
-				outline: none;
-				background: none;
-				padding: 0;
-				resize: none; // リサイズ不可
-
-				// フォント関連スタイルをすべて継承する
-				font: inherit;
-				font-size: inherit;
-				line-height: inherit;
-				font-weight: inherit;
-				font-style: inherit;
-				font-variant: inherit;
-				text-transform: inherit;
-				text-decoration: inherit;
-				letter-spacing: inherit;
-				word-spacing: inherit;
-				text-indent: inherit;
-				text-shadow: inherit;
-				text-align: inherit;
-				color: inherit;
-
-				width: auto;
-				min-width: 1em;
-				grid-area: 2 / 1;
-				margin: 0;
-				min-height: 100%;
-				padding-top: 0.2em;
-				padding-bottom: 0.36em;
-
-				// プレースホルダーを非表示にする
-				&::placeholder {
-					color: var(--color-text-000);
-					transition: var.$transition-base;
-				}
-			}
-
-			&::after {
-				content: attr(data-value) ' ';
-				visibility: hidden;
-			}
-
-			/////////////////////////////////////////
-		}
-
-		#{$cn}-label {
 			// フォント関連スタイルをすべて継承する
 			font: inherit;
 			font-size: inherit;
@@ -266,125 +228,156 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 			text-indent: inherit;
 			text-shadow: inherit;
 			text-align: inherit;
-			color: var(--color-text-030);
+			color: inherit;
 
-			display: block;
-			position: absolute;
-			top: 0;
-			left: 0;
-			transform: translate(0em, 0.64em);
-			transform-origin: top left;
-			transition: var.$transition-base;
-			pointer-events: none;
+			width: auto;
+			min-width: 1em;
+			grid-area: 2 / 1;
+			margin: 0;
+			min-height: 100%;
+			padding-top: 0.2em;
+			padding-bottom: 0.36em;
 
-			&-inner {
-				font-size: inherit;
-				transition: color var.$transition-base-duration var.$transition-base-timing-function;
-				// opacity: 0.3;
-			}
-
-			&-required {
-				line-height: 1;
-				color: var(--color-danger);
-				vertical-align: middle;
-				padding-left: 0.1em;
+			// プレースホルダーを非表示にする
+			&::placeholder {
+				color: var(--color-text-000);
+				transition: var.$transition-base;
 			}
 		}
 
-		&:hover:not(._disabled):not(._readonly):not(._focus) {
-			#{$cn}-label {
-				&-inner {
+		&::after {
+			content: attr(data-value) ' ';
+			visibility: hidden;
+		}
+
+		/////////////////////////////////////////
+	}
+
+	#{$cn}-label {
+		// フォント関連スタイルをすべて継承する
+		font: inherit;
+		font-size: inherit;
+		line-height: inherit;
+		font-weight: inherit;
+		font-style: inherit;
+		font-variant: inherit;
+		text-transform: inherit;
+		text-decoration: inherit;
+		letter-spacing: inherit;
+		word-spacing: inherit;
+		text-indent: inherit;
+		text-shadow: inherit;
+		text-align: inherit;
+		color: var(--color-text-030);
+
+		display: block;
+		position: absolute;
+		top: 0;
+		left: 0;
+		transform: translate(0em, 0.64em);
+		transform-origin: top left;
+		transition: var.$transition-base;
+		pointer-events: none;
+
+		&-inner {
+			font-size: inherit;
+			transition: color var.$transition-base-duration var.$transition-base-timing-function;
+			// opacity: 0.3;
+		}
+
+		&-required {
+			line-height: 1;
+			color: var(--color-danger);
+			vertical-align: middle;
+			padding-left: 0.1em;
+		}
+	}
+
+	&:hover:not(._disabled):not(._readonly):not(._focus) {
+		#{$cn}-label {
+			&-inner {
+				color: var(--color-text-060);
+			}
+		}
+
+		&._noLabel {
+			#{$cn}-inner-field {
+
+				// プレースホルダー
+				&::placeholder {
 					color: var(--color-text-060);
 				}
-			}
-
-			&._noLabel {
-				#{$cn}-inner-field {
-
-					// プレースホルダー
-					&::placeholder {
-						color: var(--color-text-060);
-					}
-				}
-			}
-		}
-
-		// ラベルがない時は、 placeholder を表示する
-		&._noLabel {
-			padding-top: 0;
-
-			#{$cn}-inner-field {
-				&::placeholder {
-					color: var(--color-text-030);
-				}
-			}
-		}
-
-		&._focus {
-			#{$cn}-inner-field {
-
-				// プレースホルダーを表示する
-				&::placeholder {
-					color: var(--color-text-030);
-				}
-			}
-
-			#{$cn}-label {
-				font-weight: bold;
-				font-size: 10px;
-				transform: translate(0em, 0em);
-
-				&-inner {
-					color: var(--color-text);
-				}
-			}
-		}
-
-		&._input {
-			#{$cn}-label {
-				font-size: 10px;
-				transform: translate(0em, 0em);
-
-				&-inner {
-					opacity: 1 !important;
-				}
-			}
-		}
-
-		&._invalid {
-			#{$cn}-label {
-				color: var(--color-danger) !important;
-			}
-		}
-
-		&._readonly {
-			pointer-events: none;
-			cursor: default;
-		}
-
-		&._disabled {
-			pointer-events: none;
-			cursor: default;
-
-			#{$cn}-field,
-			#{$cn}-label {
-				opacity: 0.6;
-			}
-		}
-
-		&._noSpin {
-
-			#{$cn}-field[type="number"]::-webkit-inner-spin-button,
-			#{$cn}-field[type="number"]::-webkit-outer-spin-button {
-				-webkit-appearance: none;
-				margin: 0;
-				-moz-appearance: textfield;
 			}
 		}
 	}
 
-	@if $mode =='darkmode' {}
+	// ラベルがない時は、 placeholder を表示する
+	&._noLabel {
+		padding-top: 0;
 
-	@if $mode =='auto' {}
+		#{$cn}-inner-field {
+			&::placeholder {
+				color: var(--color-text-030);
+			}
+		}
+	}
+
+	&._focus {
+		#{$cn}-inner-field {
+
+			// プレースホルダーを表示する
+			&::placeholder {
+				color: var(--color-text-030);
+			}
+		}
+
+		#{$cn}-label {
+			font-weight: bold;
+			font-size: 10px;
+			transform: translate(0em, 0em);
+
+			&-inner {
+				color: var(--color-text);
+			}
+		}
+	}
+
+	&._input {
+		#{$cn}-label {
+			font-size: 10px;
+			transform: translate(0em, 0em);
+
+			&-inner {
+				opacity: 1 !important;
+			}
+		}
+	}
+
+	&._invalid {
+		#{$cn}-label {
+			color: var(--color-danger) !important;
+		}
+	}
+
+	&._readonly {
+		pointer-events: none;
+		cursor: default;
+	}
+
+	&._disabled {
+		pointer-events: none;
+		cursor: default;
+		opacity: 0.6;
+	}
+
+	&._noSpin {
+
+		#{$cn}-field[type="number"]::-webkit-inner-spin-button,
+		#{$cn}-field[type="number"]::-webkit-outer-spin-button {
+			-webkit-appearance: none;
+			margin: 0;
+			-moz-appearance: textfield;
+		}
+	}
 }
 </style>
