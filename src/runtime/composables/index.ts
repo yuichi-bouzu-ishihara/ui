@@ -63,3 +63,6 @@ export * from './forms/useRangeInput'
 // webfont
 export * from './webfont/adobe-font'
 export * from './webfont/type-square'
+
+// vimeo
+export * from './vimeo/public/api'

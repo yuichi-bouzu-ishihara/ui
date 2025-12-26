@@ -25,6 +25,7 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, type PropType } from 'vue'
 import Player from '@vimeo/player'
 import VideoPlayerControls from './VideoPlayerControls.vue'
+import { useVimeoPublicApi } from '../../composables/vimeo/public/api'
 
 // Model --------------------------------------------------
 const volume = defineModel<number>('volume', { default: 0.2 })
@@ -475,11 +476,7 @@ const setThumbnail = async () => {
 	if (!props.thumbnailSrc) {
 		// サムネイル取得
 		try {
-			const res = await fetch(`https://vimeo.com/api/oembed.json?url=https://vimeo.com/${props.videoId}&width=1920&t=${Date.now()}`, { method: 'GET' })
-			const resJson = await res.json()
-			if ('thumbnail_url' in resJson) {
-				thumbnailUrl.value = resJson.thumbnail_url
-			}
+			thumbnailUrl.value = await useVimeoPublicApi().getThumbnailUrl(props.videoId.toString())
 		}
 		catch (error: unknown) {
 			console.error('Vimeo thumbnail error:', error)
