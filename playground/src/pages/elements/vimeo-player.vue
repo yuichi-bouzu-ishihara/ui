@@ -25,38 +25,6 @@
 						@seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
 				</Ratio>
 			</Container>
-			<Container>
-				<Column gap="20" justify="stretch" fit-w>
-					<Row align="center" gap="20" fit-w nowrap>
-						<Box w="200">
-							<Typography caption3 bold center>
-								{{ new Date((currentTime || 0) * 1000).toISOString().substr(11, 8) }} / {{ new Date(duration
-									* 1000).toISOString().substr(11, 8) }}
-							</Typography>
-						</Box>
-						<Box w="100%">
-							<InputRange v-model="currentTime" min="0" :max="duration" step="0.1" @mousedown="isSeeking = true"
-								@mouseup="isSeeking = false" />
-						</Box>
-					</Row>
-					<Row split="2" gap="20">
-						<Button @click="play">
-							Play
-						</Button>
-						<Button @click="pause">
-							Pause
-						</Button>
-					</Row>
-					<Row align="center" gap="20" fit-w nowrap>
-						<Clickable @click="muted = !muted">
-							<Icon :name="muted ? 'volumeOff' : 'volume'" size="20" />
-						</Clickable>
-						<Box w="100%">
-							<InputRange v-model="volume" min="0" max="1" step="0.1" />
-						</Box>
-					</Row>
-				</Column>
-			</Container>
 		</Column>
 		<Container>
 			<Box h="20" />
@@ -87,12 +55,6 @@ const autoplay = ref(false)
 const loop = ref(false)
 const cover = ref(false)
 
-const play = () => {
-	vimeoPlayer.value?.play()
-}
-const pause = () => {
-	vimeoPlayer.value?.pause()
-}
 const onReady = (evt: ReadyEvent) => {
 	console.log('ready', evt)
 	duration.value = evt.duration

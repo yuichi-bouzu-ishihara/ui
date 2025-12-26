@@ -9,7 +9,7 @@
 		</div>
 		<TransitionFade v-if="!background && controls && !controller">
 			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:volume="volume" v-model:muted="muted"
-				v-model:current-time="currentTime" v-bind="{ isBuffering }" :duration="videoDuration"
+				v-model:current-time="currentTime" v-model:seeking="seeking" v-bind="{ isBuffering }" :duration="videoDuration"
 				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" />
 		</TransitionFade>
 		<Box v-if="!background && controls && !controller && isBuffering" absolute top="0" left="0" w="100%" h="100%"
