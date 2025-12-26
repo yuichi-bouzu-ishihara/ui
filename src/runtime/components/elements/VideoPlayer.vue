@@ -12,7 +12,7 @@
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" contain />
 			<TransitionFade v-if="controls">
 				<Box v-if="isHover" absolute top="0" left="0" w="100%" h="100%" z-index="0">
-					<VideoPlayerControls v-model:volume="volume" v-model:current-time="currentTime"
+					<VideoPlayerControls v-model:volume="volume" v-model:current-time="currentTime" v-model:seeking="seeking"
 						v-bind="{ duration, isPlaying, isBuffering, muted }" class="videoPlayer-controls" @play="play"
 						@pause="pause" />
 				</Box>
@@ -27,7 +27,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from '#imports'
+import { ref, watch } from '#imports'
 import VideoPlayerControls from './VideoPlayerControls.vue'
 import { useVideo } from '../../composables/elements/video'
 
@@ -56,6 +56,7 @@ const duration = ref(0)
 const progress = ref(0)
 const volume = ref(config.value?.defaultVolume || 0.5)
 const player = ref<HTMLVideoElement>()
+const seeking = ref(false)
 
 // Methods --------------
 const onReady = (e: Event) => {
@@ -73,6 +74,7 @@ const onPause = () => {
 }
 
 const onTimeUpdate = (e: Event) => {
+	if (seeking.value) return
 	const video = e.target as HTMLVideoElement
 	currentTime.value = video.currentTime
 	progress.value = (currentTime.value / duration.value)
@@ -95,6 +97,13 @@ const pause = () => {
 	player.value?.pause()
 	onPause()
 }
+
+// Watchers --------------
+watch(currentTime, (time) => {
+	if (seeking.value && player.value) {
+		player.value.currentTime = time
+	}
+})
 </script>
 
 <style lang="scss">
