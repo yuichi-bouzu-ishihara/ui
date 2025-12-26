@@ -333,7 +333,7 @@ const onTimeUpdate = async () => {
 	try {
 		const time = await vimeoPlayer.getCurrentTime()
 		// シーク操作中でない場合のみcurrentTimeを更新
-		if (!seeking.value) {
+		if (!isSeeking.value) {
 			currentTime.value = time
 		}
 		emit('timeupdate', { currentTime: time })
@@ -564,6 +564,17 @@ watch(
 			currentTime.value = 0
 			return
 		}
+		if (vimeoPlayer) {
+			// シーク操作中のみsetCurrentTimeを実行
+			if (seeking.value) {
+				try {
+					await vimeoPlayer.setCurrentTime(nv)
+				}
+				catch (error: unknown) {
+					console.error('Vimeo seek error:', error)
+				}
+			}
+		}
 	},
 )
 
@@ -573,14 +584,13 @@ watch(
 		if (vimeoPlayer) {
 			if (newSeeking) {
 				previousState.value = state.value
-				await pause()
+				pause()
 			}
 			// シーク操作中でない場合のみsetCurrentTimeを実行
 			if (!newSeeking && oldSeeking) {
 				try {
-					await vimeoPlayer.setCurrentTime(currentTime.value)
 					if (previousState.value === 'play') {
-						await play()
+						play()
 					}
 				}
 				catch (error: unknown) {
