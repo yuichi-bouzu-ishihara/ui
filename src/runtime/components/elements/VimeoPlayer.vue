@@ -26,9 +26,13 @@ import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick, type PropTy
 import Player from '@vimeo/player'
 import VideoPlayerControls from './VideoPlayerControls.vue'
 import { useVimeoPublicApi } from '../../composables/vimeo/public/api'
+import { useVideo } from '../../composables/elements/video'
+
+// Composables --------------
+const { config } = useVideo()
 
 // Model --------------------------------------------------
-const volume = defineModel<number>('volume', { default: 0.2 })
+const volume = defineModel<number>('volume', { default: config.value?.defaultVolume || 0.5 })
 const muted = defineModel<boolean>('muted', { default: false })
 const currentTime = defineModel<number>('currentTime', { default: 0 })
 const seeking = defineModel<boolean>('seeking', { default: false })
