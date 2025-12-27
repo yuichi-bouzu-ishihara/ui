@@ -1,5 +1,5 @@
 <template>
-	<Box class="tooltip" :class="classes" :style="variables">
+	<Box class="tooltip" :class="classes" :style="variables" inline-block>
 		<div class="tooltip-inner">
 			<Typography v-if="!disabled" v-resize="(rect: DOMRectReadOnly) => { width = rect.width; height = rect.height }"
 				caption3 center nowrap cap-height-baseline color="var(--tool-tip-text-color)">
