@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "@kgierke/nuxt-basic-auth": "^1.7.0",
-    "@nuxt/kit": "^3.20.1",
-    "@nuxt/schema": "^3.20.1",
-    "nuxt": "^3.20.1"
+    "@nuxt/kit": "^4.2.2",
+    "@nuxt/schema": "^4.2.2",
+    "nuxt": "^4.2.2"
   },
   "devDependencies": {
     "sass": "^1.79.2",
