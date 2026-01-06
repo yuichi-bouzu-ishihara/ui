@@ -324,14 +324,20 @@ const onSeeked = async () => {
 	}
 	// state.value = 'seeked'
 	emit('seeked')
-	
+
 	// 再生していない状態でシークした場合、一時的に再生してフレームを更新
 	if (vimeoPlayer && state.value !== 'play' && state.value !== 'pause') {
 		try {
+			// 現在のミュート状態を保存
+			const wasMuted = muted.value
+			// 一時的にミュートしてから再生（音声が流れないようにする）
+			await vimeoPlayer.setMuted(true)
 			// 一時的に再生してフレームを更新
 			await vimeoPlayer.play()
 			// すぐに停止（フレームは更新されたまま）
 			await vimeoPlayer.pause()
+			// 元のミュート状態に戻す
+			await vimeoPlayer.setMuted(wasMuted)
 		}
 		catch (error: unknown) {
 			console.error('Vimeo preview update error:', error)
@@ -605,8 +611,14 @@ watch(
 					}
 					else {
 						// 再生していなかった場合、一時的に再生してフレームを更新
+						// 現在のミュート状態を保存
+						const wasMuted = muted.value
+						// 一時的にミュートしてから再生（音声が流れないようにする）
+						await vimeoPlayer.setMuted(true)
 						await vimeoPlayer.play()
 						await vimeoPlayer.pause()
+						// 元のミュート状態に戻す
+						await vimeoPlayer.setMuted(wasMuted)
 					}
 				}
 				catch (error: unknown) {
