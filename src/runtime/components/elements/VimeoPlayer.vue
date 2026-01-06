@@ -8,10 +8,10 @@
 			<img class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl">
 		</div>
 		<TransitionFade v-if="!background && shouldShowControls && !controller">
-			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:volume="volume" v-model:muted="muted"
-				v-model:current-time="currentTime" v-model:seeking="seeking" v-bind="{ isBuffering, enabledControls }"
-				:duration="videoDuration" :is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play"
-				@pause="pause" />
+			<VideoPlayerControls v-if="alwaysShowControls || isHover || state === 'pause'" v-model:volume="volume"
+				v-model:muted="muted" v-model:current-time="currentTime" v-model:seeking="seeking"
+				v-bind="{ isBuffering, enabledControls }" :duration="videoDuration" :is-playing="state === 'play'"
+				class="vimeoPlayer-controls" @play="play" @pause="pause" />
 		</TransitionFade>
 		<Box v-if="!background && shouldShowControls && !controller && isBuffering" absolute top="0" left="0" w="100%"
 			h="100%" z-index="1">
@@ -41,6 +41,7 @@ const props = defineProps({
 	thumbnailSrc: { type: String, default: '' },
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
 	controls: { type: [Boolean, Array] as PropType<boolean | string[]>, default: false }, // コンポーネントのコントローラーの表示/非表示
+	alwaysShowControls: { type: Boolean, default: false }, // コントロールを常に表示するかどうか
 	autoplay: { type: Boolean, default: false },
 	autopause: { type: Boolean, default: true }, // 他 Vimeo Player が再生されたら自動的に停止するオプション
 	loop: { type: Boolean, default: false }, // ループ再生のオプション

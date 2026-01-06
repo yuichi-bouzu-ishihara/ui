@@ -19,8 +19,9 @@
 				<Ratio golden>
 					<VimeoPlayer v-bind="{ videoId, autoplay, loop, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
 						v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
-						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" :controls="controls" contain @ready="onReady" @play="onPlay"
-						@pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
+						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" :controls="controls"
+						:always-show-controls="ctrAlwaysShowControls" contain @ready="onReady" @play="onPlay" @pause="onPause"
+						@ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
 						@bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange" @progress="onProgress"
 						@seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
 				</Ratio>
@@ -39,6 +40,7 @@
 				<Switch v-model="ctrVolumeMute" name="ctrVolumeMute" label="Volume & Mute" />
 				<Switch v-model="ctrSeekbar" name="ctrSeekbar" label="Seek Bar" />
 				<Switch v-model="ctrTime" name="ctrTime" label="Time" />
+				<Switch v-model="ctrAlwaysShowControls" name="ctrAlwaysShowControls" label="Always Show Controls" />
 			</Row>
 		</Container>
 	</Box>
@@ -46,7 +48,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent } from '../../../src/runtime/components/elements/VimeoPlayer.vue'
 
 const videoId = ref('')
 const currentTime = ref(0)
@@ -64,6 +65,7 @@ const ctrPlayPause = ref(true)
 const ctrVolumeMute = ref(true)
 const ctrSeekbar = ref(true)
 const ctrTime = ref(true)
+const ctrAlwaysShowControls = ref(false)
 
 // すべてのコントロールがオフの場合は false を返す。それ以外は配列を返す
 const controls = computed(() => {

@@ -11,7 +11,7 @@
 				@play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @timeupdate="onTimeUpdate" />
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" contain />
 			<TransitionFade v-if="shouldShowControls">
-				<Box v-if="isHover" absolute top="0" left="0" w="100%" h="100%" z-index="0">
+				<Box v-if="alwaysShowControls || isHover" absolute top="0" left="0" w="100%" h="100%" z-index="0">
 					<VideoPlayerControls v-model:volume="volume" v-model:current-time="currentTime" v-model:seeking="seeking"
 						v-bind="{ duration, isPlaying, isBuffering, muted, enabledControls }" class="videoPlayer-controls"
 						@play="play" @pause="pause" />
@@ -43,6 +43,7 @@ const props = defineProps({
 	thumbnail: { type: String, default: '' },
 	autoplay: { type: Boolean, default: false },
 	controls: { type: [Boolean, Array] as PropType<boolean | string[]>, default: false },
+	alwaysShowControls: { type: Boolean, default: false }, // コントロールを常に表示するかどうか
 })
 
 // Data --------------
