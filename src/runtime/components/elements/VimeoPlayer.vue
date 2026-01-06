@@ -3,17 +3,18 @@
 		@mouseover="isHover = true" @mouseleave="isHover = false">
 		<div ref="element" class="vimeoPlayer-main"
 			:class="{ _ready: isReady, _play: state === 'play', _pause: state === 'pause', _ended: isEnded }" />
-		<div v-if="thumbnailUrl && (isEnded || !isReady || (currentTime === 0 && state === ''))"
+		<div v-if="thumbnailUrl && (isEnded || (!isReady && !seeking) || (currentTime === 0 && state === '' && !seeking))"
 			class="vimeoPlayer-thumbnail">
 			<img class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl">
 		</div>
-		<TransitionFade v-if="!background && controls && !controller">
-			<VideoPlayerControls v-if="isHover || state === 'pause'" v-model:volume="volume" v-model:muted="muted"
-				v-model:current-time="currentTime" v-model:seeking="seeking" v-bind="{ isBuffering }" :duration="videoDuration"
-				:is-playing="state === 'play'" class="vimeoPlayer-controls" @play="play" @pause="pause" />
+		<TransitionFade v-if="!background && shouldShowControls && !controller">
+			<VideoPlayerControls v-if="alwaysShowControls || isHover || state === 'pause'" v-model:volume="volume"
+				v-model:muted="muted" v-model:current-time="currentTime" v-model:seeking="seeking"
+				v-bind="{ isBuffering, enabledControls }" :duration="videoDuration" :is-playing="state === 'play'"
+				class="vimeoPlayer-controls" @play="play" @pause="pause" />
 		</TransitionFade>
-		<Box v-if="!background && controls && !controller && isBuffering" absolute top="0" left="0" w="100%" h="100%"
-			z-index="1">
+		<Box v-if="!background && shouldShowControls && !controller && isBuffering" absolute top="0" left="0" w="100%"
+			h="100%" z-index="1">
 			<Center>
 				<Spinner size="40" color="light" />
 			</Center>
@@ -39,7 +40,8 @@ const props = defineProps({
 	background: { type: Boolean, default: false },
 	thumbnailSrc: { type: String, default: '' },
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
-	controls: { type: Boolean, default: false }, // コンポーネントのコントローラーの表示/非表示
+	controls: { type: [Boolean, Array] as PropType<boolean | string[]>, default: false }, // コンポーネントのコントローラーの表示/非表示
+	alwaysShowControls: { type: Boolean, default: false }, // コントロールを常に表示するかどうか
 	autoplay: { type: Boolean, default: false },
 	autopause: { type: Boolean, default: true }, // 他 Vimeo Player が再生されたら自動的に停止するオプション
 	loop: { type: Boolean, default: false }, // ループ再生のオプション
@@ -193,6 +195,18 @@ const styles = computed(() => {
 		// 	: {}),
 	}
 })
+const enabledControls = computed(() => {
+	if (props.controls === true) {
+		return ['play', 'time', 'volume', 'seekbar']
+	}
+	if (props.controls === false) {
+		return []
+	}
+	return props.controls
+})
+const shouldShowControls = computed(() => {
+	return props.controls !== false && enabledControls.value.length > 0
+})
 
 // Methods ------------------------------------------------
 const shouldDebug = (eventName: string): boolean => {
@@ -324,6 +338,25 @@ const onSeeked = async () => {
 	}
 	// state.value = 'seeked'
 	emit('seeked')
+
+	// 再生していない状態でシークした場合、一時的に再生してフレームを更新
+	if (vimeoPlayer && state.value !== 'play' && state.value !== 'pause') {
+		try {
+			// 現在のミュート状態を保存
+			const wasMuted = muted.value
+			// 一時的にミュートしてから再生（音声が流れないようにする）
+			await vimeoPlayer.setMuted(true)
+			// 一時的に再生してフレームを更新
+			await vimeoPlayer.play()
+			// すぐに停止（フレームは更新されたまま）
+			await vimeoPlayer.pause()
+			// 元のミュート状態に戻す
+			await vimeoPlayer.setMuted(wasMuted)
+		}
+		catch (error: unknown) {
+			console.error('Vimeo preview update error:', error)
+		}
+	}
 }
 const onTimeUpdate = async () => {
 	if (shouldDebug('timeupdate')) {
@@ -583,11 +616,23 @@ watch(
 				previousState.value = state.value
 				pause()
 			}
-			// シーク操作中でない場合のみsetCurrentTimeを実行
+			// シーク操作完了時
 			if (!newSeeking && oldSeeking) {
 				try {
 					if (previousState.value === 'play') {
+						// 再生中だった場合は再開
 						play()
+					}
+					else {
+						// 再生していなかった場合、一時的に再生してフレームを更新
+						// 現在のミュート状態を保存
+						const wasMuted = muted.value
+						// 一時的にミュートしてから再生（音声が流れないようにする）
+						await vimeoPlayer.setMuted(true)
+						await vimeoPlayer.play()
+						await vimeoPlayer.pause()
+						// 元のミュート状態に戻す
+						await vimeoPlayer.setMuted(wasMuted)
 					}
 				}
 				catch (error: unknown) {

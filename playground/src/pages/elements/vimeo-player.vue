@@ -19,8 +19,9 @@
 				<Ratio golden>
 					<VimeoPlayer v-bind="{ videoId, autoplay, loop, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
 						v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
-						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" controls contain @ready="onReady" @play="onPlay"
-						@pause="onPause" @ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
+						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" :controls="controls"
+						:always-show-controls="ctrAlwaysShowControls" contain @ready="onReady" @play="onPlay" @pause="onPause"
+						@ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
 						@bufferstart="onBufferStart" @playbackratechange="onPlaybackRateChange" @progress="onProgress"
 						@seeked="onSeeked" @timeupdate="onTimeUpdate" @volumechange="onVolumeChange" />
 				</Ratio>
@@ -33,15 +34,21 @@
 				<Switch v-model="loop" name="loop" label="Loop" />
 				<Switch v-model="cover" name="cover" label="Cover" />
 			</Row>
+			<Box h="20" />
+			<Row justify="center" gap="20" nowrap>
+				<Switch v-model="ctrPlayPause" name="ctrPlayPause" label="Play & Pause" />
+				<Switch v-model="ctrVolumeMute" name="ctrVolumeMute" label="Volume & Mute" />
+				<Switch v-model="ctrSeekbar" name="ctrSeekbar" label="Seek Bar" />
+				<Switch v-model="ctrTime" name="ctrTime" label="Time" />
+				<Switch v-model="ctrAlwaysShowControls" name="ctrAlwaysShowControls" label="Always Show Controls" />
+			</Row>
 		</Container>
 	</Box>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import type { ReadyEvent, TimeUpdateEvent, VolumeChangeEvent, VimeoPlayerInstance } from '../../../src/runtime/components/elements/VimeoPlayer.vue'
 
-const vimeoPlayer = ref<VimeoPlayerInstance>()
 const videoId = ref('')
 const currentTime = ref(0)
 const seekTime = ref(0)
@@ -54,6 +61,22 @@ const isMetadataLoaded = ref(false)
 const autoplay = ref(false)
 const loop = ref(false)
 const cover = ref(false)
+const ctrPlayPause = ref(true)
+const ctrVolumeMute = ref(true)
+const ctrSeekbar = ref(true)
+const ctrTime = ref(true)
+const ctrAlwaysShowControls = ref(false)
+
+// すべてのコントロールがオフの場合は false を返す。それ以外は配列を返す
+const controls = computed(() => {
+	const result = [
+		ctrPlayPause.value ? 'play' : '',
+		ctrVolumeMute.value ? 'volume' : '',
+		ctrSeekbar.value ? 'seekbar' : '',
+		ctrTime.value ? 'time' : '',
+	].filter(Boolean)
+	return result.length === 0 ? false : result
+})
 
 const onReady = (evt: ReadyEvent) => {
 	console.log('ready', evt)

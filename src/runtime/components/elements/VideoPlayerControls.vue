@@ -1,6 +1,6 @@
 <template>
 	<div class="videoPlayerControls">
-		<Box absolute top="0" left="0" right="0" bottom="0">
+		<Box v-if="enabledControls.includes('play')" absolute top="0" left="0" right="0" bottom="0">
 			<Clickable class="videoPlayerControls-play" @click="isPlaying ? emit('pause') : emit('play')">
 				<Center v-if="!isBuffering">
 					<Icon v-if="!isPlaying" name="play" size="40" color="light" />
@@ -8,10 +8,10 @@
 				</Center>
 			</Clickable>
 		</Box>
-		<Box class="videoPlayerControls-footer" absolute bottom="0" left="0" right="0" p="0 20px 24px">
+		<Box v-if="hasFooterControls" class="videoPlayerControls-footer" absolute bottom="0" left="0" right="0" p="0 20px 24px">
 			<Column gap="12">
-				<Row justify="between" align="end" nowrap>
-					<Box pb="4">
+				<Row v-if="enabledControls.includes('time') || enabledControls.includes('volume')" justify="between" align="end" nowrap>
+					<Box v-if="enabledControls.includes('time')" pb="4">
 						<Row nowrap>
 							<Typography font-size="12" bold cap-height-baseline color="light">
 								{{ formatTime(currentTime || 0) }}
@@ -21,7 +21,7 @@
 							</Typography>
 						</Row>
 					</Box>
-					<Column justify="center" gap="8" @mouseleave="isHoverMute = false">
+					<Column v-if="enabledControls.includes('volume')" justify="center" gap="8" @mouseleave="isHoverMute = false">
 						<TransitionFade>
 							<Box v-if="isHoverMute && !muted" h="80">
 								<InputRangeVertical v-model="volume" :min="0" :max="1" :step="0.01" :color="{
@@ -35,7 +35,7 @@
 						</Clickable>
 					</Column>
 				</Row>
-				<InputRange v-model="currentTime" :min="0" :max="duration || 1" :step="0.01" :color="{
+				<InputRange v-if="enabledControls.includes('seekbar')" v-model="currentTime" :min="0" :max="duration || 1" :step="0.01" :color="{
 					handle: 'var(--color-light)', bar: 'var(--color-light)', barBackground: 'var(--color-light-020)',
 				}" @mousedown="seeking = true" @mouseup="seeking = false" />
 			</Column>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import InputRange from '../forms/InputRange.vue'
 import InputRangeVertical from '../forms/InputRangeVertical.vue'
 import { useVideo } from '../../composables/elements/video'
@@ -66,10 +66,11 @@ const muted = defineModel<boolean>('muted', { default: false })
 const volume = defineModel<number>('volume', { default: 0.5 })
 
 // Props --------------
-defineProps({
+const props = defineProps({
 	duration: { type: Number, default: 1 },
 	isPlaying: { type: Boolean, default: false },
 	isBuffering: { type: Boolean, default: true },
+	enabledControls: { type: Array as () => string[], default: () => ['play', 'time', 'volume', 'seekbar'] },
 })
 
 // Emits --------------
@@ -77,6 +78,11 @@ const emit = defineEmits(['play', 'pause'])
 
 // Data --------------
 const isHoverMute = ref(false)
+
+// Computed --------------
+const hasFooterControls = computed(() => {
+	return props.enabledControls.includes('time') || props.enabledControls.includes('volume') || props.enabledControls.includes('seekbar')
+})
 </script>
 
 <style lang="scss">
