@@ -3,7 +3,7 @@
 		@mouseover="isHover = true" @mouseleave="isHover = false">
 		<div ref="element" class="vimeoPlayer-main"
 			:class="{ _ready: isReady, _play: state === 'play', _pause: state === 'pause', _ended: isEnded }" />
-		<div v-if="thumbnailUrl && (isEnded || !isReady || (currentTime === 0 && state === ''))"
+		<div v-if="thumbnailUrl && (isEnded || (!isReady && !seeking) || (currentTime === 0 && state === '' && !seeking))"
 			class="vimeoPlayer-thumbnail">
 			<img class="vimeoPlayer-thumbnail-inner" :src="thumbnailUrl">
 		</div>
@@ -324,6 +324,19 @@ const onSeeked = async () => {
 	}
 	// state.value = 'seeked'
 	emit('seeked')
+	
+	// 再生していない状態でシークした場合、一時的に再生してフレームを更新
+	if (vimeoPlayer && state.value !== 'play' && state.value !== 'pause') {
+		try {
+			// 一時的に再生してフレームを更新
+			await vimeoPlayer.play()
+			// すぐに停止（フレームは更新されたまま）
+			await vimeoPlayer.pause()
+		}
+		catch (error: unknown) {
+			console.error('Vimeo preview update error:', error)
+		}
+	}
 }
 const onTimeUpdate = async () => {
 	if (shouldDebug('timeupdate')) {
@@ -583,11 +596,17 @@ watch(
 				previousState.value = state.value
 				pause()
 			}
-			// シーク操作中でない場合のみsetCurrentTimeを実行
+			// シーク操作完了時
 			if (!newSeeking && oldSeeking) {
 				try {
 					if (previousState.value === 'play') {
+						// 再生中だった場合は再開
 						play()
+					}
+					else {
+						// 再生していなかった場合、一時的に再生してフレームを更新
+						await vimeoPlayer.play()
+						await vimeoPlayer.pause()
 					}
 				}
 				catch (error: unknown) {
