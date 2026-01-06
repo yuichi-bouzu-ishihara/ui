@@ -2,7 +2,8 @@
 	<Container>
 		<FileUpload v-if="!file" v-model="file" accept=".mp4" :max-size="1024 * 1024 * 1024" />
 		<Column v-else-if="src" gap="20">
-			<VideoPlayer v-model:muted="muted" v-bind="{ src, controls }" :always-show-controls="ctrAlwaysShowControls" />
+			<VideoPlayer v-model:muted="muted" v-model:current-time="currentTime" v-bind="{ src, controls }"
+				:always-show-controls="ctrAlwaysShowControls" />
 			<Row justify="center" gap="20" nowrap>
 				<Switch v-model="ctrPlayPause" name="ctrPlayPause" label="Play & Pause" />
 				<Switch v-model="ctrVolumeMute" name="ctrVolumeMute" label="Volume & Mute" />
@@ -10,20 +11,29 @@
 				<Switch v-model="ctrTime" name="ctrTime" label="Time" />
 				<Switch v-model="ctrAlwaysShowControls" name="ctrAlwaysShowControls" label="Always Show Controls" />
 			</Row>
+			<Button @click="onExtractThumbnail">
+				Extract Thumbnail
+			</Button>
+			<Image v-if="thumbnailBase64" :src="thumbnailBase64" contain />
 		</Column>
 	</Container>
 </template>
 
 <script setup>
+// Composables -------------------------------------------
+const { extractThumbnailAtTime } = useVideoThumbnail()
+
 // Data -------------------------------------------
 const file = ref(null)
 const src = ref('')
 const muted = ref(false)
+const currentTime = ref(0)
 const ctrPlayPause = ref(true)
 const ctrVolumeMute = ref(true)
 const ctrSeekbar = ref(true)
 const ctrTime = ref(true)
 const ctrAlwaysShowControls = ref(false)
+const thumbnailBase64 = ref('')
 
 // Computed -------------------------------------------
 const controls = computed(() => {
@@ -35,6 +45,12 @@ const controls = computed(() => {
 	].filter(Boolean)
 	return result.length === 0 ? false : result
 })
+
+// Methods -------------------------------------------
+const onExtractThumbnail = async () => {
+	const thumbnail = await extractThumbnailAtTime(src.value, currentTime.value, { format: 'image/webp' })
+	thumbnailBase64.value = thumbnail
+}
 
 // Watch -------------------------------------------
 watch(() => file.value, async (newVal) => {
