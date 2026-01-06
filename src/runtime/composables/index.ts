@@ -38,7 +38,6 @@ export * from './elements/skeleton-shape'
 export * from './elements/spinner'
 export * from './elements/typography'
 export * from './elements/video'
-export * from './elements/video-thumbnail'
 
 // layout
 export * from './layout/container'
@@ -66,3 +65,6 @@ export * from './webfont/type-square'
 
 // vimeo
 export * from './vimeo/public/api'
+
+// video
+export * from './video/thumbnail'

@@ -36,6 +36,7 @@ const { config } = useVideo()
 
 // Model --------------------------------------------------
 const muted = defineModel<boolean>('muted', { default: false })
+const currentTime = defineModel<number>('current-time', { default: 0 })
 
 // Props --------------
 const props = defineProps({
@@ -52,7 +53,6 @@ const isError = ref(false)
 const isHover = ref(false)
 const isReady = ref(false)
 const isBuffering = ref(false)
-const currentTime = ref(0)
 const duration = ref(0)
 const progress = ref(0)
 const volume = ref(config.value?.defaultVolume || 0.5)
