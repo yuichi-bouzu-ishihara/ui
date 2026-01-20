@@ -1,7 +1,6 @@
 <template>
 	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs" :style="styles">
-		<Row ref="tabsListRef" class="tabs-list" :gap="auto ? 'var(--tabs-gap)' : ''" justify="center" align="start" nowrap
-			fit-h>
+		<Row ref="tabsListRef" class="tabs-list" :gap="itemGap" justify="center" align="start" nowrap fit-h>
 			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
 				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
 				@click="tab.click && tab.click()">
@@ -53,7 +52,7 @@ const tabs = useTabs()
 // Props --------------
 const props = defineProps({
 	list: { type: Array as () => TabsItem[], default: () => [] },
-	gap: { type: [String, Number], default: 'var(--tabs-gap)' },
+	gap: { type: String, default: 'var(--tabs-gap)' },
 	itemWidthAuto: { type: Boolean, default: false },
 	color: { type: Object as PropType<CustomColor>, default: null },
 })
@@ -72,7 +71,7 @@ const styles = computed(() => {
 	}
 })
 const auto = computed(() => {
-	return props.itemWidthAuto || tabs.itemWidthAuto
+	return tabs.itemWidthAuto || props.itemWidthAuto
 })
 const itemWidth = computed(() => {
 	return auto.value ? '' : `width: calc(100% / ${list.value.length});`
@@ -100,6 +99,9 @@ const activeIndex = computed(() => {
 })
 const typography = computed(() => {
 	return { [`${useTabs().typography}`]: true }
+})
+const itemGap = computed(() => {
+	return auto.value ? props.gap : ''
 })
 
 // Watch ------------------
