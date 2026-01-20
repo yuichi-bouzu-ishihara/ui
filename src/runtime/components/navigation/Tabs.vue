@@ -1,13 +1,14 @@
 <template>
-	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs">
-		<Row ref="tabsListRef" class="tabs-list" justify="center" align="start" nowrap fit-h>
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs" :style="styles">
+		<Row ref="tabsListRef" class="tabs-list" :gap="auto ? 'var(--tabs-gap)' : ''" justify="center" align="start" nowrap
+			fit-h>
 			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
 				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
 				@click="tab.click && tab.click()">
 				<Row justify="center" align="center" gap="6" fit-h>
-					<Icon v-if="tab.icon" :name="tab.icon.name" :size="tab.icon.size || 16" />
-					<Typography v-else-if="tab.name" v-bind="typography" bold center unselectable cap-height-baseline
-						lineclamp="1">
+					<Icon v-if="tab.icon" :name="tab.icon.name" :size="tab.icon.size || 16" color="var(--custom-text-color)" />
+					<Typography v-else-if="tab.name" v-bind="typography" color="var(--custom-text-color)" bold center unselectable
+						cap-height-baseline lineclamp="1">
 						{{ tab.name }}
 					</Typography>
 					<Box v-if="tab.notice" mr="-8">
@@ -22,7 +23,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, ref, watch, nextTick } from 'vue'
+import { computed, toRefs, ref, watch, nextTick, type PropType } from 'vue'
 import { useRoute } from 'vue-router'
 import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
@@ -47,11 +48,13 @@ export type TabsItem = {
 
 // Composables ------------------------------------------------------------
 const route = useRoute()
+const tabs = useTabs()
 
 // Props --------------
 const props = defineProps({
 	list: { type: Array as () => TabsItem[], default: () => [] },
 	itemWidthAuto: { type: Boolean, default: false },
+	color: { type: Object as PropType<CustomColor>, default: null },
 })
 const { list } = toRefs(props)
 
@@ -59,17 +62,26 @@ const { list } = toRefs(props)
 const rect = ref<DOMRectReadOnly | null>(null)
 const itemRectList = ref<DOMRectReadOnly[]>([])
 const tabsListRef = ref<{ $el?: HTMLElement } | null>(null)
+const auto = computed(() => {
+	return props.itemWidthAuto || tabs.itemWidthAuto
+})
 
 // Computed ------------------
+const styles = computed(() => {
+	return {
+		'--custom-text-color': props.color?.text ? props.color.text : 'var(--color-text)',
+		'--custom-bar-color': props.color?.text ? props.color.text : 'var(--tabs-bar-color)',
+	}
+})
 const itemWidth = computed(() => {
-	return props.itemWidthAuto ? '' : `width: calc(100% / ${list.value.length});`
+	return auto.value ? '' : `width: calc(100% / ${list.value.length});`
 })
 const itemClasses = computed(() => (index: number) => {
 	return {
 		_icon: list.value[index].icon,
 		_current: list.value[index].current ?? (list.value[index].path ? activeIndex.value === index : false),
 		_disabled: !list.value[index].click && !list.value[index].path,
-		_auto: props.itemWidthAuto,
+		_auto: auto.value,
 	}
 })
 const activeIndex = computed(() => {
@@ -134,7 +146,8 @@ $border-height: 0.5; // ボーダーの高さ
 			z-index: -1;
 			width: 100%;
 			height: var(--tabs-bar-background-height);
-			background-color: var(--tabs-bar-background-color);
+			background-color: var(--custom-bar-color);
+			opacity: 0.2;
 		}
 
 		&-list {
@@ -166,8 +179,8 @@ $border-height: 0.5; // ボーダーの高さ
 
 				&._auto {
 					width: auto;
-					padding-right: 1em;
-					padding-left: 1em;
+					padding-right: var(--tabs-item-padding-side);
+					padding-left: var(--tabs-item-padding-side);
 				}
 			}
 		}
@@ -177,7 +190,7 @@ $border-height: 0.5; // ボーダーの高さ
 			left: 0;
 			bottom: 0;
 			height: var(--tabs-bar-height);
-			background-color: var(--tabs-bar-color);
+			background-color: var(--custom-bar-color);
 			transition: var.$transition-base;
 		}
 	}

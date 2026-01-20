@@ -2,7 +2,7 @@
  * Container に関する関数をまとめたファイル
  */
 import { useUI } from '../ui'
-import { useString } from '../string'
+import { useCss } from '../css'
 import type { UIConfig } from '../../types'
 import type { TabsConfig } from '../../types/tabs'
 import { useAppConfig, useState, readonly } from '#imports'
@@ -32,15 +32,7 @@ export const useTabs = () => {
 		styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_VALUE)
 
 		let cssVariables = ':root {'
-		for (const [key, value] of Object.entries(config.value)) {
-			let val = value
-			if (key.includes('Color') || key.includes('color')) {
-				val = `var(--${value})`
-			}
-			cssVariables += `
-					--${DATA_VALUE}-${useString().camelToKebab(key)}: ${val};
-				`
-		}
+		cssVariables += useCss().objectToCssVariables(DATA_VALUE, config.value, '')
 		cssVariables += '}'
 
 		styleElement.innerHTML = cssVariables
@@ -58,6 +50,7 @@ export const useTabs = () => {
 		barHeight: config.value?.barHeight ? readonly(config.value).barHeight : '',
 		barColor: config.value?.barColor ? readonly(config.value).barColor : '',
 		barBackgroundHeight: config.value?.barBackgroundHeight ? readonly(config.value).barBackgroundHeight : '',
-		barBackgroundColor: config.value?.barBackgroundColor ? readonly(config.value).barBackgroundColor : '',
+		itemWidthAuto: config.value?.itemWidthAuto ? readonly(config.value).itemWidthAuto : false,
+		gap: config.value?.gap ? readonly(config.value).gap : '',
 	}
 }
