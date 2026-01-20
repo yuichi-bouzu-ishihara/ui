@@ -53,6 +53,7 @@ const tabs = useTabs()
 // Props --------------
 const props = defineProps({
 	list: { type: Array as () => TabsItem[], default: () => [] },
+	gap: { type: [String, Number], default: 'var(--tabs-gap)' },
 	itemWidthAuto: { type: Boolean, default: false },
 	color: { type: Object as PropType<CustomColor>, default: null },
 })
@@ -62,9 +63,6 @@ const { list } = toRefs(props)
 const rect = ref<DOMRectReadOnly | null>(null)
 const itemRectList = ref<DOMRectReadOnly[]>([])
 const tabsListRef = ref<{ $el?: HTMLElement } | null>(null)
-const auto = computed(() => {
-	return props.itemWidthAuto || tabs.itemWidthAuto
-})
 
 // Computed ------------------
 const styles = computed(() => {
@@ -72,6 +70,9 @@ const styles = computed(() => {
 		'--custom-text-color': props.color?.text ? props.color.text : 'var(--color-text)',
 		'--custom-bar-color': props.color?.text ? props.color.text : 'var(--tabs-bar-color)',
 	}
+})
+const auto = computed(() => {
+	return props.itemWidthAuto || tabs.itemWidthAuto
 })
 const itemWidth = computed(() => {
 	return auto.value ? '' : `width: calc(100% / ${list.value.length});`
