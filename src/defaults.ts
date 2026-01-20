@@ -335,7 +335,7 @@ export const defaultOptions = {
 		itemPaddingTop: '0', // アイテムの上部パディング e.g. 4px
 		itemPaddingBottom: '8px', // アイテムの下部パディング e.g. 4px
 		itemPaddingSide: '1em', // アイテムの左右パディング e.g. 16px
-		itemWidthAuto: true, // アイテムの幅を自動調整するかどうか e.g. true, false
+		itemWidthAuto: false, // アイテムの幅を自動調整するかどうか e.g. true, false
 	},
 	container: {
 		base: {
