@@ -5,5 +5,9 @@ export type TabsConfig = {
 	barHeight: string // バーの高さ e.g. 4px
 	barColor: string // バーの色 e.g. color-light, color-dark
 	barBackgroundHeight: string // バーの背景の高さ e.g. 1px
-	barBackgroundColor: string // バーの背景色 e.g. color-light, color-dark
+	gap: string // アイテムの間隔 e.g. 16px
+	itemPaddingTop: string // アイテムの上部パディング e.g. 0px
+	itemPaddingBottom: string // アイテムの下部パディング e.g. 8px
+	itemPaddingSide: string // アイテムの左右パディング e.g. 16px
+	itemWidthAuto: boolean // アイテムの幅を自動調整するかどうか e.g. true, false
 }

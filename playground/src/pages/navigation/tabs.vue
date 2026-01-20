@@ -5,7 +5,7 @@
 				<Tabs :list="list" />
 				<Tabs :list="iconList" />
 				<Tabs :list="list" item-width-auto />
-				<Tabs :list="iconList" item-width-auto />
+				<Tabs :list="iconList" item-width-auto :color="{ text: 'var(--color-danger)' }" />
 			</Column>
 		</Container>
 	</div>

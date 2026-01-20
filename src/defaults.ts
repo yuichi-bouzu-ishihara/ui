@@ -327,13 +327,15 @@ export const defaultOptions = {
 	tabs: {
 		typography: 'body', // テキストサイズ e.g. largeTitle, title, body, caption,,,
 		height: '28px', // 高さ e.g. 44px
+		gap: '16px', // アイテムの間隔 e.g. 16px ※ item-width-auto の場合のみ有効
 		barRadius: '0', // 角丸 e.g. 4px
-		barHeight: '1.5px', // バーの高さ e.g. 4px
+		barHeight: '2px', // バーの高さ e.g. 4px
 		barColor: 'color-text', // バーの色 e.g. color-light, color-dark
-		barBackgroundHeight: '0.5px', // バーの背景の高さ e.g. 44px
-		barBackgroundColor: 'color-text-020', // バーの背景色 e.g. color-light, color-dark
+		barBackgroundHeight: '0', // バーの背景の高さ e.g. 44px
 		itemPaddingTop: '0', // アイテムの上部パディング e.g. 4px
 		itemPaddingBottom: '8px', // アイテムの下部パディング e.g. 4px
+		itemPaddingSide: '1em', // アイテムの左右パディング e.g. 16px
+		itemWidthAuto: true, // アイテムの幅を自動調整するかどうか e.g. true, false
 	},
 	container: {
 		base: {
