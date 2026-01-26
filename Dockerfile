@@ -12,7 +12,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     vim
 
 # npmを特定のバージョンにアップグレード
-RUN npm install -g npm@11.1.0
+RUN npm install -g npm@11.8.0
 
 COPY . .
 RUN npm install
