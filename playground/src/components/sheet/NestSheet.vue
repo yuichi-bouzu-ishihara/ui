@@ -54,7 +54,8 @@ export type Props = {
 const NAME = 'nest1'
 
 // Composables ---------------------------
-const { open, close, list } = useSheet()
+const { open, close, list, current, isCurrent } = useSheet()
+const attrs = useAttrs()
 
 // Props -----------------------------------------------
 const props = withDefaults(defineProps<Props>(), {
@@ -87,6 +88,11 @@ const nest = () => {
 const addContent = () => {
 	text.value += text.value
 }
+
+// Watchers -----------------------------------------------
+watch(() => isCurrent(attrs.index as number), (nv) => {
+	console.log('isCurrent Sheet', attrs.index, nv)
+}, { immediate: true })
 
 // Lifecycle -----------------------------------------------
 onMounted(() => {

@@ -59,9 +59,9 @@ const open = async (component: Component, props: Record<string, unknown> = {}) =
 }
 
 const sheet = useSheet()
-watch(() => sheet.current.value, (nv) => {
-	console.log('useSheet().current', nv)
-}, { immediate: true })
+// watch(() => sheet.current.value, (nv) => {
+// 	console.log('useSheet().current', nv)
+// }, { immediate: true })
 watch(() => sheet.list.value, (list) => {
 	console.log('useSheet().list', list)
 }, { immediate: true, deep: true })

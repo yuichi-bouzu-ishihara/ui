@@ -24,7 +24,8 @@
 
 <script setup lang="ts">
 // Composables ---------------------------
-const { close } = useSheet()
+const { close, current } = useSheet()
+const attrs = useAttrs()
 
 // Data -----------------------------------------------
 const stepCount = ref(0)
@@ -51,4 +52,9 @@ const currentStep = computed(() => stepList.value[stepCount.value])
 const next = () => {
 	stepCount.value++
 }
+
+// Watchers -----------------------------------------------
+watch(() => current.value, (nv) => {
+	console.log('useSheet().current', nv, attrs.index)
+}, { immediate: true, deep: true })
 </script>
