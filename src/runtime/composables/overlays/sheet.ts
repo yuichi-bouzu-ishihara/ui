@@ -16,6 +16,7 @@ export type Payload = {
 
 // 内部保存用（componentは常にstring）
 type InternalPayload = {
+	index: number // シートのインデックス
 	component: string // 内部では常に文字列
 	props?: { [key: string]: unknown } | null
 	resolve?: (value: unknown) => void
@@ -102,6 +103,7 @@ export const useSheet = () => {
 				// コンポーネント型から名前を解決（必ず文字列になる）
 				const componentName = getComponentName(pl.component)
 				const payloadWithResolve: InternalPayload = {
+					index: list.value.length, // シートのインデックス - 表示順
 					component: componentName, // 文字列
 					props: pl.props,
 					resolve: rsv as (value: unknown) => void,
@@ -155,6 +157,15 @@ export const useSheet = () => {
 			Object.entries(components).forEach(([name, component]) => {
 				globalComponentMap.set(component, name)
 			})
+		},
+
+		/**
+		 * 指定したインデックスが現在表示中のシートかどうかを判定する
+		 * @param {number} index - シートのインデックス
+		 * @returns {boolean} 現在表示中のシートかどうか
+		 */
+		isCurrent: (index: number): boolean => {
+			return String(current.value?.index) === String(index)
 		},
 
 		isOpen: readonly(isOpen),
