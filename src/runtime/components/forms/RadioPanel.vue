@@ -4,7 +4,7 @@
 			<Typography v-bind="typography" cap-height-baseline>
 				{{ title }}
 			</Typography>
-			<Box h="16" />
+			<Box :h="16 * sizeScale" />
 		</div>
 		<Row v-bind="{ split, gap }">
 			<label v-for="option in options" :key="`radioPanel-item-${option.value}`" class="radioPanel-item"
@@ -19,13 +19,13 @@
 		</Row>
 		<TransitionAcordion>
 			<Box v-if="isCurrentFree && freeOption">
-				<Box h="20" />
+				<Box :h="20 * sizeScale" />
 				<slot name="before-free-input" />
 				<Box ml="-8" mr="-8">
 					<InputRange v-model="freeValue" controls :min="freeOption.min" :max="freeOption.max"
 						:step="freeOption.step" />
 				</Box>
-				<Box h="6" />
+				<Box :h="12 * sizeScale" />
 			</Box>
 		</TransitionAcordion>
 	</div>
@@ -113,6 +113,20 @@ const isCurrentFree = computed(() => {
 // 自由入力の設定
 const freeOption = computed(() => {
 	return props.options.find(option => option.value === selectedOptionValue.value)?.free
+})
+const sizeScale = computed(() => {
+	switch (size.value) {
+		case 'xsmall':
+			return 0.2
+		case 'small':
+			return 0.4
+		case 'medium':
+			return 1
+		case 'large':
+			return 1.2 // または適切な値
+		default:
+			return 1
+	}
 })
 
 // Watch ------------------

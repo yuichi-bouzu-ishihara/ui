@@ -20,6 +20,16 @@
 						</Typography>
 					</template>
 				</RadioPanel>
+				<Column gap="8">
+					<RadioPanel v-model="value2" large name="radioPanelTest" :options="LIST_INCLUDE_FEE"
+						:split="LIST_INCLUDE_FEE.length.toString()" gap="8" title="Include Free Size" />
+					<RadioPanel v-model="value2" name="radioPanelTest" :options="LIST_INCLUDE_FEE"
+						:split="LIST_INCLUDE_FEE.length.toString()" gap="8" />
+					<RadioPanel v-model="value2" small name="radioPanelTest" :options="LIST_INCLUDE_FEE"
+						:split="LIST_INCLUDE_FEE.length.toString()" gap="8" />
+					<RadioPanel v-model="value2" xsmall name="radioPanelTest" :options="LIST_INCLUDE_FEE"
+						:split="LIST_INCLUDE_FEE.length.toString()" gap="8" />
+				</Column>
 			</Column>
 		</Container>
 	</div>
