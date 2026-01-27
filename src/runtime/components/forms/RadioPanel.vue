@@ -4,7 +4,7 @@
 			<Typography v-bind="typography" cap-height-baseline>
 				{{ title }}
 			</Typography>
-			<Box h="16" />
+			<Box :h="16 * sizeScale" />
 		</div>
 		<Row v-bind="{ split, gap }">
 			<label v-for="option in options" :key="`radioPanel-item-${option.value}`" class="radioPanel-item"
@@ -19,13 +19,13 @@
 		</Row>
 		<TransitionAcordion>
 			<Box v-if="isCurrentFree && freeOption">
-				<Box h="20" />
+				<Box :h="20 * sizeScale" />
 				<slot name="before-free-input" />
 				<Box ml="-8" mr="-8">
 					<InputRange v-model="freeValue" controls :min="freeOption.min" :max="freeOption.max"
 						:step="freeOption.step" />
 				</Box>
-				<Box h="6" />
+				<Box :h="12 * sizeScale" />
 			</Box>
 		</TransitionAcordion>
 	</div>
@@ -114,6 +114,20 @@ const isCurrentFree = computed(() => {
 const freeOption = computed(() => {
 	return props.options.find(option => option.value === selectedOptionValue.value)?.free
 })
+const sizeScale = computed(() => {
+	switch (size.value) {
+		case 'xsmall':
+			return 0.2
+		case 'small':
+			return 0.4
+		case 'medium':
+			return 1
+		case 'large':
+			return 1.2 // または適切な値
+		default:
+			return 1
+	}
+})
 
 // Watch ------------------
 // valueの外部からの変更を監視（初期値の設定など）
@@ -131,11 +145,13 @@ watch(() => value.value, (newValue) => {
 	// Freeが選択されていない場合のみ、valueがoptionsのいずれかのvalueと一致するかチェック
 	const matchingOption = props.options.find(option => option.value === newValue)
 	if (matchingOption) {
-		selectedOptionValue.value = newValue
 		if (matchingOption.free) {
 			freeValue.value = matchingOption.free.default ?? matchingOption.free.min
 		}
 	}
+
+	// 選択されたオプションのvalueを更新
+	selectedOptionValue.value = newValue
 }, { immediate: true })
 
 // 自由入力の値が変更されたら、valueを更新
