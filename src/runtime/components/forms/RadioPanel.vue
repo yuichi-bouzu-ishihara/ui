@@ -131,11 +131,13 @@ watch(() => value.value, (newValue) => {
 	// Freeが選択されていない場合のみ、valueがoptionsのいずれかのvalueと一致するかチェック
 	const matchingOption = props.options.find(option => option.value === newValue)
 	if (matchingOption) {
-		selectedOptionValue.value = newValue
 		if (matchingOption.free) {
 			freeValue.value = matchingOption.free.default ?? matchingOption.free.min
 		}
 	}
+
+	// 選択されたオプションのvalueを更新
+	selectedOptionValue.value = newValue
 }, { immediate: true })
 
 // 自由入力の値が変更されたら、valueを更新
