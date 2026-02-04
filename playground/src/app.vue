@@ -17,15 +17,13 @@
 				<template v-if="sheet.list.value.length">
 					<template v-for="(item, index) in sheet.list.value">
 						<template v-if="item.component !== ''">
-							<component :is="basics[item.component]" :key="`sheetLayer-item-${item.component}-${index}`"
+							<component :is="sheetComponents[item.component]" :key="`sheetLayer-item-${item.component}-${index}`"
 								v-bind="item.props" :index="index" />
 						</template>
 					</template>
 				</template>
 			</SheetLayer>
-			<ModalLayer style="z-index: 15">
-				<TestModal v-if="modalName === 'test'" />
-			</ModalLayer>
+			<ModalLayer style="z-index: 15" :components="modalComponents" />
 			<ProcessingLayer style="z-index: 20" />
 			<ToastLayer style="z-index: 25" />
 			<DialogLayer style="z-index: 30" />
@@ -42,8 +40,8 @@ import PagenationSheet from '@/components/sheet/PagenationSheet.vue'
 import ColorSheet from '@/components/sheet/ColorSheet.vue'
 
 // Constans ----------------------------------------------
-// 表示する汎用モーダルコンポーネントを定義する
-const basics: Record<
+// 表示するSheetコンポーネントを定義する
+const sheetComponents: Record<
 	string,
 	| typeof NestSheet
 	| typeof PagenationSheet
@@ -54,17 +52,20 @@ const basics: Record<
 	ColorSheet,
 }
 
+// 表示するModalコンポーネントを定義する
+const modalComponents: Record<string, typeof TestModal> = {
+	TestModal,
+}
+
 // Composables -----------------------------------------------
 const sheet = useSheet()
+const modal = useModal()
 
 // Data -----------------------------------------------
 const pending = ref(true)
 
 // Computed -----------------------------------------------
-const modalName = computed(() => {
-	return useModal().name.value
-})
-const drawer = computed(() => (name) => {
+const drawer = computed(() => (name: string) => {
 	if (useDrawer().lefts.value.some(item => item.name === name)) {
 		return true
 	}
@@ -79,7 +80,8 @@ onMounted(async () => {
 	pending.value = true
 	try {
 		await useUI().init()
-		sheet.setComponents(basics)
+		sheet.setComponents(sheetComponents)
+		modal.setComponents(modalComponents)
 	}
 	catch (e) {
 		console.error(e)

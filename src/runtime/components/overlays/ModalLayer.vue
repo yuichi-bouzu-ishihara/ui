@@ -1,29 +1,36 @@
 <template>
 	<div :class="`modalLayer${isOpen ? ' _open' : ''}`">
-		<div v-if="name !== ''" ref="innerEl" class="modalLayer-inner">
-			<slot />
+		<div v-if="component !== ''" class="modalLayer-inner">
+			<component :is="basics[component]" v-if="basics[component]" v-bind="currentProps" />
+			<slot v-else />
 		</div>
 		<TransitionFade>
-			<Backdrop v-if="name !== ''" class="modalLayer-overlay" v-bind="backdropBind" @click="close(false)" />
+			<Backdrop v-if="component !== ''" class="modalLayer-overlay" v-bind="backdropBind" @click="close(false)" />
 		</TransitionFade>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, computed } from 'vue'
+import { watch, computed, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { useModal } from '../../composables/overlays/modal'
 import TransitionFade from '../transition/TransitionFade.vue'
 import Backdrop from './Backdrop.vue'
 
-// Stores & Composables ---------------------------
-const { close, name, isOpen, backdrop, blur } = useModal()
+// Composables ---------------------------
+const { close, component, isOpen, backdrop, blur, props: currentProps } = useModal()
 const route = useRoute()
 
-// Data ---------------------------
-const innerEl = ref<HTMLDivElement | null>(null)
+// Props ---------------------------
+const props = defineProps<{
+	components?: Record<string, Component>
+}>()
 
 // Computed -------------------------
+// 表示するモーダルコンポーネントを定義する（propsから受け取る）
+const basics = computed<Record<string, Component>>(() => {
+	return props.components || {}
+})
 const backdropBind = computed(() => ({
 	ultraSoft: backdrop.value === 'ultraSoft',
 	soft: backdrop.value === 'soft',
