@@ -4,10 +4,10 @@
 			<Typography title3 center color="light">
 				{{ title }}
 			</Typography>
-			<Typography body center color="light" v-if="message">
+			<Typography v-if="message" body center color="light">
 				{{ message }}
 			</Typography>
-			<Button @click.stop="close('confirmed')" style="margin-top: 16px;">
+			<Button style="margin-top: 16px;" @click="close('confirmed')">
 				閉じる
 			</Button>
 		</Center>
@@ -16,7 +16,7 @@
 
 <script setup lang="ts">
 // Props ---------------------------
-const propsDefinition = defineProps<{
+defineProps<{
 	title?: string
 	message?: string
 }>()
