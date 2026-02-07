@@ -1,13 +1,13 @@
 <template>
 	<div class="sheet-wrapper" :style="{ zIndex: index }">
-		<div class="sheet" :class="classes" :style="{ ...variables, ...depthStyle }">
+		<div ref="sheetEl" class="sheet" :class="classes" :style="{ ...variables, ...depthStyle }">
 			<div class="sheet-inner">
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
 						<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height" class="sheet-inner-item-content"
 							w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
-								<Box sticky top="0" w="100%" z-index="1">
+								<Box ref="headerEl" sticky top="0" w="100%" :z-index="headerZIndex">
 									<Container class="sheet-inner-item-content-header" v-bind="container" no-padding>
 										<SlotHeader v-bind="{ title, pagenation }" blur :background="backgroundColor" :color="textColor"
 											:style="{ padding: `0 ${containerSideSpace}` }">
@@ -32,7 +32,7 @@
 									</Container>
 								</Box>
 							</template>
-							<Box w="100%" relative z-index="0" h="calc(100% - var(--header-height))">
+							<Box w="100%" relative z-index="0" :h="`calc(100% - var(--header-height) - ${footnoteRect?.height}px)`">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
 									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
@@ -40,7 +40,7 @@
 									</Box>
 								</Column>
 							</Box>
-							<Box v-if="footnote" p="16" opacity="0.6">
+							<Box v-if="footnote" v-resize="(rect: DOMRectReadOnly) => footnoteRect = rect" p="16" opacity="0.6">
 								<Container v-bind="container">
 									<Center>
 										<Typography footnote center cap-height-baseline :color="textColor">
@@ -58,7 +58,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, useSlots, watch, type PropType } from 'vue'
+import { computed, onMounted, onUnmounted, ref, useSlots, watch, type PropType } from 'vue'
 import Typography from '../elements/Typography.vue'
 import Box from '../layout/Box.vue'
 import Center from '../layout/Center.vue'
@@ -105,6 +105,10 @@ const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click', 'back'
 // Data -----------------------------------------------
 const contentHeight = ref(0)
 const isContentOverflow = ref(false)
+const headerEl = ref<HTMLElement | null>(null)
+const sheetEl = ref<HTMLElement | null>(null)
+const headerZIndex = ref(0)
+const footnoteRect = ref<DOMRectReadOnly | null>(null)
 
 // Computed -----------------------------------------------
 const classes = computed(() => {
@@ -209,6 +213,25 @@ watch(() => [viewport.height.value, contentHeight.value], () => {
 		isContentOverflow.value = false
 	}
 }, { immediate: true })
+
+// Scroll -----------------------------------------------
+// header が sticky 状態（スクロールコンテナの上端に張り付いている）かどうかを判定し、z-index を動的に切り替える
+const onSheetScroll = () => {
+	if (!headerEl.value || !sheetEl.value) return
+	const headerRect = (headerEl.value as unknown as { $el?: HTMLElement }).$el?.getBoundingClientRect()
+	const sheetRect = sheetEl.value.getBoundingClientRect()
+	if (!headerRect) return
+	// header の top がスクロールコンテナの top とほぼ一致すれば sticky 状態
+	headerZIndex.value = Math.abs(headerRect.top - sheetRect.top) < 2 ? 1 : 0
+}
+
+// Lifecycle -----------------------------------------------
+onMounted(() => {
+	sheetEl.value?.addEventListener('scroll', onSheetScroll)
+})
+onUnmounted(() => {
+	sheetEl.value?.removeEventListener('scroll', onSheetScroll)
+})
 </script>
 
 <style lang="scss">
