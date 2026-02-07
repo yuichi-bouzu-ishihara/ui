@@ -32,7 +32,7 @@
 									</Container>
 								</Box>
 							</template>
-							<Box w="100%" relative z-index="0" h="calc(100% - var(--header-height))">
+							<Box w="100%" relative z-index="0" :h="`calc(100% - var(--header-height) - ${footnoteRect?.height}px)`">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
 									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
@@ -40,7 +40,7 @@
 									</Box>
 								</Column>
 							</Box>
-							<Box v-if="footnote" p="16" opacity="0.6">
+							<Box v-if="footnote" v-resize="(rect: DOMRectReadOnly) => footnoteRect = rect" p="16" opacity="0.6">
 								<Container v-bind="container">
 									<Center>
 										<Typography footnote center cap-height-baseline :color="textColor">
@@ -108,6 +108,7 @@ const isContentOverflow = ref(false)
 const headerEl = ref<HTMLElement | null>(null)
 const sheetEl = ref<HTMLElement | null>(null)
 const headerZIndex = ref(0)
+const footnoteRect = ref<DOMRectReadOnly | null>(null)
 
 // Computed -----------------------------------------------
 const classes = computed(() => {

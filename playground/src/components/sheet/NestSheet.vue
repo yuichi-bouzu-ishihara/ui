@@ -1,5 +1,5 @@
 <template>
-	<Sheet class="nest1Sheet" :name="NAME" v-bind="{ title, full, wide, narrow, center }">
+	<Sheet class="nest1Sheet" :name="NAME" v-bind="{ title, full, wide, narrow, center }" footnote="This is a footnote">
 		<template #header-right>
 			<Button xsmall rounded @click="close($attrs.index as number, false)">
 				close
