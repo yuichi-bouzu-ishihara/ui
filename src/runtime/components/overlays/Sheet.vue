@@ -32,7 +32,8 @@
 									</Container>
 								</Box>
 							</template>
-							<Box w="100%" relative z-index="0" :h="`calc(100% - var(--header-height) - ${footnoteRect?.height}px)`">
+							<Box w="100%" relative z-index="0"
+								:h="`calc(100% - var(--header-height) - ${footnoteRect?.height || 0}px)`">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
 									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
