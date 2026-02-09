@@ -17,8 +17,8 @@ export type ImageMetadata = {
 	width: number
 	height: number
 	aspectRatio: number
-	fileSize: number
-	mimeType: string
+	fileSize?: number
+	mimeType?: string
 }
 
 export const useFile = () => {
@@ -355,30 +355,50 @@ const fileToBase64 = (file: File): Promise<string> => {
 
 /**
  * 画像のメタデータを取得
- * @param file - 画像ファイル
+ * @param source - 画像ファイル（File）、画像URL / 相対パス（string）、またはbase64データ（string）
  * @returns 画像のメタデータ（幅、高さ、アスペクト比など）
  */
-const getImageMetadata = (file: File): Promise<{
-	width: number
-	height: number
-	aspectRatio: number
-	fileSize: number
-	mimeType: string
-}> => {
+const getImageMetadata = (source: File | string): Promise<ImageMetadata> => {
+	if (source instanceof File) {
+		return new Promise((resolve, reject) => {
+			const img = new globalThis.Image()
+			const objectUrl = URL.createObjectURL(source)
+			img.onload = () => {
+				const aspectRatio = img.naturalWidth / img.naturalHeight
+				URL.revokeObjectURL(objectUrl)
+				resolve({
+					width: img.naturalWidth,
+					height: img.naturalHeight,
+					aspectRatio,
+					fileSize: source.size,
+					mimeType: source.type,
+				})
+			}
+			img.onerror = () => {
+				URL.revokeObjectURL(objectUrl)
+				reject(new Error('画像メタデータの取得に失敗しました'))
+			}
+			img.src = objectUrl
+		})
+	}
+
+	// string の場合: URL / 相対パス / base64データ
 	return new Promise((resolve, reject) => {
-		const img = new Image()
+		const img = new globalThis.Image()
 		img.onload = () => {
 			const aspectRatio = img.naturalWidth / img.naturalHeight
+			// base64データの場合、MIMEタイプをプレフィックスから抽出
+			const mimeMatch = source.match(/^data:([^;]+);base64,/)
+			const mimeType = mimeMatch?.[1]
 			resolve({
 				width: img.naturalWidth,
 				height: img.naturalHeight,
 				aspectRatio,
-				fileSize: file.size,
-				mimeType: file.type,
+				mimeType,
 			})
 		}
-		img.onerror = () => reject(new Error('Failed to load image metadata'))
-		img.src = URL.createObjectURL(file)
+		img.onerror = () => reject(new Error(`画像の読み込みに失敗しました: ${source.substring(0, 100)}`))
+		img.src = source
 	})
 }
 
