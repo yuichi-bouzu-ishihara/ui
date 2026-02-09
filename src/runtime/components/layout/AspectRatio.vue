@@ -1,5 +1,5 @@
 <template>
-	<div class="aspectRatio" :class="classes">
+	<div class="aspectRatio" :class="classes" :style="value ? `aspect-ratio: ${value}` : ''">
 		<slot />
 	</div>
 </template>
