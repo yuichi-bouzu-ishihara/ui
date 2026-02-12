@@ -10,6 +10,7 @@ import type { ButtonConfig } from './button'
 import type { SkeletonShapeConfig } from './skeleton-shape'
 import type { SpinnerConfig } from './spinner'
 import type { RoundProgressBarConfig } from './round-progress-bar'
+import type { CircleCheckConfig } from './circle-check'
 import type { WebfontConfig } from './webfont'
 import type { ContainerConfig } from './container'
 import type { AvatarConfig } from './avatar'
@@ -42,6 +43,7 @@ export type UIConfig = {
 	skeletonShape?: SkeletonShapeConfig
 	spinner?: SpinnerConfig
 	roundProgressBar?: RoundProgressBarConfig
+	circleCheck?: CircleCheckConfig
 	webfont?: WebfontConfig
 	container?: ContainerConfig
 	sheet?: SheetConfig
