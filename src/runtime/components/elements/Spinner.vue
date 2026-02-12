@@ -4,20 +4,13 @@
 	complete prop が true になると、Spinner の円描画が消えた瞬間に CircleCheck に切り替わる
  -->
 <template>
-	<Box v-if="!showCircleCheck" class="spinner" v-bind="box">
-		<svg class="spinner-circular" :class="classes" viewBox="25 25 50 50">
+	<Box class="spinner" v-bind="box">
+		<svg v-if="!showCircleCheck" class="spinner-circular" :class="classes" viewBox="25 25 50 50">
 			<circle class="spinner-circular-path" cx="50" cy="50" r="20" fill="none" :stroke-width="stroke" :style="styles"
 				stroke-miterlimit="0" @animationiteration="onDashIteration" />
 		</svg>
+		<CircleCheck v-else v-bind="{ color, size, stroke }" :active="showCircleCheck" @complete="onCircleCheckComplete" />
 	</Box>
-	<CircleCheck
-		v-else
-		:color="props.color"
-		:size="props.size"
-		:stroke="props.stroke"
-		:active="showCircleCheck"
-		@complete="onCircleCheckComplete"
-	/>
 </template>
 
 <script setup lang="ts">
