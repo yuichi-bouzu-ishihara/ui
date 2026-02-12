@@ -16,7 +16,7 @@
 		<Transition name="circleCheck-icon">
 			<svg v-if="showCheck" class="circleCheck-check" :class="classes" viewBox="0 0 50 50">
 				<polyline class="circleCheck-check-path" fill="none" :stroke-width="checkStrokeValue" stroke-linecap="square"
-					stroke-linejoin="round" points="14,27 22,34 36,18" :style="checkStyles" />
+					stroke-linejoin="round" points="12,27 21,35 38,16" :style="checkStyles" />
 			</svg>
 		</Transition>
 	</Box>
@@ -206,15 +206,15 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 		}
 
 		&-check {
-			width: 50%;
-			height: 50%;
+			width: 70%;
+			height: 70%;
 			position: relative;
 			z-index: 1;
 
 			&-path {
 				stroke: var(--color-dark);
-				stroke-dasharray: 40;
-				stroke-dashoffset: 40;
+				stroke-dasharray: 50;
+				stroke-dashoffset: 50;
 				animation: circleCheck-checkDraw 0.35s ease forwards;
 			}
 
@@ -259,7 +259,7 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 		// チェックマーク描画アニメーション
 		@keyframes circleCheck-checkDraw {
 			0% {
-				stroke-dashoffset: 40;
+				stroke-dashoffset: 50;
 			}
 
 			100% {
