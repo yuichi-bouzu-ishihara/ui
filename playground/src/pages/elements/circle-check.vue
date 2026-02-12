@@ -22,7 +22,10 @@
 				<Button @click="replay">
 					リプレイ
 				</Button>
-				<CircleCheck :size="32" :stroke="4" :duration="500" color="success" :active="isActive" @complete="onComplete" />
+				<Box w="80" h="80" inner-center>
+					<CircleCheck size="50%" :stroke="4" :duration="500" color="success" :active="isActive"
+						@complete="onComplete" />
+				</Box>
 			</Column>
 		</Center>
 	</Container>

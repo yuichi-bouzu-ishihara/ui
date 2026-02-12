@@ -9,7 +9,7 @@
 			<circle class="spinner-circular-path" cx="50" cy="50" r="20" fill="none" :stroke-width="stroke" :style="styles"
 				stroke-miterlimit="0" @animationiteration="onDashIteration" />
 		</svg>
-		<CircleCheck v-else v-bind="{ color, size, stroke }" active @complete="onCircleCheckComplete" />
+		<CircleCheck v-else v-bind="{ color, stroke }" size="120%" active @complete="onCircleCheckComplete" />
 	</Box>
 </template>
 
