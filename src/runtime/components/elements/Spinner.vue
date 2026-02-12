@@ -9,7 +9,7 @@
 			<circle class="spinner-circular-path" cx="50" cy="50" r="20" fill="none" :stroke-width="stroke" :style="styles"
 				stroke-miterlimit="0" @animationiteration="onDashIteration" />
 		</svg>
-		<CircleCheck v-else v-bind="{ color, size, stroke }" active @complete="onCircleCheckComplete" />
+		<CircleCheck v-else v-bind="{ color, stroke }" size="120%" active @complete="onCircleCheckComplete" />
 	</Box>
 </template>
 
@@ -109,6 +109,11 @@ const box = computed(() => {
 	}
 	else {
 		size = props.size
+	}
+	// % 指定の場合は幅のみ設定し、高さは CSS の ::before padding-top: 100% で制御する
+	const isPercent = typeof size === 'string' && String(size).includes('%')
+	if (isPercent) {
+		return { w: size, minW: size }
 	}
 	return { w: size, minW: size, h: size, minH: size }
 })

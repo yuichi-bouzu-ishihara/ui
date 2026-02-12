@@ -9,7 +9,9 @@
         <Spinner size="24" stroke="4.8" color="primary-060" />
         <Spinner size="24" stroke="5.6" color="primary" />
         <Spinner size="24" stroke="5.6" color="#00ff00" />
-        <Spinner size="24" stroke="5.6" color="rgba(0, 255, 0, 0.2)" />
+        <Box w="80" h="80" inner-center>
+          <Spinner size="50%" stroke="5.6" color="rgba(0, 255, 0, 0.2)" />
+        </Box>
 
         <!-- complete prop のデモ -->
         <Row align="center" gap="12">

@@ -3,17 +3,17 @@
 	ボタンUIコンポーネント
 -->
 <template>
-	<Box class="button" :class="[classes, $attrs.class]" :style="customColorStyle" v-bind="{ w, h, minW: w, minH: h, r }">
+	<Box ref="element" class="button" :class="[classes, $attrs.class]" :style="customColorStyle"
+		v-bind="{ w, h, minW: w, minH: h, r }">
 		<template v-if="to">
 			<BasicLink class="button-inner" v-bind="{ to, replace, noHoverStyle: true, blank }">
 				<Typography class="button-inner-slot" v-bind="typography">
 					<slot />
 				</Typography>
-				<template v-if="loading">
-					<div class="button-inner-loader" @click.stop="click">
-						<Spinner v-bind="spinner" />
-					</div>
-				</template>
+				<Box v-if="loading || loadingState !== ''" :w="rect?.height" :h="rect?.height" class="button-inner-loader"
+					@click.stop="click">
+					<Spinner v-bind="spinner" :complete="loadingState === 'completed'" />
+				</Box>
 			</BasicLink>
 		</template>
 		<template v-else>
@@ -21,18 +21,17 @@
 				<Typography class="button-inner-slot" v-bind="typography">
 					<slot />
 				</Typography>
-				<template v-if="loading">
-					<div class="button-inner-loader" @click.stop="click">
-						<Spinner v-bind="spinner" />
-					</div>
-				</template>
+				<Box v-if="loading || loadingState !== ''" :w="rect?.height" :h="rect?.height" class="button-inner-loader"
+					@click.stop="click">
+					<Spinner v-bind="spinner" :complete="loadingState === 'completed'" />
+				</Box>
 			</button>
 		</template>
 	</Box>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, nextTick, onMounted, ref } from 'vue'
 import { useButton } from '../../composables/elements/button'
 import Spinner from '../elements/Spinner.vue'
 import Box from '../layout/Box.vue'
@@ -70,6 +69,9 @@ const props = defineProps({
 	// ローダー表示
 	loading: { type: Boolean, default: false },
 
+	// ローダー表示の状態
+	loadingState: { type: String, default: '', validator: (value: string) => ['', 'processing', 'completed'].includes(value) },
+
 	// 遷移先 url path。 click を emit する代わりに、<BasicLink to /> する。
 	to: { type: [String, Object], default: '' },
 	blank: { type: Boolean, default: false }, // 遷移先のページを開く方法を指定する。
@@ -90,11 +92,15 @@ const props = defineProps({
 // Emits ---------------------------
 const emit = defineEmits(['click', 'disabled-click', 'loading-click'])
 
+// Data ---------------------------
+const element = ref<InstanceType<typeof Box> | null>(null)
+const rect = ref<DOMRect | null>(null)
+
 // Computed ---------------------------
 const classes: object = computed(() => {
 	const obj: Record<string, boolean> = {
 		_disabled: props.disabled,
-		_loading: props.loading,
+		_loading: props.loading || props.loadingState !== '',
 		_rounded: props.rounded,
 		_noPaddingH: props.w !== '' || props.noPadding,
 		_noPaddingV: props.h !== '' || props.noPadding,
@@ -209,12 +215,12 @@ const click = () => {
 	if (props.to) return
 
 	// クリッカブル判定
-	const clickable = !props.disabled && !props.loading
+	const clickable = !props.disabled && (!props.loading || props.loadingState === '')
 	// disabled や loading の場合は、それぞれのクリックイベントを emit する。
 	if (props.disabled) {
 		emit('disabled-click')
 	}
-	if (props.loading) {
+	if (props.loading || props.loadingState !== '') {
 		emit('loading-click')
 	}
 	// クリッカブルな場合は、click イベントを emit する。
@@ -222,6 +228,14 @@ const click = () => {
 		emit('click')
 	}
 }
+
+// Lifecycle ---------------------------
+onMounted(async () => {
+	await nextTick()
+	if (element.value?.$el) {
+		rect.value = (element.value.$el as HTMLElement).getBoundingClientRect()
+	}
+})
 </script>
 
 <style lang="scss">
