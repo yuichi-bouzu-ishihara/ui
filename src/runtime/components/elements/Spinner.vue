@@ -110,6 +110,11 @@ const box = computed(() => {
 	else {
 		size = props.size
 	}
+	// % 指定の場合は幅のみ設定し、高さは CSS の ::before padding-top: 100% で制御する
+	const isPercent = typeof size === 'string' && String(size).includes('%')
+	if (isPercent) {
+		return { w: size, minW: size }
+	}
 	return { w: size, minW: size, h: size, minH: size }
 })
 </script>

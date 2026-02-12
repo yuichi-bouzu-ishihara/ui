@@ -140,6 +140,11 @@ const box = computed(() => {
 	else {
 		size = props.size
 	}
+	// % 指定の場合は幅のみ設定し、高さは CSS の aspect-ratio: 1 / 1 で制御する
+	const isPercent = typeof size === 'string' && String(size).includes('%')
+	if (isPercent) {
+		return { w: size, minW: size }
+	}
 	return { w: size, minW: size, h: size, minH: size }
 })
 </script>
@@ -154,6 +159,7 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	aspect-ratio: 1 / 1; // % サイズ指定時に正方形アスペクト比を維持する
 
 	&-circular {
 		width: 100%;
