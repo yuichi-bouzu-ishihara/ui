@@ -19,9 +19,10 @@
 				<CircleCheck :size="48" :stroke="3" :duration="800" color="rgba(0, 200, 83, 0.6)" />
 
 				<!-- active で制御 -->
-				<Button @click="replay">リプレイ</Button>
-				<CircleCheck :size="56" :stroke="3" :duration="1000" color="success" :active="isActive" @complete="onComplete" />
-				<Typography v-if="completed" size="12" color="text-060">完了しました</Typography>
+				<Button @click="replay">
+					リプレイ
+				</Button>
+				<CircleCheck :size="32" :stroke="4" :duration="500" color="success" :active="isActive" @complete="onComplete" />
 			</Column>
 		</Center>
 	</Container>

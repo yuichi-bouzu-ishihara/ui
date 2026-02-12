@@ -6,45 +6,17 @@
 	<Box class="circleCheck" v-bind="box">
 		<svg class="circleCheck-circular" :class="classes" viewBox="0 0 50 50">
 			<!-- 背景の薄い円 -->
-			<circle
-				class="circleCheck-circular-bg"
-				cx="25"
-				cy="25"
-				r="20"
-				fill="none"
-				:stroke-width="strokeValue"
-				:style="strokeStyles"
-			/>
+			<!-- <circle class="circleCheck-circular-bg" cx="25" cy="25" r="20" fill="none" :stroke-width="strokeValue"
+				:style="strokeStyles" /> -->
 			<!-- アニメーションする円 -->
-			<circle
-				class="circleCheck-circular-path"
-				cx="25"
-				cy="25"
-				r="20"
-				fill="none"
-				:stroke-width="strokeValue"
-				:style="circleStyles"
-				stroke-linecap="round"
-				@animationend="onCircleAnimationEnd"
-			/>
+			<circle class="circleCheck-circular-path" cx="25" cy="25" r="20" fill="none" :stroke-width="strokeValue"
+				:style="circleStyles" stroke-linecap="square" @animationend="onCircleAnimationEnd" />
 		</svg>
 		<!-- チェックアイコン -->
 		<Transition name="circleCheck-icon">
-			<svg
-				v-if="showCheck"
-				class="circleCheck-check"
-				:class="classes"
-				viewBox="0 0 50 50"
-			>
-				<polyline
-					class="circleCheck-check-path"
-					fill="none"
-					:stroke-width="strokeValue"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					points="14,27 22,34 36,18"
-					:style="checkStyles"
-				/>
+			<svg v-if="showCheck" class="circleCheck-check" :class="classes" viewBox="0 0 50 50">
+				<polyline class="circleCheck-check-path" fill="none" :stroke-width="checkStrokeValue" stroke-linecap="square"
+					stroke-linejoin="round" points="14,27 22,34 36,18" :style="checkStyles" />
 			</svg>
 		</Transition>
 	</Box>
@@ -119,6 +91,9 @@ const color = computed(() => {
 const strokeValue = computed(() => {
 	return props.stroke === 0 ? useCircleCheck().stroke : props.stroke
 })
+const checkStrokeValue = computed(() => {
+	return props.stroke === 0 ? useCircleCheck().stroke * 2 : Number(props.stroke) * 2
+})
 
 const durationValue = computed(() => {
 	return props.duration === 0 ? useCircleCheck().duration : Number(props.duration)
@@ -185,7 +160,7 @@ const box = computed(() => {
 $cn: '.circleCheck'; // コンポーネントセレクタ名
 
 @include mix.component-styles($cn) using ($mode) {
-	@if $mode == 'base' {
+	@if $mode =='base' {
 		position: relative;
 		display: flex;
 		align-items: center;
@@ -264,12 +239,10 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 
 		&-icon-enter-from {
 			opacity: 0;
-			transform: scale(0.6);
 		}
 
 		&-icon-enter-to {
 			opacity: 1;
-			transform: scale(1);
 		}
 
 		// 円描画アニメーション（上から時計回り）
@@ -294,9 +267,5 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 			}
 		}
 	}
-
-	@if $mode == 'darkmode' {}
-
-	@if $mode == 'auto' {}
 }
 </style>
