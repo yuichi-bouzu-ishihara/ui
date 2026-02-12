@@ -4,12 +4,12 @@
 	complete prop が true になると、Spinner の円描画が消えた瞬間に CircleCheck に切り替わる
  -->
 <template>
-	<Box class="spinner" v-bind="box">
+	<Box class="spinner" :class="{ _complete: complete }" v-bind="box">
 		<svg v-if="!showCircleCheck" class="spinner-circular" :class="classes" viewBox="25 25 50 50">
 			<circle class="spinner-circular-path" cx="50" cy="50" r="20" fill="none" :stroke-width="stroke" :style="styles"
 				stroke-miterlimit="0" @animationiteration="onDashIteration" />
 		</svg>
-		<CircleCheck v-else v-bind="{ color, size, stroke }" :active="showCircleCheck" @complete="onCircleCheckComplete" />
+		<CircleCheck v-else v-bind="{ color, size, stroke }" active @complete="onCircleCheckComplete" />
 	</Box>
 </template>
 
@@ -122,80 +122,70 @@ $cn: '.spinner'; // コンポーネントセレクタ名
 $rotate-duration: 1.6s;
 $dash-duration: 1.16s;
 
-@mixin color($color: var(--color-dark)) {
-	stroke: $color;
-}
+#{$cn} {
+	position: relative;
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
-		position: relative;
+	&:not(._complete):before {
+		content: '';
+		display: block;
+		padding-top: 100%;
+	}
 
-		&:before {
-			content: '';
-			display: block;
-			padding-top: 100%;
+	&-circular {
+		animation: rotate $rotate-duration linear infinite;
+		height: 100%;
+		transform-origin: center center;
+		width: 100%;
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		margin: auto;
+
+		&-path {
+			stroke-dasharray: 1, 200;
+			stroke-dashoffset: 0;
+			animation: dash $dash-duration ease-in-out infinite;
+			stroke-linecap: square;
+			stroke: var(--color-dark);
 		}
 
-		&-circular {
-			animation: rotate $rotate-duration linear infinite;
-			height: 100%;
-			transform-origin: center center;
-			width: 100%;
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			left: 0;
-			right: 0;
-			margin: auto;
-
-			&-path {
-				stroke-dasharray: 1, 200;
-				stroke-dashoffset: 0;
-				animation: dash $dash-duration ease-in-out infinite;
-				stroke-linecap: square;
-				stroke: var(--color-dark);
-			}
-
-			// Color
-			@each $priority in var.$color-priorities {
-				@each $tint in var.$color-tint {
-					&._color-#{$priority}#{$tint} {
-						@include mix.color-var($priority, $tint) using ($css-var) {
-							#{$cn}-circular-path {
-								stroke: $css-var;
-							}
+		// Color
+		@each $priority in var.$color-priorities {
+			@each $tint in var.$color-tint {
+				&._color-#{$priority}#{$tint} {
+					@include mix.color-var($priority, $tint) using ($css-var) {
+						#{$cn}-circular-path {
+							stroke: $css-var;
 						}
 					}
 				}
 			}
 		}
+	}
 
-		@keyframes rotate {
-			100% {
-				transform: rotate(360deg);
-			}
-		}
-
-		@keyframes dash {
-			0% {
-				stroke-dasharray: 1, 200;
-				stroke-dashoffset: 0;
-			}
-
-			50% {
-				stroke-dasharray: 89, 200;
-				stroke-dashoffset: -35px;
-			}
-
-			100% {
-				stroke-dasharray: 89, 200;
-				stroke-dashoffset: -124px;
-			}
+	@keyframes rotate {
+		100% {
+			transform: rotate(360deg);
 		}
 	}
 
-	@if $mode =='darkmode' {}
+	@keyframes dash {
+		0% {
+			stroke-dasharray: 1, 200;
+			stroke-dashoffset: 0;
+		}
 
-	@if $mode =='auto' {}
+		50% {
+			stroke-dasharray: 89, 200;
+			stroke-dashoffset: -35px;
+		}
+
+		100% {
+			stroke-dasharray: 89, 200;
+			stroke-dashoffset: -124px;
+		}
+	}
 }
 </style>
