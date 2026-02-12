@@ -50,19 +50,19 @@
           </Row>
         </Row>
         <Row justify="center" :gap="[8, 8]">
-          <Button loading large>
+          <Button v-bind="{ loadingState }" large @loading-click="loadingStateToggle">
             Loading - L
           </Button>
-          <Button loading medium>
+          <Button v-bind="{ loadingState }" medium @loading-click="loadingStateToggle">
             Loading - M
           </Button>
-          <Button loading small>
+          <Button v-bind="{ loadingState }" small @loading-click="loadingStateToggle">
             Loading - S
           </Button>
-          <Button loading xsmall>
+          <Button v-bind="{ loadingState }" xsmall @loading-click="loadingStateToggle">
             Loading - XSmall
           </Button>
-          <Button loading info>
+          <Button v-bind="{ loadingState }" info @loading-click="loadingStateToggle">
             Loading - Info
           </Button>
         </Row>
@@ -93,6 +93,11 @@
 </template>
 
 <script setup lang="ts">
+const loadingState = ref('processing')
+const loadingStateToggle = () => {
+  console.log('loadingStateToggle')
+  loadingState.value = loadingState.value === 'processing' ? 'completed' : 'processing'
+}
 const handleClick = () => {
   console.log('clicked')
 }

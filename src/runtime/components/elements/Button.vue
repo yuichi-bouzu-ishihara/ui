@@ -9,11 +9,9 @@
 				<Typography class="button-inner-slot" v-bind="typography">
 					<slot />
 				</Typography>
-				<template v-if="loading">
-					<div class="button-inner-loader" @click.stop="click">
-						<Spinner v-bind="spinner" />
-					</div>
-				</template>
+				<div v-if="loading || loadingState !== ''" class="button-inner-loader" @click.stop="click">
+					<Spinner v-bind="spinner" :complete="loadingState === 'completed'" />
+				</div>
 			</BasicLink>
 		</template>
 		<template v-else>
@@ -21,11 +19,9 @@
 				<Typography class="button-inner-slot" v-bind="typography">
 					<slot />
 				</Typography>
-				<template v-if="loading">
-					<div class="button-inner-loader" @click.stop="click">
-						<Spinner v-bind="spinner" />
-					</div>
-				</template>
+				<div v-if="loading || loadingState !== ''" class="button-inner-loader" @click.stop="click">
+					<Spinner v-bind="spinner" :complete="loadingState === 'completed'" />
+				</div>
 			</button>
 		</template>
 	</Box>
@@ -70,6 +66,9 @@ const props = defineProps({
 	// ローダー表示
 	loading: { type: Boolean, default: false },
 
+	// ローダー表示の状態
+	loadingState: { type: String, default: '', validator: (value: string) => ['', 'processing', 'completed'].includes(value) },
+
 	// 遷移先 url path。 click を emit する代わりに、<BasicLink to /> する。
 	to: { type: [String, Object], default: '' },
 	blank: { type: Boolean, default: false }, // 遷移先のページを開く方法を指定する。
@@ -94,7 +93,7 @@ const emit = defineEmits(['click', 'disabled-click', 'loading-click'])
 const classes: object = computed(() => {
 	const obj: Record<string, boolean> = {
 		_disabled: props.disabled,
-		_loading: props.loading,
+		_loading: props.loading || props.loadingState !== '',
 		_rounded: props.rounded,
 		_noPaddingH: props.w !== '' || props.noPadding,
 		_noPaddingV: props.h !== '' || props.noPadding,
@@ -209,12 +208,12 @@ const click = () => {
 	if (props.to) return
 
 	// クリッカブル判定
-	const clickable = !props.disabled && !props.loading
+	const clickable = !props.disabled && (!props.loading || props.loadingState === '')
 	// disabled や loading の場合は、それぞれのクリックイベントを emit する。
 	if (props.disabled) {
 		emit('disabled-click')
 	}
-	if (props.loading) {
+	if (props.loading || props.loadingState !== '') {
 		emit('loading-click')
 	}
 	// クリッカブルな場合は、click イベントを emit する。
