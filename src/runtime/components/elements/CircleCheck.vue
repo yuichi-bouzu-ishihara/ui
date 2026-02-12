@@ -91,23 +91,13 @@ const color = computed(() => {
 const strokeValue = computed(() => {
 	return props.stroke === 0 ? useCircleCheck().stroke : props.stroke
 })
+
 const checkStrokeValue = computed(() => {
 	return props.stroke === 0 ? useCircleCheck().stroke * 2 : Number(props.stroke) * 2
 })
 
 const durationValue = computed(() => {
 	return props.duration === 0 ? useCircleCheck().duration : Number(props.duration)
-})
-
-const strokeStyles = computed(() => {
-	let styles: { stroke?: string } = {}
-
-	// hex、rgb、rgba のカラーが設定されている場合は、stroke を設定する
-	if (!color.value && isCssColor(props.color)) {
-		styles = { ...styles, stroke: props.color }
-	}
-
-	return styles
 })
 
 const circleStyles = computed(() => {
