@@ -159,112 +159,110 @@ const box = computed(() => {
 @use '../../scss/_mixins.scss' as mix;
 $cn: '.circleCheck'; // コンポーネントセレクタ名
 
-@include mix.component-styles($cn) using ($mode) {
-	@if $mode =='base' {
+#{$cn} {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	&-circular {
+		width: 100%;
+		height: 100%;
+		position: absolute;
+		top: 0;
+		left: 0;
+		// 上（12時の位置）から開始するために -90deg 回転
+		transform: rotate(-90deg);
+
+		&-bg {
+			stroke: var(--color-dark);
+			opacity: 0.1;
+		}
+
+		&-path {
+			stroke: var(--color-dark);
+			stroke-dasharray: var(--circle-circumference);
+			stroke-dashoffset: var(--circle-circumference);
+			animation: circleCheck-draw var(--circle-duration, 800ms) ease forwards;
+		}
+
+		// Color
+		@each $priority in var.$color-priorities {
+			@each $tint in var.$color-tint {
+				&._color-#{$priority}#{$tint} {
+					@include mix.color-var($priority, $tint) using ($css-var) {
+						#{$cn}-circular-bg {
+							stroke: $css-var;
+						}
+
+						#{$cn}-circular-path {
+							stroke: $css-var;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	&-check {
+		width: 49%;
+		height: 49%;
 		position: relative;
-		display: flex;
-		align-items: center;
-		justify-content: center;
+		z-index: 1;
 
-		&-circular {
-			width: 100%;
-			height: 100%;
-			position: absolute;
-			top: 0;
-			left: 0;
-			// 上（12時の位置）から開始するために -90deg 回転
-			transform: rotate(-90deg);
+		&-path {
+			stroke: var(--color-dark);
+			stroke-dasharray: 50;
+			stroke-dashoffset: 50;
+			animation: circleCheck-checkDraw 0.35s ease forwards;
+		}
 
-			&-bg {
-				stroke: var(--color-dark);
-				opacity: 0.1;
-			}
-
-			&-path {
-				stroke: var(--color-dark);
-				stroke-dasharray: var(--circle-circumference);
-				stroke-dashoffset: var(--circle-circumference);
-				animation: circleCheck-draw var(--circle-duration, 800ms) ease forwards;
-			}
-
-			// Color
-			@each $priority in var.$color-priorities {
-				@each $tint in var.$color-tint {
-					&._color-#{$priority}#{$tint} {
-						@include mix.color-var($priority, $tint) using ($css-var) {
-							#{$cn}-circular-bg {
-								stroke: $css-var;
-							}
-
-							#{$cn}-circular-path {
-								stroke: $css-var;
-							}
+		// Color
+		@each $priority in var.$color-priorities {
+			@each $tint in var.$color-tint {
+				&._color-#{$priority}#{$tint} {
+					@include mix.color-var($priority, $tint) using ($css-var) {
+						#{$cn}-check-path {
+							stroke: $css-var;
 						}
 					}
 				}
 			}
 		}
+	}
 
-		&-check {
-			width: 49%;
-			height: 49%;
-			position: relative;
-			z-index: 1;
+	// チェックアイコンの表示トランジション
+	&-icon-enter-active {
+		transition: opacity 0.2s ease, transform 0.2s ease;
+	}
 
-			&-path {
-				stroke: var(--color-dark);
-				stroke-dasharray: 50;
-				stroke-dashoffset: 50;
-				animation: circleCheck-checkDraw 0.35s ease forwards;
-			}
+	&-icon-enter-from {
+		opacity: 0;
+	}
 
-			// Color
-			@each $priority in var.$color-priorities {
-				@each $tint in var.$color-tint {
-					&._color-#{$priority}#{$tint} {
-						@include mix.color-var($priority, $tint) using ($css-var) {
-							#{$cn}-check-path {
-								stroke: $css-var;
-							}
-						}
-					}
-				}
-			}
+	&-icon-enter-to {
+		opacity: 1;
+	}
+
+	// 円描画アニメーション（上から時計回り）
+	@keyframes circleCheck-draw {
+		0% {
+			stroke-dashoffset: var(--circle-circumference);
 		}
 
-		// チェックアイコンの表示トランジション
-		&-icon-enter-active {
-			transition: opacity 0.2s ease, transform 0.2s ease;
+		100% {
+			stroke-dashoffset: 0;
+		}
+	}
+
+	// チェックマーク描画アニメーション
+	@keyframes circleCheck-checkDraw {
+		0% {
+			stroke-dashoffset: 50;
 		}
 
-		&-icon-enter-from {
-			opacity: 0;
-		}
-
-		&-icon-enter-to {
-			opacity: 1;
-		}
-
-		// 円描画アニメーション（上から時計回り）
-		@keyframes circleCheck-draw {
-			0% {
-				stroke-dashoffset: var(--circle-circumference);
-			}
-
-			100% {
-				stroke-dashoffset: 0;
-			}
-		}
-
-		// チェックマーク描画アニメーション
-		@keyframes circleCheck-checkDraw {
-			0% {
-				stroke-dashoffset: 50;
-			}
-
-			100% {
-				stroke-dashoffset: 0;
-			}
+		100% {
+			stroke-dashoffset: 0;
 		}
 	}
 }
