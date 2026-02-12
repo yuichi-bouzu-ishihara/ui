@@ -206,8 +206,8 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 		}
 
 		&-check {
-			width: 70%;
-			height: 70%;
+			width: 49%;
+			height: 49%;
 			position: relative;
 			z-index: 1;
 
