@@ -3,7 +3,10 @@
     "allow": [
       "Bash(npx vue-tsc:*)",
       "Bash(npx nuxi prepare)",
-      "Bash(npx nuxi typecheck:*)"
+      "Bash(npx nuxi typecheck:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(npm run build:*)"
     ]
   }
 }
