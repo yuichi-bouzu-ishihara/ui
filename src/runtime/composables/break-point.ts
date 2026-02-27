@@ -6,7 +6,8 @@ import type { UIConfig } from '../types'
 import type { BreakPointConfig } from '../types/break-point'
 import { useUI } from './ui'
 import { useString } from './string'
-import { reactive, useState, useAppConfig, readonly } from '#imports'
+import { useViewport } from './viewport'
+import { reactive, useState, useAppConfig, readonly, watch } from '#imports'
 
 // Constants ------------------------------------------------------------------------------------------------------------
 const DATA_VALUE = 'breakPoint'
@@ -23,12 +24,16 @@ export const useBreakPoint = () => {
 	// useState
 	const config = useState<BreakPointConfig | null>('ui-breakPoint-config', () => null)
 	const isInitialized = useState<boolean>('ui-breakPoint-isInitialized', () => false)
+	const isViewportWatchInitialized = useState<boolean>('ui-breakPoint-isViewportWatchInitialized', () => false)
 	const currentScreenSize = useState<string>('ui-breakPoint-currentScreenSize', () => '')
 
 	/**
 	 * 初期化
 	 */
 	const init = () => {
+		// 既に初期化済みなら何もしない
+		if (isInitialized.value) return
+
 		// window object がない場合は何もしない
 		if (typeof window === 'undefined' || !window.getComputedStyle) {
 			throw new Error('Typography の初期化に失敗しました。windowオブジェクトが存在しないか、window.getComputedStyleが利用できません。')
@@ -127,6 +132,56 @@ export const useBreakPoint = () => {
 
 		// 初期化済みフラグをセット
 		isInitialized.value = true
+
+		// viewport.width の watch を設定（フォールバック機構）
+		initViewportWatch()
+	}
+
+	/**
+	 * viewport.width（数値px）から該当するブレークポイントを判定する関数
+	 * @param width ビューポート幅（px）
+	 * @returns 現在のスクリーンサイズ（'xxl', 'xl', 'l', 'm', 's', 'xs'）
+	 */
+	const getScreenSizeFromWidth = (width: number): string => {
+		if (!config.value) return SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1]
+
+		// SCREEN_SIZE_VARS は大きい順: ['xxl', 'xl', 'l', 'm', 's', 'xs']
+		for (const size of SCREEN_SIZE_VARS) {
+			const breakpointValue = config.value[size as keyof BreakPointConfig]
+			if (typeof breakpointValue !== 'string') continue
+			const breakpointPx = Number.parseInt(breakpointValue, 10)
+			if (width >= breakpointPx) {
+				return size
+			}
+		}
+		return SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1] // 'xs'
+	}
+
+	/**
+	 * viewport.width を watch して currentScreenSize を更新する（フォールバック機構）
+	 * MediaQueryList の change イベントが発火しない場合の補完として機能
+	 */
+	const initViewportWatch = () => {
+		// 既に初期化済みなら何もしない
+		if (isViewportWatchInitialized.value) return
+
+		const viewport = useViewport()
+
+		watch(
+			() => viewport.width.value,
+			(newWidth) => {
+				if (newWidth > 0 && config.value) {
+					const newSize = getScreenSizeFromWidth(newWidth)
+					// 値が変わった場合のみ更新（競合回避）
+					if (currentScreenSize.value !== newSize) {
+						currentScreenSize.value = newSize
+					}
+				}
+			},
+			{ immediate: false },
+		)
+
+		isViewportWatchInitialized.value = true
 	}
 
 	const above = (size: string): boolean => {
