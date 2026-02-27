@@ -31,10 +31,116 @@ const JA_LOAD_CHARS_CHUNKS = () => {
 
 export const useWebFontTypeSquare = () => {
 	const isLoaded = useState<boolean>('ui-webfont-typeSquare-isLoaded', () => false)
+	const isAllFontsLoaded = useState<boolean>('ui-webfont-typeSquare-isAllFontsLoaded', () => false)
+	const isScriptLoaded = useState<boolean>('ui-webfont-typeSquare-isScriptLoaded', () => false)
 	const config = useState<WebfontConfig['typeSquare'] | null>('ui-webfont-typeSquare-typeSquareConfig', () => null)
 
 	/**
+	 * TypeSquareスクリプトのみを読み込む（自動読み込みモード用）
+	 */
+	const loadScript = (id: string): Promise<void> => {
+		return new Promise((resolve, reject) => {
+			if (isScriptLoaded.value) {
+				resolve()
+				return
+			}
+
+			const scriptElement = document.createElement('script')
+			scriptElement.src = `https://typesquare.com/3/tsst/script/ja/typesquare.js?${id}`
+			scriptElement.type = 'text/javascript'
+			scriptElement.onload = () => {
+				isScriptLoaded.value = true
+				resolve()
+			}
+			scriptElement.onerror = () => {
+				reject(new Error('Failed to load TypeSquare script'))
+			}
+			document.head.appendChild(scriptElement)
+		})
+	}
+
+	/**
+	 * 全フォントデータをロードする内部関数
+	 */
+	const loadFontsInternal = (): Promise<void> => {
+		return new Promise((resolve) => {
+			if (!config.value || !config.value.list || config.value.list.length === 0) {
+				resolve()
+				return
+			}
+
+			const { os } = useEnvironment()
+
+			// 全てのフォントデータを格納するための変数
+			let allFontsStyle = ''
+
+			// 読み込むべきフォントのみを対象とする
+			let count = JA_LOAD_CHARS_CHUNKS().length * config.value.list.filter((fontConfig) => {
+				// 現在のOSが exOS に含まれていない場合のみ true
+				return !fontConfig.exOS?.includes(os.value.name)
+			}).length
+
+			if (count === 0) {
+				resolve()
+				return
+			}
+
+			config.value.list.forEach((fontConfig) => {
+				const fontName = fontConfig.name
+				const fontWeight = fontConfig.weight || 'normal'
+				const sizeAdjust = fontConfig.sizeAdjust || '100%'
+				const ascentOverride = fontConfig.ascentOverride || 'normal'
+				const descentOverride = fontConfig.descentOverride || 'normal'
+				const exLocation = fontConfig.exLocation || []
+				const exOS = fontConfig.exOS || []
+				// フォントの読み込みを省略するURLの場合は処理しない
+				if (exLocation.length > 0 && exLocation.includes(location.href)) return
+				// 現在のOSが exOS に含まれている場合はスキップ
+				if (exOS.length > 0 && exOS.includes(os.value.name)) return
+
+				JA_LOAD_CHARS_CHUNKS().forEach((chunk) => {
+					window.Ts.loadFontAsync({
+						cssName: fontName,
+						fontFamily: fontName,
+						text: chunk,
+						outputType: 'json',
+						callbackId: Date.now(),
+						callback: (params) => {
+							count--
+							const data = JSON.parse(params.data)
+							const dataObject = JSON.parse(data.res)
+							const fontsStyle = `
+								@font-face {
+									font-family: ${dataObject.fontFamily};
+									font-weight: ${fontWeight};
+									src: url(data:font/${dataObject.format};base64,${dataObject.src});
+									size-adjust: ${sizeAdjust};
+									ascent-override: ${ascentOverride};
+									descent-override: ${descentOverride};
+								}
+							`
+							allFontsStyle += fontsStyle
+							if (count <= 0) {
+								// 全てのフォントデータが読み込まれたら、一度だけ <style> 要素を追加する
+								const styleElement = document.createElement('style')
+								styleElement.setAttribute('type', 'text/css')
+								styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_KEY)
+								styleElement.innerHTML = allFontsStyle
+								document.head.appendChild(styleElement)
+								isAllFontsLoaded.value = true
+								resolve()
+							}
+						},
+					})
+				})
+			})
+		})
+	}
+
+	/**
 	 * 初期化
+	 * loadMode='auto'（デフォルト）: TypeSquareスクリプトのみ読み込み（ページ内の文字を自動検出してロード）
+	 * loadMode='preload': 従来の一括読み込み（JIS第1水準漢字すべてをロード）
 	 */
 	const init = (payload: WebfontConfig['typeSquare']) => {
 		// 読み込み済みは何もしない
@@ -43,87 +149,26 @@ export const useWebFontTypeSquare = () => {
 		config.value = payload
 		if (!config.value || !config.value.list || config.value.list.length === 0) return
 
-		const promises = []
 		const id = config.value.id
-
 		// id がない場合は何もしない
 		if (!id) return
 
-		const { os } = useEnvironment()
+		const loadMode = config.value.loadMode ?? 'auto'
 
-		// TypeSquare のスクリプトを必ず読み込む
-		// 全てのフォントデータを格納するための変数
-		let allFontsStyle = ''
-
-		promises.push(
-			new Promise((resolve) => {
-				const scriptElement = document.createElement('script')
-				scriptElement.src = `https://typesquare.com/3/tsst/script/ja/typesquare.js?${id}`
-				scriptElement.type = 'text/javascript'
-				scriptElement.onload = () => {
-					if (!config.value || !config.value.list || config.value.list.length === 0) return
-					// 読み込むべきフォントのみを対象とする
-					let count = JA_LOAD_CHARS_CHUNKS().length * config.value.list.filter((fontConfig) => {
-						// 現在のOSが exOS に含まれていない場合のみ true
-						return !fontConfig.exOS?.includes(os.value.name)
-					}).length
-
-					config.value.list.forEach((fontConfig) => {
-						const fontName = fontConfig.name
-						const fontWeight = fontConfig.weight || 'normal'
-						const sizeAdjust = fontConfig.sizeAdjust || '100%'
-						const ascentOverride = fontConfig.ascentOverride || 'normal'
-						const descentOverride = fontConfig.descentOverride || 'normal'
-						const exLocation = fontConfig.exLocation || []
-						const exOS = fontConfig.exOS || []
-						// フォントの読み込みを省略するURLの場合は処理しない
-						if (exLocation.length > 0 && exLocation.includes(location.href)) return
-						// 現在のOSが exOS に含まれている場合はスキップ
-						if (exOS.length > 0 && exOS.includes(os.value.name)) return
-
-						JA_LOAD_CHARS_CHUNKS().forEach((chunk) => {
-							window.Ts.loadFontAsync({
-								cssName: fontName,
-								fontFamily: fontName,
-								text: chunk,
-								outputType: 'json',
-								callbackId: Date.now(),
-								callback: (params) => {
-									count--
-									const data = JSON.parse(params.data)
-									const dataObject = JSON.parse(data.res)
-									const fontsStyle = `
-										@font-face {
-											font-family: ${dataObject.fontFamily};
-											font-weight: ${fontWeight};
-											src: url(data:font/${dataObject.format};base64,${dataObject.src});
-											size-adjust: ${sizeAdjust};
-											ascent-override: ${ascentOverride};
-											descent-override: ${descentOverride};
-										}
-									`
-									allFontsStyle += fontsStyle
-									if (count <= 0) {
-										// 全てのフォントデータが読み込まれたら、一度だけ <style> 要素を追加する
-										const styleElement = document.createElement('style')
-										styleElement.setAttribute('type', 'text/css')
-										styleElement.setAttribute(`data-${useUI().dataKey}`, DATA_KEY)
-										styleElement.innerHTML = allFontsStyle
-										document.head.appendChild(styleElement)
-										resolve(true)
-									}
-								},
-							})
-						})
-					})
-				}
-				document.head.appendChild(scriptElement)
-			}),
-		)
-
-		if (promises.length) {
-			Promise.allSettled(promises).then(() => {
-				// 読み込み完了にする
+		if (loadMode === 'auto') {
+			// 自動読み込みモード: スクリプトのみ読み込み
+			// TypeSquareが自動的にページ内の文字を検出してロードする
+			loadScript(id).then(() => {
+				isLoaded.value = true
+			}).catch((error: unknown) => {
+				console.error(error)
+			})
+		}
+		else {
+			// preloadモード: 従来の一括読み込み
+			loadScript(id).then(() => {
+				return loadFontsInternal()
+			}).then(() => {
 				isLoaded.value = true
 			}).catch((error: unknown) => {
 				console.error(error)
@@ -131,9 +176,46 @@ export const useWebFontTypeSquare = () => {
 		}
 	}
 
+	/**
+	 * 全フォントデータを読み込む
+	 * ユーザー入力時など、任意のタイミングで呼び出すことで、すべてのJIS第1水準漢字のフォントデータをロードします。
+	 * @returns Promise<boolean> - 読み込み成功時はtrue、既に読み込み済みまたはエラー時はfalse
+	 */
+	const loadAllFonts = async (): Promise<boolean> => {
+		// 既に全フォント読み込み済みの場合は何もしない
+		if (isAllFontsLoaded.value) return false
+
+		// ブラウザ環境でない場合は何もしない
+		if (typeof window === 'undefined') return false
+
+		// 設定がない場合は何もしない
+		if (!config.value || !config.value.list || config.value.list.length === 0) return false
+
+		const id = config.value.id
+		if (!id) return false
+
+		try {
+			// スクリプトが未読み込みの場合は先に読み込む
+			if (!isScriptLoaded.value) {
+				await loadScript(id)
+			}
+
+			// 全フォントデータを読み込む
+			await loadFontsInternal()
+			return true
+		}
+		catch (error: unknown) {
+			console.error(error)
+			return false
+		}
+	}
+
 	return {
 		init,
+		loadAllFonts,
 		isLoaded: readonly(isLoaded),
+		isAllFontsLoaded: readonly(isAllFontsLoaded),
+		isScriptLoaded: readonly(isScriptLoaded),
 		config: readonly(config),
 	}
 }

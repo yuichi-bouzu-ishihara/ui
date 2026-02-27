@@ -1,6 +1,13 @@
 export type WebfontConfig = {
 	typeSquare: {
 		id: string
+		/**
+		 * フォント読み込みモード
+		 * - 'auto': TypeSquare標準の自動読み込み（ページ内の文字を検出してロード）。初期表示の崩れを防ぐ。
+		 * - 'preload': 従来の一括読み込み（JIS第1水準漢字すべてをロード）
+		 * @default 'auto'
+		 */
+		loadMode?: 'auto' | 'preload'
 		list: {
 			name: string
 			weight: string
