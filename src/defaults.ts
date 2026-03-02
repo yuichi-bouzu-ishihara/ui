@@ -171,6 +171,7 @@ export const defaultOptions = {
 		},
 		typeSquare: {
 			id: typeSquareId,
+			loadMode: 'auto',
 			list: [
 				{
 					name: '',
