@@ -167,6 +167,15 @@ export const useBreakPoint = () => {
 
 		const viewport = useViewport()
 
+		// 初期化時点でviewport.widthが既に設定されている場合に対応
+		// （DevToolsのデバイスエミュレーション切り替え時など）
+		if (viewport.width.value > 0 && config.value) {
+			const initialSize = getScreenSizeFromWidth(viewport.width.value)
+			if (currentScreenSize.value !== initialSize) {
+				currentScreenSize.value = initialSize
+			}
+		}
+
 		watch(
 			() => viewport.width.value,
 			(newWidth) => {
