@@ -4,7 +4,7 @@
 			<div class="sheet-inner">
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
-						<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height" class="sheet-inner-item-content"
+						<Box class="sheet-inner-item-content"
 							w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box ref="headerEl" sticky top="0" w="100%" :z-index="headerZIndex">
