@@ -4,8 +4,7 @@
 			<div class="sheet-inner">
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
-						<Box class="sheet-inner-item-content"
-							w="100%" ml="auto" mr="auto" :color="backgroundColor">
+						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto" :color="backgroundColor">
 							<template v-if="isHeader">
 								<Box ref="headerEl" sticky top="0" w="100%" :z-index="headerZIndex">
 									<Container class="sheet-inner-item-content-header" v-bind="container" no-padding>
@@ -274,7 +273,7 @@ $cn: '.sheet'; // コンポーネントセレクタ名
 			&-content {
 				padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
 				height: calc(var(--sheet-inner-height) - var(--sheet-top-space));
-				border-radius: #{var.$border-radius-xlarge}px;
+				border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
 
 				&-header {
 					border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
@@ -302,6 +301,10 @@ $cn: '.sheet'; // コンポーネントセレクタ名
 	@include mix.breakpoint('base') {
 		&-inner {
 			align-items: center;
+		}
+
+		&:not(._full) &-inner-item-content {
+			border-radius: #{var.$border-radius-xlarge}px;
 		}
 	}
 }
