@@ -32,8 +32,8 @@
 							</Box>
 						</template>
 						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto"
-							:mt="isHeader ? 'calc(-1 * var(--header-height))' : 0"
-							:pt="isContentOverflow ? 'var(--header-height)' : 0" :color="backgroundColor">
+							:mt="isHeader ? 'calc(-1 * var(--header-height))' : 0" :pt="isHeader ? 'var(--header-height)' : 0"
+							:color="backgroundColor">
 							<Box w="100%" relative z-index="0" :h="`calc(100% ${isHeader ? '+' : '-'} var(--header-height))`">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
