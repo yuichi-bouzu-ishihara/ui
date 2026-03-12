@@ -1,0 +1,98 @@
+name: Create GitHub Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          echo "tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "Previous tag: $PREV_TAG"
+
+      - name: Get commit messages
+        id: commits
+        run: |
+          if [ -n "${{ steps.prev_tag.outputs.tag }}" ]; then
+            COMMITS=$(git log ${{ steps.prev_tag.outputs.tag }}..HEAD --pretty=format:"- %s" --no-merges)
+          else
+            COMMITS=$(git log --pretty=format:"- %s" --no-merges -20)
+          fi
+
+          # Escape for GitHub Actions output
+          COMMITS="${COMMITS//'%'/'%25'}"
+          COMMITS="${COMMITS//$'\n'/'%0A'}"
+          COMMITS="${COMMITS//$'\r'/'%0D'}"
+
+          echo "commits=$COMMITS" >> $GITHUB_OUTPUT
+
+      - name: Format release notes with Claude
+        id: format
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # Decode commits
+          COMMITS=$(echo "${{ steps.commits.outputs.commits }}" | sed 's/%0A/\n/g' | sed 's/%0D//g' | sed 's/%25/%/g')
+
+          # Create prompt
+          PROMPT="以下のGitコミットメッセージをもとに、日本語でリリースノートを作成してください。
+
+ルール:
+- カテゴリごとに分類（機能追加、修正、改善、その他）
+- 簡潔でわかりやすい説明
+- 技術的な詳細は適度に省略
+- マークダウン形式
+
+コミットメッセージ:
+$COMMITS
+
+リリースノート:"
+
+          # Call Claude API
+          RESPONSE=$(curl -s https://api.anthropic.com/v1/messages \
+            -H "Content-Type: application/json" \
+            -H "x-api-key: $ANTHROPIC_API_KEY" \
+            -H "anthropic-version: 2023-06-01" \
+            -d "$(jq -n \
+              --arg prompt "$PROMPT" \
+              '{
+                model: "claude-sonnet-4-20250514",
+                max_tokens: 1024,
+                messages: [{role: "user", content: $prompt}]
+              }')")
+
+          # Extract content from response
+          RELEASE_NOTES=$(echo "$RESPONSE" | jq -r '.content[0].text // empty')
+
+          if [ -z "$RELEASE_NOTES" ]; then
+            echo "Claude API failed, using raw commits"
+            RELEASE_NOTES="## Changes
+
+$COMMITS"
+          fi
+
+          # Save to file for gh release
+          echo "$RELEASE_NOTES" > release_notes.md
+          echo "Release notes generated"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create ${{ github.ref_name }} \
+            --title "${{ github.ref_name }}" \
+            --notes-file release_notes.md
