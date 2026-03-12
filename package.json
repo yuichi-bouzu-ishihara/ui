@@ -34,12 +34,11 @@
     "src/runtime/assets"
   ],
   "scripts": {
-    "version": "changelogen --no-github-release 2>&1 | tee .changelog-output.txt",
+    "version": "changelogen --no-github-release",
     "prepublishOnly": "npm run prepack ",
-    "show-release-notes": "echo '\n\n=== Release Notes ===' && cat .changelog-output.txt && rm .changelog-output.txt",
-    "pub:patch": "npm run lint && npm version patch && npm publish && git push --follow-tags && npm run show-release-notes",
-    "pub:minor": "npm run lint && npm version minor && npm publish && git push --follow-tags && npm run show-release-notes",
-    "pub:major": "npm run lint && npm version major && npm publish && git push --follow-tags && npm run show-release-notes",
+    "pub:patch": "npm run lint && npm version patch && npm publish && git push --follow-tags",
+    "pub:minor": "npm run lint && npm version minor && npm publish && git push --follow-tags",
+    "pub:major": "npm run lint && npm version major && npm publish && git push --follow-tags",
     "pub:local": "npm run lint && npm run prepublishOnly && mv *.tgz ./packs/",
     "generate-icons": "node ./src/runtime/scripts/generateIcon-list.js && node ./src/runtime/scripts/generateIcon-scss.js",
     "prepack": "nuxt-module-build build || true",
