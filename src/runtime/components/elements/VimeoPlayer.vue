@@ -57,16 +57,36 @@ const play = async () => {
 		try {
 			setMuted(muted.value)
 			setVolume(volume.value)
-			await vimeoPlayer.play()
+			const promise = vimeoPlayer.play()
+			playPromise.value = promise
+			await promise
 		}
 		catch (error: unknown) {
-			console.error('Vimeo play error:', error)
+			// PlayInterrupted エラーは pause() による意図的な中断なので無視
+			if (error instanceof Error && error.name === 'PlayInterrupted') {
+				// 意図的な中断なのでログを出さない
+			}
+			else {
+				console.error('Vimeo play error:', error)
+			}
+		}
+		finally {
+			playPromise.value = null
 		}
 	}
 }
 
 const pause = async () => {
 	if (vimeoPlayer) {
+		// play() が実行中の場合、完了を待ってから pause() を実行
+		if (playPromise.value) {
+			try {
+				await playPromise.value
+			}
+			catch {
+				// play() のエラーは play() 側で処理するので無視
+			}
+		}
 		try {
 			await vimeoPlayer.pause()
 		}
@@ -170,6 +190,7 @@ const previousState = ref('') // 前回のstate
 const bufferStartCount = ref(0) // bufferstartの発生回数
 const bufferTimeoutTimer = ref<NodeJS.Timeout | null>(null) // bufferstart後のタイムアウトタイマー
 const progressTimeoutTimer = ref<NodeJS.Timeout | null>(null) // progress後のタイムアウトタイマー
+const playPromise = ref<Promise<void> | null>(null) // play() の Promise を保持
 
 // Computed -----------------------------------------------
 const classes = computed(() => {
@@ -347,14 +368,21 @@ const onSeeked = async () => {
 			// 一時的にミュートしてから再生（音声が流れないようにする）
 			await vimeoPlayer.setMuted(true)
 			// 一時的に再生してフレームを更新
-			await vimeoPlayer.play()
+			const playPromiseLocal = vimeoPlayer.play()
+			await playPromiseLocal
 			// すぐに停止（フレームは更新されたまま）
 			await vimeoPlayer.pause()
 			// 元のミュート状態に戻す
 			await vimeoPlayer.setMuted(wasMuted)
 		}
 		catch (error: unknown) {
-			console.error('Vimeo preview update error:', error)
+			// PlayInterrupted エラーは無視（フレーム更新のための一時再生なので問題ない）
+			if (error instanceof Error && error.name === 'PlayInterrupted') {
+				// 意図的な中断なのでログを出さない
+			}
+			else {
+				console.error('Vimeo preview update error:', error)
+			}
 		}
 	}
 }
@@ -629,14 +657,21 @@ watch(
 						const wasMuted = muted.value
 						// 一時的にミュートしてから再生（音声が流れないようにする）
 						await vimeoPlayer.setMuted(true)
-						await vimeoPlayer.play()
+						const playPromiseLocal = vimeoPlayer.play()
+						await playPromiseLocal
 						await vimeoPlayer.pause()
 						// 元のミュート状態に戻す
 						await vimeoPlayer.setMuted(wasMuted)
 					}
 				}
 				catch (error: unknown) {
-					console.error('Vimeo seek error:', error)
+					// PlayInterrupted エラーは無視
+					if (error instanceof Error && error.name === 'PlayInterrupted') {
+						// 意図的な中断なのでログを出さない
+					}
+					else {
+						console.error('Vimeo seek error:', error)
+					}
 				}
 			}
 		}
