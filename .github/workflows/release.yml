@@ -22,9 +22,34 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Get previous tag
+        id: prev_tag
+        run: |
+          # Get the tag before the current one
+          CURRENT_TAG="${{ github.ref_name }}"
+          PREV_TAG=$(git tag --sort=-v:refname | grep -A1 "^${CURRENT_TAG}$" | tail -n1)
+
+          if [ -z "$PREV_TAG" ] || [ "$PREV_TAG" = "$CURRENT_TAG" ]; then
+            # Fallback: get the second most recent tag
+            PREV_TAG=$(git tag --sort=-v:refname | sed -n '2p')
+          fi
+
+          echo "Current tag: $CURRENT_TAG"
+          echo "Previous tag: $PREV_TAG"
+          echo "tag=$PREV_TAG" >> $GITHUB_OUTPUT
+
       - name: Generate changelog with changelogen
         run: |
-          npx changelogen@latest --no-github-release --output changelog_output.md
+          PREV_TAG="${{ steps.prev_tag.outputs.tag }}"
+
+          if [ -n "$PREV_TAG" ]; then
+            echo "Generating changelog from $PREV_TAG to HEAD"
+            npx changelogen@latest --from "$PREV_TAG" --no-github-release --output changelog_output.md
+          else
+            echo "No previous tag found, generating full changelog"
+            npx changelogen@latest --no-github-release --output changelog_output.md
+          fi
+
           echo "=== Changelogen Output ==="
           cat changelog_output.md
 
