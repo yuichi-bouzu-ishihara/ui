@@ -4,35 +4,37 @@
 			<div class="sheet-inner">
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
-						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto" :color="backgroundColor">
-							<template v-if="isHeader">
-								<Box ref="headerEl" sticky top="0" w="100%" :z-index="headerZIndex">
-									<Container class="sheet-inner-item-content-header" v-bind="container" no-padding>
-										<SlotHeader v-bind="{ title, pagenation }" blur :background="backgroundColor" :color="textColor"
-											:style="{ padding: `0 ${containerSideSpace}` }">
-											<template #left>
-												<IconUI v-if="back" :icon="{ name: 'arrowLeft', size: 18, color: textColor }"
-													:box="{ w: 36, h: 36 }" @click="emit('back')" />
-												<IconUI v-else-if="leftIcon" :icon="{ name: leftIcon, size: 18, color: textColor }"
-													:box="{ w: 36, h: 36 }" @click="emit('left-icon-click')" />
-												<slot v-else name="header-left" />
-											</template>
-											<template #right>
-												<IconUI v-if="close" :icon="{ name: 'cross', size: 18, color: textColor }"
-													:box="{ w: 36, h: 36 }" @click="emit('close')" />
-												<IconUI v-else-if="rightIcon" :icon="{ name: rightIcon, size: 18, color: textColor }"
-													:box="{ w: 36, h: 36 }" @click="emit('right-icon-click')" />
-												<slot v-else name="header-right" />
-											</template>
-											<template #center>
-												<slot name="header-center" />
-											</template>
-										</SlotHeader>
-									</Container>
-								</Box>
-							</template>
-							<Box w="100%" relative z-index="0"
-								:h="`calc(100% - var(--header-height) - ${footnoteRect?.height || 0}px)`">
+						<template v-if="isHeader">
+							<Box ref="headerEl" sticky top="0" w="100%" z-index="1">
+								<Container v-bind="container" no-padding>
+									<SlotHeader v-bind="{ title, pagenation }" :blur="isScrollTop"
+										:background="isScrollTop ? backgroundColor : 'transparent'" :color="textColor"
+										:style="{ padding: `0 ${containerSideSpace}` }">
+										<template #left>
+											<IconUI v-if="back" :icon="{ name: 'arrowLeft', size: 18, color: textColor }"
+												:box="{ w: 36, h: 36 }" @click="emit('back')" />
+											<IconUI v-else-if="leftIcon" :icon="{ name: leftIcon, size: 18, color: textColor }"
+												:box="{ w: 36, h: 36 }" @click="emit('left-icon-click')" />
+											<slot v-else name="header-left" />
+										</template>
+										<template #right>
+											<IconUI v-if="close" :icon="{ name: 'cross', size: 18, color: textColor }" :box="{ w: 36, h: 36 }"
+												@click="emit('close')" />
+											<IconUI v-else-if="rightIcon" :icon="{ name: rightIcon, size: 18, color: textColor }"
+												:box="{ w: 36, h: 36 }" @click="emit('right-icon-click')" />
+											<slot v-else name="header-right" />
+										</template>
+										<template #center>
+											<slot name="header-center" />
+										</template>
+									</SlotHeader>
+								</Container>
+							</Box>
+						</template>
+						<Box class="sheet-inner-item-content" w="100%" ml="auto" mr="auto"
+							:mt="isHeader ? 'calc(-1 * var(--header-height))' : 0"
+							:pt="isContentOverflow ? 'var(--header-height)' : 0" :color="backgroundColor">
+							<Box w="100%" relative z-index="0" :h="`calc(100% ${isHeader ? '+' : '-'} var(--header-height))`">
 								<Column class="sheet-inner-item-content-main" :align="center ? 'center' : 'start'" justify="stretch"
 									fit-w :fit-h="center">
 									<Box v-resize="(rect: DOMRectReadOnly) => contentHeight = rect.height">
@@ -40,7 +42,8 @@
 									</Box>
 								</Column>
 							</Box>
-							<Box v-if="footnote" v-resize="(rect: DOMRectReadOnly) => footnoteRect = rect" p="16" opacity="0.6">
+							<Box v-if="footnote" v-resize="(rect: DOMRectReadOnly) => footnoteRect = rect" sticky bottom="0" w="100%"
+								z-index="1" p="16" opacity="0.6">
 								<Container v-bind="container">
 									<Center>
 										<Typography footnote center cap-height-baseline :color="textColor">
@@ -105,9 +108,9 @@ const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click', 'back'
 // Data -----------------------------------------------
 const contentHeight = ref(0)
 const isContentOverflow = ref(false)
+const isScrollTop = ref(false)
 const headerEl = ref<HTMLElement | null>(null)
 const sheetEl = ref<HTMLElement | null>(null)
-const headerZIndex = ref(0)
 const footnoteRect = ref<DOMRectReadOnly | null>(null)
 
 // Computed -----------------------------------------------
@@ -222,7 +225,7 @@ const onSheetScroll = () => {
 	const sheetRect = sheetEl.value.getBoundingClientRect()
 	if (!headerRect) return
 	// header の top がスクロールコンテナの top とほぼ一致すれば sticky 状態
-	headerZIndex.value = Math.abs(headerRect.top - sheetRect.top) < 2 ? 1 : 0
+	isScrollTop.value = Math.abs(headerRect.top - sheetRect.top) < 2 ? true : false
 }
 
 // Lifecycle -----------------------------------------------
@@ -273,12 +276,8 @@ $cn: '.sheet'; // コンポーネントセレクタ名
 			&-content {
 				padding-bottom: env(safe-area-inset-bottom) !important; // iPhoneX 以降のホームボタンの下の余白
 				height: calc(var(--sheet-inner-height) - var(--sheet-top-space));
-				border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
-
-				&-header {
-					border-radius: #{var.$border-radius-xlarge}px #{var.$border-radius-xlarge}px 0 0;
-					overflow: hidden;
-				}
+				border-radius: #{var.$border-radius-xlarge}px;
+				overflow: hidden;
 
 				&-main {
 					border-radius: #{var.$border-radius-xlarge}px !important;
