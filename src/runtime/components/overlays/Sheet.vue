@@ -103,7 +103,13 @@ const props = defineProps({
 })
 
 // Emits -----------------------
-const emit = defineEmits(['close', 'left-icon-click', 'right-icon-click', 'back'])
+const emit = defineEmits<{
+	'close': []
+	'left-icon-click': []
+	'right-icon-click': []
+	'back': []
+	'header-stuck': [isStuck: boolean] // header が sticky 状態（スクロールコンテナの上端に張り付いている）かどうか
+}>()
 
 // Data -----------------------------------------------
 const contentHeight = ref(0)
@@ -216,6 +222,10 @@ watch(() => [viewport.height.value, contentHeight.value], () => {
 		isContentOverflow.value = false
 	}
 }, { immediate: true })
+
+watch(isScrollTop, (value) => {
+	emit('header-stuck', value)
+})
 
 // Scroll -----------------------------------------------
 // header が sticky 状態（スクロールコンテナの上端に張り付いている）かどうかを判定し、z-index を動的に切り替える
