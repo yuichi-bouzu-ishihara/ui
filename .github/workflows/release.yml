@@ -17,38 +17,32 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get previous tag
-        id: prev_tag
-        run: |
-          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
-          echo "tag=$PREV_TAG" >> $GITHUB_OUTPUT
-          echo "Previous tag: $PREV_TAG"
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-      - name: Get commit messages
+      - name: Generate changelog with changelogen
         run: |
-          if [ -n "${{ steps.prev_tag.outputs.tag }}" ]; then
-            git log ${{ steps.prev_tag.outputs.tag }}..HEAD --pretty=format:"- %s" --no-merges > commits.txt
-          else
-            git log --pretty=format:"- %s" --no-merges -20 > commits.txt
-          fi
-          cat commits.txt
+          npx changelogen@latest --no-github-release --output changelog_output.md
+          echo "=== Changelogen Output ==="
+          cat changelog_output.md
 
       - name: Format release notes with Claude
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         shell: bash
         run: |
-          COMMITS=$(cat commits.txt)
+          CHANGELOG=$(cat changelog_output.md)
 
-          # Build JSON payload directly
           JSON_PAYLOAD=$(jq -n \
-            --arg commits "$COMMITS" \
+            --arg changelog "$CHANGELOG" \
             '{
               model: "claude-sonnet-4-20250514",
               max_tokens: 1024,
               messages: [{
                 role: "user",
-                content: ("以下のGitコミットメッセージをもとに、日本語でリリースノートを作成してください。\n\nルール\n- カテゴリごとに分類（機能追加、修正、改善、その他）\n- 簡潔でわかりやすい説明\n- 技術的な詳細は適度に省略\n- マークダウン形式\n\nコミットメッセージ\n" + $commits + "\n\nリリースノート")
+                content: ("以下のchangelogenで生成された変更履歴をもとに、日本語でリリースノートを作成してください。\n\nルール\n- カテゴリごとに分類（機能追加、修正、改善、その他）\n- 簡潔でわかりやすい説明\n- 技術的な詳細は適度に省略\n- マークダウン形式\n- バージョン番号のヘッダーは不要\n\n変更履歴\n" + $changelog + "\n\nリリースノート")
               }]
             }')
 
@@ -61,10 +55,8 @@ jobs:
           RELEASE_NOTES=$(echo "$RESPONSE" | jq -r '.content[0].text // empty')
 
           if [ -z "$RELEASE_NOTES" ]; then
-            echo "Claude API failed, using raw commits"
-            echo "## Changes" > release_notes.md
-            echo "" >> release_notes.md
-            cat commits.txt >> release_notes.md
+            echo "Claude API failed, using changelogen output"
+            cp changelog_output.md release_notes.md
           else
             echo "$RELEASE_NOTES" > release_notes.md
           fi
