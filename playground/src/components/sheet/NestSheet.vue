@@ -82,7 +82,8 @@ const nest = () => {
 			full: true,
 			center: true,
 			content: text.value,
-		} as Props,
+			allowDuplicate: true,
+		},
 	})
 }
 const addContent = () => {

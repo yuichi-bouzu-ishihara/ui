@@ -100,7 +100,6 @@ const props = defineProps({
 	footnote: { type: String, default: '' }, // フッターに表示するテキスト
 	center: { type: Boolean, default: false }, // コンテンツを中央に配置する
 	color: { type: Object, default: () => ({ background: '', text: '' }) }, // シートの背景色
-	allowDuplicate: { type: Boolean, default: false }, // 重複を許可するかどうか（デフォルト: false）
 })
 
 // Emits -----------------------

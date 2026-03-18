@@ -136,9 +136,18 @@ export const useSheet = () => {
 			// コンポーネント型から名前を解決（必ず文字列になる）
 			const componentName = getComponentName(pl.component)
 
-			// 重複チェック（allowDuplicate が false または未指定の場合）
-			if (!pl.allowDuplicate) {
-				const existing = list.value.find(item => item.component === componentName)
+			// 重複許可の判定:
+			// 1. Payload.allowDuplicate が true
+			// 2. Payload.props.allowDuplicate が true
+			// 3. 既存シートの props.allowDuplicate が true
+			// いずれかが true であれば重複を許可する
+			const existing = list.value.find(item => item.component === componentName)
+			const allowDuplicate = pl.allowDuplicate
+				|| (pl.props?.allowDuplicate === true)
+				|| (existing?.props?.allowDuplicate === true)
+
+			// 重複チェック（allowDuplicate が false の場合）
+			if (!allowDuplicate) {
 				// 既存のシートが current（最前面）でない場合のみ close する
 				if (existing && existing.index >= 0 && !isCurrent(existing.index)) {
 					// 既存のシートを close
