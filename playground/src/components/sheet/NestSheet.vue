@@ -1,5 +1,6 @@
 <template>
-	<Sheet class="nest1Sheet" :name="NAME" v-bind="{ title, full, wide, narrow, center }" footnote="This is a footnote">
+	<Sheet class="nest1Sheet" :name="NAME" v-bind="{ title, full, wide, narrow, center }" allow-duplicate
+		footnote="This is a footnote">
 		<template #header-right>
 			<Button xsmall rounded @click="close($attrs.index as number, false)">
 				close
@@ -81,7 +82,8 @@ const nest = () => {
 			full: true,
 			center: true,
 			content: text.value,
-		} as Props,
+			allowDuplicate: true,
+		},
 	})
 }
 const addContent = () => {

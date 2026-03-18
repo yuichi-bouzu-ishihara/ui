@@ -12,6 +12,7 @@ import type { Component } from 'vue'
 export type Payload = {
 	component: Component // コンポーネント型のみ（stringを削除）
 	props?: { [key: string]: unknown } | null
+	allowDuplicate?: boolean // 重複を許可するかどうか（デフォルト: false）
 }
 
 // 内部保存用（componentは常にstring）
@@ -20,10 +21,12 @@ type InternalPayload = {
 	component: string // 内部では常に文字列
 	props?: { [key: string]: unknown } | null
 	resolve?: (value: unknown) => void
+	allowDuplicate?: boolean // 重複を許可するかどうか
 }
 
 // Constants -----------------------------------------
 const DATA_VALUE = 'sheet'
+const ANIMATION_DURATION = 250 // シートアニメーション時間（ms）
 
 // グローバルなコンポーネントマップ（複数のbasicsを統合）
 const globalComponentMap = new Map<Component, string>()
@@ -63,6 +66,38 @@ export const useSheet = () => {
 	const current = useState<InternalPayload | null>('ui-sheet-current', () => null) // 現在表示中のシートを保持する
 	const config = useState<SheetConfig | null>('ui-sheet-config', () => null)
 
+	/**
+	 * 指定したインデックスが現在表示中のシートかどうかを判定する
+	 * @param {number} index - シートのインデックス
+	 * @returns {boolean} 現在表示中のシートかどうか
+	 */
+	const isCurrent = (index: number): boolean => {
+		return String(current.value?.index) === String(index)
+	}
+
+	/**
+	 * シートを閉じる
+	 * @param {number | 'all'} index - シートのインデックス。'all' の場合はすべて閉じる
+	 * @param {unknown} result - シートの結果
+	 */
+	const close = async (index: number | 'all', result: unknown = true) => {
+		if (index === 'all') {
+			list.value = []
+			current.value = null
+		}
+		else {
+			const pl = list.value[index]
+			if (pl) {
+				if (pl.resolve) {
+					pl.resolve(result)
+				}
+				pl.resolve = undefined
+			}
+			list.value = list.value.filter((_item, i) => i !== index)
+			current.value = list.value[list.value.length - 1] || null
+		}
+	}
+
 	return {
 		/**
 		 * 初期化
@@ -97,43 +132,43 @@ export const useSheet = () => {
 		 * @param {Payload} pl - ペイロード（componentはコンポーネント型のみ）
 		 * @returns {Promise<unknown>} シートの結果
 		 */
-		open: (pl: Payload): Promise<unknown> => {
+		open: async (pl: Payload): Promise<unknown> => {
+			// コンポーネント型から名前を解決（必ず文字列になる）
+			const componentName = getComponentName(pl.component)
+
+			// 重複許可の判定:
+			// 1. Payload.allowDuplicate が true
+			// 2. Payload.props.allowDuplicate が true
+			// 3. 既存シートの props.allowDuplicate が true
+			// いずれかが true であれば重複を許可する
+			const existing = list.value.find(item => item.component === componentName)
+			const allowDuplicate = pl.allowDuplicate
+				|| (pl.props?.allowDuplicate === true)
+				|| (existing?.props?.allowDuplicate === true)
+
+			// 重複チェック（allowDuplicate が false の場合）
+			if (!allowDuplicate) {
+				// 既存のシートが current（最前面）でない場合のみ close する
+				if (existing && existing.index >= 0 && !isCurrent(existing.index)) {
+					// 既存のシートを close
+					await close(existing.index)
+					// close アニメーション完了を待つ
+					await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION))
+				}
+			}
+
 			isOpen.value = true
 			return new Promise((rsv) => {
-				// コンポーネント型から名前を解決（必ず文字列になる）
-				const componentName = getComponentName(pl.component)
 				const payloadWithResolve: InternalPayload = {
 					index: list.value.length, // シートのインデックス - 表示順
 					component: componentName, // 文字列
 					props: pl.props,
 					resolve: rsv as (value: unknown) => void,
+					allowDuplicate: pl.allowDuplicate,
 				}
 				current.value = payloadWithResolve
 				list.value.push(payloadWithResolve)
 			})
-		},
-
-		/**
-		 * シートを閉じる
-		 * @param {number | 'all'} index - シートのインデックス。'all' の場合はすべて閉じる
-		 * @param {unknown} result - シートの結果
-		 */
-		close: async (index: number | 'all', result: unknown = true) => {
-			if (index === 'all') {
-				list.value = []
-				current.value = null
-			}
-			else {
-				const pl = list.value[index]
-				if (pl) {
-					if (pl.resolve) {
-						pl.resolve(result)
-					}
-					pl.resolve = undefined
-				}
-				list.value = list.value.filter((_item, i) => i !== index)
-				current.value = list.value[list.value.length - 1] || null
-			}
 		},
 
 		/**
@@ -159,15 +194,8 @@ export const useSheet = () => {
 			})
 		},
 
-		/**
-		 * 指定したインデックスが現在表示中のシートかどうかを判定する
-		 * @param {number} index - シートのインデックス
-		 * @returns {boolean} 現在表示中のシートかどうか
-		 */
-		isCurrent: (index: number): boolean => {
-			return String(current.value?.index) === String(index)
-		},
-
+		close,
+		isCurrent,
 		isOpen: readonly(isOpen),
 		scrollY: readonly(scrollY),
 		list: readonly(list),
