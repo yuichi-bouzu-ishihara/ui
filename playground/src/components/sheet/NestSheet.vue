@@ -30,6 +30,9 @@
 					<Button w="100%" @click="nest">
 						Add NestSheet
 					</Button>
+					<Button w="100%" @click="message">
+						Message
+					</Button>
 				</Column>
 			</Container>
 		</Column>
@@ -40,6 +43,7 @@
 <script setup lang="ts">
 import type { Component } from 'vue'
 import NestSheet from './NestSheet.vue'
+import SheetMessage from '../../../../src/runtime/components/overlays/SheetMessage.vue'
 
 export type Props = {
 	title?: string
@@ -83,11 +87,20 @@ const nest = () => {
 			center: true,
 			content: text.value,
 		},
-		allowDuplicate: list.value.length < 2 ? true : false,
+		allowDuplicate: list.value.length < 2,
 	})
 }
 const addContent = () => {
 	text.value += text.value
+}
+const message = () => {
+	open({
+		component: SheetMessage as unknown as Component,
+		props: {
+			title: 'Message',
+		},
+		allowDuplicate: list.value.length < 2,
+	})
 }
 
 // Lifecycle -----------------------------------------------
