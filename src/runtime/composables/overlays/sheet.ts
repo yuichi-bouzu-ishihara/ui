@@ -2,7 +2,6 @@
  * Sheet
  */
 import { useUI } from '../ui'
-import { useUtils } from '../utils'
 import { useCss } from '../css'
 import type { UIConfig } from '../../types'
 import type { SheetConfig } from '../../types/sheet'
@@ -27,7 +26,6 @@ type InternalPayload = {
 
 // Constants -----------------------------------------
 const DATA_VALUE = 'sheet'
-const ANIMATION_DURATION = 250 // シートアニメーション時間（ms）
 
 // グローバルなコンポーネントマップ（複数のbasicsを統合）
 const globalComponentMap = new Map<Component, string>()
@@ -154,6 +152,7 @@ export const useSheet = () => {
 			// 3. 既存シートの props.allowDuplicate が true
 			// いずれかが true であれば重複を許可する
 			const existingItems = list.value.filter(item => item.component === componentName)
+
 			console.log('existingItems', existingItems)
 			const allowDuplicate = pl.allowDuplicate ?? true
 

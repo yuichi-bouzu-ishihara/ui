@@ -141,7 +141,7 @@ const isCssColor = (color: string): boolean => {
 
 /**
  * css 変数かどうかを判定する
- * @param color 判定するカラー文字列
+ * @param variable 判定するcss変数文字列
  * @returns {boolean} css 変数の場合true
  */
 const isCssVariable = (variable: string): boolean => {
