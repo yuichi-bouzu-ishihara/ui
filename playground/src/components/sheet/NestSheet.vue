@@ -82,8 +82,8 @@ const nest = () => {
 			full: true,
 			center: true,
 			content: text.value,
-			allowDuplicate: true,
 		},
+		allowDuplicate: list.value.length < 2 ? true : false,
 	})
 }
 const addContent = () => {

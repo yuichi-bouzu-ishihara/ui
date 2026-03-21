@@ -141,16 +141,22 @@ export const useSheet = () => {
 			// 2. Payload.props.allowDuplicate が true
 			// 3. 既存シートの props.allowDuplicate が true
 			// いずれかが true であれば重複を許可する
-			const existing = list.value.find(item => item.component === componentName)
-			const allowDuplicate = pl.allowDuplicate || (pl.props?.allowDuplicate === true) || (existing?.props?.allowDuplicate === true)
+			const existingItems = list.value.filter(item => item.component === componentName)
+			const allowDuplicate = pl.allowDuplicate ?? false
 
 			// 重複チェック（allowDuplicate が false の場合）
-			if (!allowDuplicate) {
-				// 既存のシートが current（最前面）でない場合のみ close する
-				if (existing && existing.index >= 0 && !isCurrent(existing.index)) {
-					// 既存のシートを close
-					await close(existing.index)
-					// close アニメーション完了を待つ
+			if (!allowDuplicate && existingItems.length > 0) {
+				// 既存のシートで current（最前面）でないものをすべて close する
+				// インデックスが大きい順に閉じる（インデックスずれを防ぐため）
+				const itemsToClose = existingItems
+					.filter(item => item.index >= 0)
+					.sort((a, b) => b.index - a.index)
+
+				for (const item of itemsToClose) {
+					await close(item.index)
+				}
+				// close アニメーション完了を待つ
+				if (itemsToClose.length > 0) {
 					await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION))
 				}
 			}
