@@ -8,6 +8,7 @@
 				<Box w="100" h="100" />
 				<Box w="100" h="100" color="#00ff00" />
 				<Box w="100" h="100" color="rgba(0, 0, 255, 0.5)" />
+				<Box w="100" h="100" color="var(--color-light-040)" />
 			</Row>
 		</Container>
 	</Box>

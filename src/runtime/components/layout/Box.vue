@@ -13,7 +13,7 @@ import { useRegex } from '../../composables/regex'
 // Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値 に関する関数
-const { isCssColor } = useRegex()
+const { isCssColor, isCssVariable } = useRegex()
 
 // Props --------------------------------
 const props = defineProps({
@@ -80,7 +80,7 @@ const classes = computed(() => {
 	// グラデーションが設定されている場合は、カラーを処理しない
 	if (gradation === '') {
 		// モジュールに設定されたカラーが設定されている場合は、カラーを設定する
-		if (props.color !== '' && !isCssColor(props.color)) {
+		if (props.color !== '' && !isCssColor(props.color) && !isCssVariable(props.color)) {
 			color = props.color
 			color = `_color-${color.replace('color-', '').replace('-', '')}`
 		}

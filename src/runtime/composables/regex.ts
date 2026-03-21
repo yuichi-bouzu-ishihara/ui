@@ -33,6 +33,7 @@ export const useRegex = () => {
 		tiktokProfileUrlPattern,
 		isColorHexOrRgbOrRgba,
 		isCssColor,
+		isCssVariable,
 	}
 }
 
@@ -136,4 +137,13 @@ const isCssColor = (color: string): boolean => {
 	const namedColors = /^(?:transparent|currentColor|inherit|initial|unset|revert|revert-layer)$/i
 
 	return hex.test(color) || rgb.test(color) || rgba.test(color) || cssVar.test(color) || hsl.test(color) || hsla.test(color) || namedColors.test(color)
+}
+
+/**
+ * css 変数かどうかを判定する
+ * @param color 判定するカラー文字列
+ * @returns {boolean} css 変数の場合true
+ */
+const isCssVariable = (variable: string): boolean => {
+	return /^var\(\s*--[\w-]+\s*(?:,[^)]+)?\)$/i.test(variable)
 }
