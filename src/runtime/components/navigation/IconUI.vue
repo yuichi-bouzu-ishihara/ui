@@ -29,6 +29,8 @@ type Icon = {
 type BoxStyle = {
 	w: number
 	h: number
+	ml?: number
+	mr?: number
 }
 
 // Composables --------------------------------------------------
