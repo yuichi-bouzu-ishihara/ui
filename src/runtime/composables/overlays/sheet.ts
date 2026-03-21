@@ -2,6 +2,7 @@
  * Sheet
  */
 import { useUI } from '../ui'
+import { useUtils } from '../utils'
 import { useCss } from '../css'
 import type { UIConfig } from '../../types'
 import type { SheetConfig } from '../../types/sheet'
@@ -153,7 +154,7 @@ export const useSheet = () => {
 			// 3. 既存シートの props.allowDuplicate が true
 			// いずれかが true であれば重複を許可する
 			const existingItems = list.value.filter(item => item.component === componentName)
-			const allowDuplicate = pl.allowDuplicate ?? false
+			const allowDuplicate = pl.allowDuplicate ?? true
 
 			// 重複チェック（allowDuplicate が false の場合）
 			if (!allowDuplicate && existingItems.length > 0) {
@@ -164,8 +165,6 @@ export const useSheet = () => {
 
 				if (indicesToClose.length > 0) {
 					await close(indicesToClose)
-					// close アニメーション完了を待つ
-					await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION))
 				}
 			}
 

@@ -44,6 +44,28 @@
 				</Row>
 			</Column>
 		</Container>
+		<Teleport to="body">
+			<Box fixed bottom="24" right="24" z-index="1000">
+				<Column justify="end" gap="8">
+					<Button small
+						@click="sheet.open({ component: NestSheet, props: { title: 'Title dup: false', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' } })">
+						<Icon name="plus" size="16" color="light" /> NestSheet (dup: false)
+					</Button>
+					<Button small
+						@click="sheet.open({ component: NestSheet, props: { title: 'Title dup: true', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' }, allowDuplicate: true })">
+						<Icon name="plus" size="16" color="light" /> NestSheet (dup: true)
+					</Button>
+					<Button small
+						@click="sheet.open({ component: SheetMessage, props: { title: 'Title dup: false', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' } })">
+						<Icon name="plus" size="16" color="light" /> Message (dup: false)
+					</Button>
+					<Button small
+						@click="sheet.open({ component: SheetMessage, props: { title: 'Title dup: true', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' }, allowDuplicate: true })">
+						<Icon name="plus" size="16" color="light" /> Message (dup: true)
+					</Button>
+				</Column>
+			</Box>
+		</Teleport>
 	</div>
 </template>
 
