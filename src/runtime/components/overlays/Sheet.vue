@@ -18,10 +18,10 @@
 											<slot v-else name="header-left" />
 										</template>
 										<template #right>
-											<IconUI v-if="close" :icon="{ name: 'cross', size: 18, color: textColor }" :box="{ w: 36, h: 36 }"
-												@click="emit('close')" />
+											<IconUI v-if="close" :icon="{ name: 'cross', size: 18, color: textColor }"
+												:box="{ w: 36, h: 36, mr: -8 }" @click="emit('close')" />
 											<IconUI v-else-if="rightIcon" :icon="{ name: rightIcon, size: 18, color: textColor }"
-												:box="{ w: 36, h: 36 }" @click="emit('right-icon-click')" />
+												:box="{ w: 36, h: 36, ml: -8 }" @click="emit('right-icon-click')" />
 											<slot v-else name="header-right" />
 										</template>
 										<template #center>
