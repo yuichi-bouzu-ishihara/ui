@@ -154,6 +154,7 @@ export const useSheet = () => {
 			// 3. 既存シートの props.allowDuplicate が true
 			// いずれかが true であれば重複を許可する
 			const existingItems = list.value.filter(item => item.component === componentName)
+			console.log('existingItems', existingItems)
 			const allowDuplicate = pl.allowDuplicate ?? true
 
 			// 重複チェック（allowDuplicate が false の場合）
