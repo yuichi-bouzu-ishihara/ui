@@ -77,20 +77,31 @@ export const useSheet = () => {
 
 	/**
 	 * シートを閉じる
-	 * @param {number | 'all'} index - シートのインデックス。'all' の場合はすべて閉じる
-	 * @param {unknown} result - シートの結果
+	 * @param index - シートのインデックス。'all' の場合はすべて閉じる、number[] の場合は複数同時に閉じる
+	 * @param result - シートの結果
 	 */
-	const close = async (index: number | 'all', result: unknown = true) => {
+	const close = async (index: number | number[] | 'all', result: unknown = true) => {
 		if (index === 'all') {
 			list.value = []
 			current.value = null
 		}
+		else if (Array.isArray(index)) {
+			// 複数インデックスを同時に閉じる
+			const indexSet = new Set(index)
+			for (const i of indexSet) {
+				const pl = list.value[i]
+				if (pl?.resolve) {
+					pl.resolve(result)
+					pl.resolve = undefined
+				}
+			}
+			list.value = list.value.filter((_item, i) => !indexSet.has(i))
+			current.value = list.value[list.value.length - 1] || null
+		}
 		else {
 			const pl = list.value[index]
-			if (pl) {
-				if (pl.resolve) {
-					pl.resolve(result)
-				}
+			if (pl?.resolve) {
+				pl.resolve(result)
 				pl.resolve = undefined
 			}
 			list.value = list.value.filter((_item, i) => i !== index)
@@ -146,17 +157,14 @@ export const useSheet = () => {
 
 			// 重複チェック（allowDuplicate が false の場合）
 			if (!allowDuplicate && existingItems.length > 0) {
-				// 既存のシートで current（最前面）でないものをすべて close する
-				// インデックスが大きい順に閉じる（インデックスずれを防ぐため）
-				const itemsToClose = existingItems
+				// 既存のシートをすべて close する
+				const indicesToClose = existingItems
 					.filter(item => item.index >= 0)
-					.sort((a, b) => b.index - a.index)
+					.map(item => item.index)
 
-				for (const item of itemsToClose) {
-					await close(item.index)
-				}
-				// close アニメーション完了を待つ
-				if (itemsToClose.length > 0) {
+				if (indicesToClose.length > 0) {
+					await close(indicesToClose)
+					// close アニメーション完了を待つ
 					await new Promise(resolve => setTimeout(resolve, ANIMATION_DURATION))
 				}
 			}
