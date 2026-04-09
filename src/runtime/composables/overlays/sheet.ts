@@ -22,6 +22,7 @@ type InternalPayload = {
 	props?: { [key: string]: unknown } | null
 	resolve?: (value: unknown) => void
 	allowDuplicate?: boolean // 重複を許可するかどうか
+	_closeResult?: unknown // close 時の result を保存（reopen用）
 }
 
 // Constants -----------------------------------------
@@ -64,6 +65,7 @@ export const useSheet = () => {
 	const list = useState<InternalPayload[]>('ui-sheet-list', () => []) // シートのリストを保持する
 	const current = useState<InternalPayload | null>('ui-sheet-current', () => null) // 現在表示中のシートを保持する
 	const config = useState<SheetConfig | null>('ui-sheet-config', () => null)
+	const lastClosed = useState<InternalPayload[]>('ui-sheet-lastClosed', () => []) // 直近のcloseで閉じたシート（reopen用）
 
 	/**
 	 * 指定したインデックスが現在表示中のシートかどうかを判定する
@@ -80,33 +82,64 @@ export const useSheet = () => {
 	 * @param result - シートの結果
 	 */
 	const close = async (index: number | number[] | 'all', result: unknown = true) => {
+		// 既存の lastClosed の Promise を undefined で resolve（reopen されなかった場合）
+		for (const item of lastClosed.value) {
+			if (item.resolve) {
+				item.resolve(undefined)
+				item.resolve = undefined
+			}
+		}
+
+		let closing: InternalPayload[] = []
+
 		if (index === 'all') {
+			closing = [...list.value]
 			list.value = []
 			current.value = null
 		}
 		else if (Array.isArray(index)) {
 			// 複数インデックスを同時に閉じる（InternalPayload.index プロパティで検索）
 			const indexSet = new Set(index)
-			for (const i of indexSet) {
-				const pl = list.value.find(item => item.index === i)
-				if (pl?.resolve) {
-					pl.resolve(result)
-					pl.resolve = undefined
-				}
-			}
+			closing = list.value.filter(item => indexSet.has(item.index))
 			list.value = list.value.filter(item => !indexSet.has(item.index))
 			current.value = list.value[list.value.length - 1] || null
 		}
 		else {
 			// 単一インデックスを閉じる（InternalPayload.index プロパティで検索）
-			const pl = list.value.find(item => item.index === index)
-			if (pl?.resolve) {
-				pl.resolve(result)
-				pl.resolve = undefined
-			}
+			const item = list.value.find(item => item.index === index)
+			if (item) closing = [item]
 			list.value = list.value.filter(item => item.index !== index)
 			current.value = list.value[list.value.length - 1] || null
 		}
+
+		// result を保存して lastClosed にセット（resolveは保持したまま）
+		lastClosed.value = closing.map(item => ({ ...item, _closeResult: result }))
+	}
+
+	/**
+	 * 直近のcloseで閉じたシートを再度開く
+	 * @returns {boolean} 復元に成功した場合は true
+	 */
+	const reopen = (): boolean => {
+		if (lastClosed.value.length === 0) {
+			return false // 復元するシートがない
+		}
+
+		// lastClosed のシートを list に戻す
+		for (const item of lastClosed.value) {
+			// 新しいインデックスを付与（_closeResultは保持したまま）
+			const newItem: InternalPayload = { ...item, index: list.value.length }
+			list.value.push(newItem)
+		}
+
+		// current を更新
+		current.value = list.value[list.value.length - 1] || null
+		isOpen.value = true
+
+		// lastClosed をクリア
+		lastClosed.value = []
+
+		return true
 	}
 
 	return {
@@ -207,10 +240,12 @@ export const useSheet = () => {
 		},
 
 		close,
+		reopen,
 		isCurrent,
 		isOpen: readonly(isOpen),
 		scrollY: readonly(scrollY),
 		list: readonly(list),
+		lastClosed: readonly(lastClosed),
 		color: config.value ? readonly(config.value).color : { background: '', text: '' },
 		current: readonly(current),
 	}
