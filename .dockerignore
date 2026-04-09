@@ -1,0 +1,46 @@
+# Dependencies (will be installed in container)
+node_modules
+playground/node_modules
+
+# Git
+.git
+.gitignore
+
+# Claude Code / ECC
+everything-claude-code
+.claude
+.mcp.json
+
+# Build outputs (will be generated in container)
+dist
+.nuxt
+.output
+
+# Development
+.vscode
+.idea
+*.iml
+
+# Testing
+reports
+coverage
+*.lcov
+.nyc_output
+
+# Logs
+*.log*
+
+# Temp
+.temp
+.tmp
+.cache
+
+# OS files
+.DS_Store
+
+# Local env
+.env.local
+.env.*.local
+
+# Packs
+packs
