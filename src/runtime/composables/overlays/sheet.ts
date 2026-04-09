@@ -85,25 +85,26 @@ export const useSheet = () => {
 			current.value = null
 		}
 		else if (Array.isArray(index)) {
-			// 複数インデックスを同時に閉じる
+			// 複数インデックスを同時に閉じる（InternalPayload.index プロパティで検索）
 			const indexSet = new Set(index)
 			for (const i of indexSet) {
-				const pl = list.value[i]
+				const pl = list.value.find(item => item.index === i)
 				if (pl?.resolve) {
 					pl.resolve(result)
 					pl.resolve = undefined
 				}
 			}
-			list.value = list.value.filter((_item, i) => !indexSet.has(i))
+			list.value = list.value.filter(item => !indexSet.has(item.index))
 			current.value = list.value[list.value.length - 1] || null
 		}
 		else {
-			const pl = list.value[index]
+			// 単一インデックスを閉じる（InternalPayload.index プロパティで検索）
+			const pl = list.value.find(item => item.index === index)
 			if (pl?.resolve) {
 				pl.resolve(result)
 				pl.resolve = undefined
 			}
-			list.value = list.value.filter((_item, i) => i !== index)
+			list.value = list.value.filter(item => item.index !== index)
 			current.value = list.value[list.value.length - 1] || null
 		}
 	}
