@@ -26,6 +26,7 @@
 			<ModalLayer style="z-index: 15" :components="modalComponents" />
 			<ProcessingLayer style="z-index: 20" />
 			<ToastLayer style="z-index: 25" />
+			<FloatingUILayer style="z-index: 26" />
 			<DialogLayer style="z-index: 30" />
 		</div>
 	</div>

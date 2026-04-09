@@ -10,7 +10,9 @@ import { useAppConfig, useState, readonly } from '#imports'
 const DATA_VALUE = 'header'
 
 export const useHeader = () => {
+	// State -----------------------------------------------
 	const config = useState<HeaderConfig | null>('ui-header-config', () => null)
+	const height = useState('headerHeight', () => 0)
 
 	/**
 	 * 初期化
@@ -39,5 +41,9 @@ export const useHeader = () => {
 		init,
 		update,
 		config: readonly(config),
+		height: readonly(height),
+		setHeight: (value: number) => {
+			height.value = value
+		},
 	}
 }
