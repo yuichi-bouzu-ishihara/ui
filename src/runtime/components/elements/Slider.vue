@@ -115,7 +115,7 @@ watch(
 watch(
 	() => [width.value, slotWidth.value],
 	([newWidth, newSlotWidth]) => {
-		if (newWidth === 0 || newSlotWidth === 0) {
+		if (newWidth === undefined || newSlotWidth === undefined || newWidth === 0 || newSlotWidth === 0) {
 			return
 		}
 		if (newWidth < newSlotWidth) {

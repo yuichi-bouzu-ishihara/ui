@@ -43,7 +43,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, type Component } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSheet } from '../../composables/overlays/sheet'
 import Icon from '../elements/Icon.vue'

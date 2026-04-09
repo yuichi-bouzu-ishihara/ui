@@ -116,7 +116,7 @@ const variables = computed(() => ({
 	'--custom-color-text': props.color.text,
 	'--custom-color-background': props.color.background,
 }))
-const defaultIcon = computed(() => ({
+const defaultIcon = computed((): StatusIcon => ({
 	idle: { name: 'upload' },
 	loading: { name: 'spinner' },
 	success: { name: 'checkCircleLine' },
@@ -268,7 +268,7 @@ const handleFileDrop = async (state: string, files: File[] | null) => {
 			break
 		case 'drop':
 			isDragOver.value = false
-			if (files && files.length > 0) {
+			if (files && files.length > 0 && files[0]) {
 				// useFileDropで既にファイルタイプ検証済みなので、そのまま使用
 				await selectFile(files[0])
 			}
@@ -376,7 +376,14 @@ const loadMetadata = async (file: File) => {
 
 		// ファイルタイプに応じてメタデータを取得
 		if (file.type.startsWith('image/')) {
-			const meta = await getImageMetadata(file)
+			const imageMeta = await getImageMetadata(file)
+			const meta: FileUploadMetadata = {
+				width: imageMeta.width,
+				height: imageMeta.height,
+				aspectRatio: imageMeta.aspectRatio,
+				fileSize: imageMeta.fileSize ?? file.size,
+				mimeType: imageMeta.mimeType ?? file.type,
+			}
 			metadata.value = meta
 			emit('metadata-loaded', meta)
 		}

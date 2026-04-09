@@ -106,9 +106,9 @@ export const useToast = () => {
 	const clearTimer = (id: number) => {
 		const index = list.value.findIndex(t => t.id === id)
 		if (index !== -1) {
-			const timer = list.value[index].timer
-			if (timer) {
-				clearTimeout(timer)
+			const toast = list.value[index]
+			if (toast?.timer) {
+				clearTimeout(toast.timer)
 			}
 		}
 	}
@@ -158,6 +158,9 @@ export const useToast = () => {
 		}
 
 		const existingToast = list.value[index]
+		if (!existingToast) {
+			return false
+		}
 
 		// タイマーをクリア（durationが変更された場合）
 		if (updates.duration !== undefined || updates.persistent !== undefined) {
@@ -181,7 +184,7 @@ export const useToast = () => {
 			...existingToast,
 			...updates,
 			duration: finalDuration,
-			persistent,
+			persistent: persistent ?? false,
 			timer,
 		}
 

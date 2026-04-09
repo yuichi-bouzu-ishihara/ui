@@ -175,7 +175,8 @@ const handleDown = () => {
 }
 const handleHit = () => {
 	if (active.value !== null) {
-		selectOption(filteredOptions.value[active.value], new Event('click'))
+		const option = filteredOptions.value[active.value]
+		if (option) selectOption(option, new Event('click'))
 	}
 }
 const handleFocus = () => {

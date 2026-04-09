@@ -31,7 +31,7 @@ const scale = computed({
 const pinchStart = (event: TouchEvent) => {
 	if (!props.pinch) return
 
-	if (event.targetTouches.length === 2) {
+	if (event.targetTouches.length === 2 && event.targetTouches[0] && event.targetTouches[1]) {
 		// Two fingers are touching.
 		const dx = event.targetTouches[0].clientX - event.targetTouches[1].clientX
 		const dy = event.targetTouches[0].clientY - event.targetTouches[1].clientY
@@ -40,7 +40,7 @@ const pinchStart = (event: TouchEvent) => {
 }
 
 const zoom = (event: TouchEvent) => {
-	if (event.targetTouches.length === 2) {
+	if (event.targetTouches.length === 2 && event.targetTouches[0] && event.targetTouches[1]) {
 		// Two fingers are touching.
 		const dx = event.targetTouches[0].clientX - event.targetTouches[1].clientX
 		const dy = event.targetTouches[0].clientY - event.targetTouches[1].clientY
