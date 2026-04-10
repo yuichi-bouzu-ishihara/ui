@@ -7,6 +7,26 @@ import { useEnvironment } from '../environment'
 import type { WebfontConfig } from '../../types/webfont'
 import { useState, readonly } from '#imports'
 
+// TypeSquare API の型定義
+interface TypeSquareLoadFontParams {
+	cssName: string
+	fontFamily: string
+	text: string
+	outputType: string
+	callbackId: number
+	callback: (params: { data: string }) => void
+}
+
+interface TypeSquareAPI {
+	loadFontAsync: (params: TypeSquareLoadFontParams) => void
+}
+
+declare global {
+	interface Window {
+		Ts?: TypeSquareAPI
+	}
+}
+
 const DATA_KEY = 'webfont-typeSquare'
 
 // JIS第1水準の漢字を含む文字列
@@ -99,7 +119,7 @@ export const useWebFontTypeSquare = () => {
 				if (exOS.length > 0 && exOS.includes(os.value.name)) return
 
 				JA_LOAD_CHARS_CHUNKS().forEach((chunk) => {
-					window.Ts.loadFontAsync({
+					window.Ts?.loadFontAsync({
 						cssName: fontName,
 						fontFamily: fontName,
 						text: chunk,

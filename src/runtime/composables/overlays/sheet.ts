@@ -114,6 +114,9 @@ export const useSheet = () => {
 
 		// result を保存して lastClosed にセット（resolveは保持したまま）
 		lastClosed.value = closing.map(item => ({ ...item, _closeResult: result }))
+
+		// 追加: Promise を resolve する
+		closing.forEach(item => item.resolve?.(result))
 	}
 
 	/**

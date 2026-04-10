@@ -49,7 +49,7 @@ const target = computed(() => {
 	return str
 })
 const href = computed(() => {
-	return props.to
+	return typeof props.to === 'string' ? props.to : ''
 })
 </script>
 

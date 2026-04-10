@@ -64,13 +64,17 @@ const init = () => {
 
 		// 有効なインデックスの場合のみ配置
 		if (shortestColumnIndex >= 0 && shortestColumnIndex < columns.value.length) {
-			// アイテムを配置
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
-			columns.value[shortestColumnIndex].push(item as any)
+			const column = columns.value[shortestColumnIndex]
+			const currentHeight = columnHeights.value[shortestColumnIndex]
+			if (column !== undefined && currentHeight !== undefined) {
+				// アイテムを配置
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				column.push(item as any)
 
-			// 列の高さを更新（アイテムの高さ + gap）
-			const itemHeight = (item.height / item.width) * (Number.parseInt(String(props.columnWidth)))
-			columnHeights.value[shortestColumnIndex] += itemHeight + props.gap
+				// 列の高さを更新（アイテムの高さ + gap）
+				const itemHeight = (item.height / item.width) * (Number.parseInt(String(props.columnWidth)))
+				columnHeights.value[shortestColumnIndex] = currentHeight + itemHeight + props.gap
+			}
 		}
 	})
 }
@@ -82,11 +86,12 @@ const findShortestColumn = (): number => {
 	}
 
 	let shortestIndex = 0
-	let shortestHeight = columnHeights.value[0]
+	let shortestHeight = columnHeights.value[0] ?? 0
 
 	for (let i = 1; i < columnHeights.value.length; i++) {
-		if (columnHeights.value[i] < shortestHeight) {
-			shortestHeight = columnHeights.value[i]
+		const height = columnHeights.value[i]
+		if (height !== undefined && height < shortestHeight) {
+			shortestHeight = height
 			shortestIndex = i
 		}
 	}
@@ -100,7 +105,8 @@ const getItemIndex = (columnIndex: number, itemIndex: number) => {
 	let globalIndex = 0
 
 	for (let i = 0; i < columnIndex; i++) {
-		globalIndex += columns.value[i].length
+		const column = columns.value[i]
+		if (column) globalIndex += column.length
 	}
 
 	return globalIndex + itemIndex

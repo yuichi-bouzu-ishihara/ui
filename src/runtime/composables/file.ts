@@ -56,6 +56,10 @@ const select = async (accepts = ['image']): Promise<{ file: unknown, name: strin
 				const target = e.target as HTMLInputElement
 				if (target.files && target.files.length > 0) {
 					const file = target.files[0]
+					if (!file) {
+						resolve(null)
+						return
+					}
 					const name = file.name
 					resolve({ file, name, blob: URL.createObjectURL(file) })
 				}
@@ -138,7 +142,7 @@ const download = (url: string, name: string) => {
  */
 const getFileName = (fileUrl: string): string => {
 	const urlParts = fileUrl.split('/')
-	return urlParts[urlParts.length - 1]
+	return urlParts[urlParts.length - 1] ?? ''
 }
 
 /**
@@ -311,7 +315,7 @@ const urlToFile = async (url: string, filename: string = '', mimeType: string = 
 	// filenameが指定されていない場合、URLから取得
 	if (!filename) {
 		const urlParts = url.split('/')
-		filename = urlParts[urlParts.length - 1]
+		filename = urlParts[urlParts.length - 1] ?? ''
 	}
 
 	// mimeTypeが指定されていない場合、filenameから推測
@@ -525,7 +529,7 @@ const isFileTypeAllowed = (file: File, accepts: string[]): boolean => {
 const formatFileSize = (bytes: number): string => {
 	if (bytes === 0) return '0Bytes'
 	const k = 1024
-	const sizes = ['Bytes', 'KB', 'MB', 'GB']
+	const sizes = ['Bytes', 'KB', 'MB', 'GB'] as const
 	const i = Math.floor(Math.log(bytes) / Math.log(k))
-	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + sizes[i]
+	return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + (sizes[i] ?? 'Bytes')
 }

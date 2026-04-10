@@ -84,7 +84,7 @@ const value = computed({
 			emit('valid')
 		}
 		else {
-			emit('invalid')
+			emit('invalid', '')
 		}
 	},
 })
