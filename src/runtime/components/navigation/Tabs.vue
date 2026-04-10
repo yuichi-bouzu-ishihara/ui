@@ -17,7 +17,7 @@
 			</component>
 		</Row>
 		<div v-if="activeIndex !== -1 && rect && itemRectList[activeIndex]" class="tabs-bar"
-			:style="`transform: translateX(${itemRectList[activeIndex].left - rect.left}px); width: ${itemRectList[activeIndex].width}px`" />
+			:style="`transform: translateX(${(itemRectList[activeIndex]?.left ?? 0) - rect.left}px); width: ${itemRectList[activeIndex]?.width ?? 0}px`" />
 	</Box>
 </template>
 
@@ -77,10 +77,11 @@ const itemWidth = computed(() => {
 	return auto.value ? '' : `width: calc(100% / ${list.value.length});`
 })
 const itemClasses = computed(() => (index: number) => {
+	const item = list.value[index]
 	return {
-		_icon: list.value[index].icon,
-		_current: list.value[index].current ?? (list.value[index].path ? activeIndex.value === index : false),
-		_disabled: !list.value[index].click && !list.value[index].path,
+		_icon: item?.icon,
+		_current: item?.current ?? (item?.path ? activeIndex.value === index : false),
+		_disabled: !item?.click && !item?.path,
 		_auto: auto.value,
 	}
 })

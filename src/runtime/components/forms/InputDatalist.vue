@@ -179,7 +179,8 @@ const handleDown = () => {
 const handleHit = () => {
 	// console.log('handleHit')
 	if (active.value !== null) {
-		selectOption(filteredOptions.value[active.value])
+		const option = filteredOptions.value[active.value]
+		if (option) selectOption(option)
 	}
 }
 const handleInput = () => {

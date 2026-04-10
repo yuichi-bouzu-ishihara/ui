@@ -64,3 +64,8 @@ packs/*
 
 # npmrc
 .npmrc
+
+# Claude Code / ECC
+everything-claude-code
+.claude
+.mcp.json

@@ -124,7 +124,7 @@ export const useBreakPoint = () => {
 			}
 
 			// マッチする画面サイズがない場合、最小の値をデフォルトとして返す
-			return maxSize || SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1]
+			return maxSize || (SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1] ?? 'xs')
 		}
 
 		// 初期値を設定（最大の画面サイズを設定）
@@ -143,7 +143,7 @@ export const useBreakPoint = () => {
 	 * @returns 現在のスクリーンサイズ（'xxl', 'xl', 'l', 'm', 's', 'xs'）
 	 */
 	const getScreenSizeFromWidth = (width: number): string => {
-		if (!config.value) return SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1]
+		if (!config.value) return SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1] ?? 'xs'
 
 		// SCREEN_SIZE_VARS は大きい順: ['xxl', 'xl', 'l', 'm', 's', 'xs']
 		for (const size of SCREEN_SIZE_VARS) {
@@ -154,7 +154,7 @@ export const useBreakPoint = () => {
 				return size
 			}
 		}
-		return SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1] // 'xs'
+		return SCREEN_SIZE_VARS[SCREEN_SIZE_VARS.length - 1] ?? 'xs'
 	}
 
 	/**

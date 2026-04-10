@@ -701,10 +701,6 @@ onMounted(async () => {
 		id: props.videoId,
 		background: props.background,
 		controls: props.controller,
-		// ローディングスピナーを非表示にするオプション
-		showTitle: false,
-		showPortrait: false,
-		showByline: false,
 		// 他 Vimeo Player が再生されたら自動的に停止するオプション
 		autopause: props.autopause,
 		// ローディング中の表示を制御
@@ -717,7 +713,11 @@ onMounted(async () => {
 		preload: 'auto',
 		// ループ再生のオプション
 		loop: props.loop,
-	})
+		// ローディングスピナーを非表示にするオプション（Vimeo埋め込みパラメータ）
+		title: false,
+		portrait: false,
+		byline: false,
+	} as ConstructorParameters<typeof Player>[1])
 	await Promise.all([getVideoSize(), setThumbnail()])
 	updateVideoSize()
 	vimeoPlayer.on('bufferend', onBufferEnd)

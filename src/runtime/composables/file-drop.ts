@@ -97,6 +97,7 @@ export const useFileDrop = () => {
 
 		for (let i = 0; i < files.length; i++) {
 			const file = files[i]
+			if (!file) continue
 			if (isFileTypeAllowed(file, acceptedTypes.value)) {
 				validFiles.push(file)
 			}

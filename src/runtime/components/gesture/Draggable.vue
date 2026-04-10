@@ -48,11 +48,11 @@ const startDrag = (event: MouseEvent | TouchEvent) => {
 	document.body.addEventListener('touchmove', drag)
 	document.body.addEventListener('mouseup', endDrag)
 	document.body.addEventListener('touchend', endDrag)
-	if ('touches' in event) {
+	if ('touches' in event && event.touches[0]) {
 		startX.value = event.touches[0].clientX - position.value.x
 		startY.value = event.touches[0].clientY - position.value.y
 	}
-	else {
+	else if ('clientX' in event) {
 		startX.value = event.clientX - position.value.x
 		startY.value = event.clientY - position.value.y
 	}
@@ -63,12 +63,12 @@ const startDrag = (event: MouseEvent | TouchEvent) => {
 const drag = (event: MouseEvent | TouchEvent) => {
 	if (!dragged.value) return
 
-	let newX, newY
-	if ('touches' in event) {
+	let newX = position.value.x, newY = position.value.y
+	if ('touches' in event && event.touches[0]) {
 		newX = event.touches[0].clientX - startX.value
 		newY = event.touches[0].clientY - startY.value
 	}
-	else {
+	else if ('clientX' in event) {
 		newX = event.clientX - startX.value
 		newY = event.clientY - startY.value
 	}

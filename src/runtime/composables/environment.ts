@@ -93,32 +93,32 @@ export const useEnvironment = () => {
 		if (/CriOS/i.test(userAgent) && /iPhone|iPad|iPod/.test(userAgent)) {
 			name = 'Chrome'
 			match = userAgent.match(/CriOS\/\d+(\.\d+)?/)
-			version = match ? match[1] : ''
+			version = match?.[1] ?? ''
 		}
 		else if (/Firefox/i.test(userAgent)) {
 			name = 'Firefox'
 			match = userAgent.match(/Firefox\/\d+(\.\d+)?/)
-			version = match ? match[1] : ''
+			version = match?.[1] ?? ''
 		}
 		else if (/Chrome/i.test(userAgent)) {
 			name = 'Chrome'
 			match = userAgent.match(/Chrome\/\d+(\.\d+)?/)
-			version = match ? match[1] : ''
+			version = match?.[1] ?? ''
 		}
 		else if (/Safari/i.test(userAgent) && /iPhone|iPad|iPod/.test(userAgent)) {
 			name = 'Safari'
 			match = userAgent.match(/Version\/\d+(\.\d+)?/)
-			version = match ? match[1] : ''
+			version = match?.[1] ?? ''
 		}
 		else if (/MSIE/i.test(userAgent)) {
 			name = 'Internet Explorer'
 			match = userAgent.match(/MSIE \d+(\.\d+)?/)
-			version = match ? match[1] : ''
+			version = match?.[1] ?? ''
 		}
 		else if (/Edge/i.test(userAgent)) {
 			name = 'Edge'
 			match = userAgent.match(/Edge\/\d+(\.\d+)?/)
-			version = match ? match[1] : ''
+			version = match?.[1] ?? ''
 		}
 
 		return {
