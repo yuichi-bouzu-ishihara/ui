@@ -5,7 +5,7 @@
 				<div class="sheet-inner-item">
 					<Container no-padding v-bind="container">
 						<template v-if="isHeader">
-							<Box ref="headerEl" sticky top="0" w="100%" z-index="1">
+							<Box ref="headerEl" sticky top="0" w="100%" z-index="1" style="pointer-events: none;">
 								<Container v-bind="container" no-padding>
 									<SlotHeader v-bind="{ title, pagenation }" :blur="isScrollTop"
 										:background="isScrollTop ? backgroundColor : 'transparent'" :color="textColor"
