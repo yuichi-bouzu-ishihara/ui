@@ -65,13 +65,6 @@ const list = ref([
 			sheet.close('all')
 		},
 	},
-	{
-		icon: 'eyeOpen',
-		name: 'Reopen Last Closed',
-		click: () => {
-			sheet.reopen()
-		},
-	},
 ])
 </script>
 

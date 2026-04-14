@@ -22,7 +22,6 @@ type InternalPayload = {
 	props?: { [key: string]: unknown } | null
 	resolve?: (value: unknown) => void
 	allowDuplicate?: boolean // 重複を許可するかどうか
-	_closeResult?: unknown // close 時の result を保存（reopen用）
 }
 
 // Constants -----------------------------------------
@@ -65,7 +64,6 @@ export const useSheet = () => {
 	const list = useState<InternalPayload[]>('ui-sheet-list', () => []) // シートのリストを保持する
 	const current = useState<InternalPayload | null>('ui-sheet-current', () => null) // 現在表示中のシートを保持する
 	const config = useState<SheetConfig | null>('ui-sheet-config', () => null)
-	const lastClosed = useState<InternalPayload[]>('ui-sheet-lastClosed', () => []) // 直近のcloseで閉じたシート（reopen用）
 
 	/**
 	 * 指定したインデックスが現在表示中のシートかどうかを判定する
@@ -81,15 +79,7 @@ export const useSheet = () => {
 	 * @param index - シートのインデックス。'all' の場合はすべて閉じる、number[] の場合は複数同時に閉じる
 	 * @param result - シートの結果
 	 */
-	const close = async (index: number | number[] | 'all', result: unknown = true) => {
-		// 既存の lastClosed の Promise を undefined で resolve（reopen されなかった場合）
-		for (const item of lastClosed.value) {
-			if (item.resolve) {
-				item.resolve(undefined)
-				item.resolve = undefined
-			}
-		}
-
+	const close = (index: number | number[] | 'all', result: unknown = true) => {
 		let closing: InternalPayload[] = []
 
 		if (index === 'all') {
@@ -112,37 +102,8 @@ export const useSheet = () => {
 			current.value = list.value[list.value.length - 1] || null
 		}
 
-		// result を保存して lastClosed にセット（resolveは保持したまま）
-		lastClosed.value = closing.map(item => ({ ...item, _closeResult: result }))
-
-		// 追加: Promise を resolve する
+		// Promise を resolve する
 		closing.forEach(item => item.resolve?.(result))
-	}
-
-	/**
-	 * 直近のcloseで閉じたシートを再度開く
-	 * @returns {boolean} 復元に成功した場合は true
-	 */
-	const reopen = (): boolean => {
-		if (lastClosed.value.length === 0) {
-			return false // 復元するシートがない
-		}
-
-		// lastClosed のシートを list に戻す
-		for (const item of lastClosed.value) {
-			// 新しいインデックスを付与（_closeResultは保持したまま）
-			const newItem: InternalPayload = { ...item, index: list.value.length }
-			list.value.push(newItem)
-		}
-
-		// current を更新
-		current.value = list.value[list.value.length - 1] || null
-		isOpen.value = true
-
-		// lastClosed をクリア
-		lastClosed.value = []
-
-		return true
 	}
 
 	return {
@@ -179,15 +140,12 @@ export const useSheet = () => {
 		 * @param {Payload} pl - ペイロード（componentはコンポーネント型のみ）
 		 * @returns {Promise<unknown>} シートの結果
 		 */
-		open: async (pl: Payload): Promise<unknown> => {
+		open: (pl: Payload): Promise<unknown> => {
 			// コンポーネント型から名前を解決（必ず文字列になる）
 			const componentName = getComponentName(pl.component)
 
 			// 重複許可の判定:
-			// 1. Payload.allowDuplicate が true
-			// 2. Payload.props.allowDuplicate が true
-			// 3. 既存シートの props.allowDuplicate が true
-			// いずれかが true であれば重複を許可する
+			// allowDuplicate が false の場合のみ重複をチェックする
 			const existingItems = list.value.filter(item => item.component === componentName)
 			const allowDuplicate = pl.allowDuplicate ?? true
 
@@ -199,7 +157,7 @@ export const useSheet = () => {
 					.map(item => item.index)
 
 				if (indicesToClose.length > 0) {
-					await close(indicesToClose)
+					close(indicesToClose)
 				}
 			}
 
@@ -242,12 +200,10 @@ export const useSheet = () => {
 		},
 
 		close,
-		reopen,
 		isCurrent,
 		isOpen: readonly(isOpen),
 		scrollY: readonly(scrollY),
 		list: readonly(list),
-		lastClosed: readonly(lastClosed),
 		color: config.value ? readonly(config.value).color : { background: '', text: '' },
 		current: readonly(current),
 	}
