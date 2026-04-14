@@ -12,6 +12,8 @@
 import FloatingUI from '../../../../src/runtime/components/navigation/FloatingUI.vue'
 import NestSheet, { type Props as NestSheetProps } from '@/components/sheet/NestSheet.vue'
 import PagenationSheet from '@/components/sheet/PagenationSheet.vue'
+import ASheet from '@/components/sheet/ASheet.vue'
+import BSheet from '@/components/sheet/BSheet.vue'
 
 const sheet = useSheet()
 // watch(() => sheet.current.value, (nv) => {
@@ -23,6 +25,22 @@ watch(() => sheet.list.value, (list) => {
 
 // Data ---------------------------
 const list = ref([
+	{
+		icon: 'plus',
+		name: 'ASheet',
+		click: () => sheet.open({
+			component: ASheet,
+			allowDuplicate: false,
+		}),
+	},
+	{
+		icon: 'plus',
+		name: 'BSheet',
+		click: () => sheet.open({
+			component: BSheet,
+			allowDuplicate: false,
+		}),
+	},
 	{
 		icon: 'plus',
 		name: 'NestSheet',

@@ -14,14 +14,9 @@
 				<TheDrawerDepthTest v-if="drawer('depthTest')" />
 			</DrawerLayer>
 			<SheetLayer style="z-index: 10">
-				<template v-if="sheet.list.value.length">
-					<template v-for="(item, index) in sheet.list.value">
-						<template v-if="item.component !== ''">
-							<component :is="sheetComponents[item.component]" :key="`sheetLayer-item-${item.component}-${index}`"
-								v-bind="item.props" :index="index" />
-						</template>
-					</template>
-				</template>
+				<component :is="sheetComponents[item.component]"
+					v-for="(item, index) in sheet.list.value.filter(item => item.component !== '')"
+					:key="`sheetLayer-item-${item.index}`" v-bind="item.props" :index="index" />
 			</SheetLayer>
 			<ModalLayer style="z-index: 15" :components="modalComponents" />
 			<ProcessingLayer style="z-index: 20" />
@@ -39,6 +34,8 @@ import TestModal from '@/components/modal/TestModal.vue'
 import NestSheet from '@/components/sheet/NestSheet.vue'
 import PagenationSheet from '@/components/sheet/PagenationSheet.vue'
 import ColorSheet from '@/components/sheet/ColorSheet.vue'
+import ASheet from '@/components/sheet/ASheet.vue'
+import BSheet from '@/components/sheet/BSheet.vue'
 
 // Constans ----------------------------------------------
 // 表示するSheetコンポーネントを定義する
@@ -47,10 +44,14 @@ const sheetComponents: Record<
 	| typeof NestSheet
 	| typeof PagenationSheet
 	| typeof ColorSheet
+	| typeof ASheet
+	| typeof BSheet
 > = {
 	NestSheet,
 	PagenationSheet,
 	ColorSheet,
+	ASheet,
+	BSheet,
 }
 
 // 表示するModalコンポーネントを定義する

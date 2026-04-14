@@ -2,15 +2,9 @@
 	<div ref="element" :class="`sheetLayer${isOpen ? ' _open' : ''}`">
 		<div class="sheetLayer-inner">
 			<TransitionGroup name="sheet" @after-leave="afterLeave">
-				<template v-if="list.length">
-					<template v-for="(item, index) in list">
-						<template v-if="item.component !== ''">
-							<component :is="basics[item.component]" :key="`sheetLayer-inner-item-${item.component}-${index}`"
-								v-bind="item.props" :index="index" />
-						</template>
-					</template>
-					<slot />
-				</template>
+				<component :is="basics[item.component]" v-for="(item, index) in list.filter(item => item.component !== '')"
+					:key="`sheetLayer-inner-item-${item.index}`" v-bind="item.props" :index="index" />
+				<slot />
 			</TransitionGroup>
 		</div>
 		<TransitionFade>
@@ -20,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSheet } from '../../composables/overlays/sheet'
 import TransitionFade from '../transition/TransitionFade.vue'
@@ -42,9 +36,6 @@ const basics: Record<
 // Stores & Composables ---------------------------
 const { close, list, isOpen, setIsOpen } = useSheet()
 const route = useRoute()
-
-// Data ---------------------------
-const element = ref<HTMLDivElement | null>(null)
 
 // Computed ---------------------------
 const backdrop = computed(() => {

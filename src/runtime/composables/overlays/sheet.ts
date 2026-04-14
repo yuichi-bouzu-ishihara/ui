@@ -189,8 +189,6 @@ export const useSheet = () => {
 			// 3. 既存シートの props.allowDuplicate が true
 			// いずれかが true であれば重複を許可する
 			const existingItems = list.value.filter(item => item.component === componentName)
-
-			console.log('existingItems', existingItems)
 			const allowDuplicate = pl.allowDuplicate ?? true
 
 			// 重複チェック（allowDuplicate が false の場合）
@@ -207,8 +205,9 @@ export const useSheet = () => {
 
 			isOpen.value = true
 			return new Promise((rsv) => {
+				const newIndex = (list.value[list.value.length - 1]?.index ?? 0) + 1
 				const payloadWithResolve: InternalPayload = {
-					index: list.value.length, // シートのインデックス - 表示順
+					index: newIndex, // シートのインデックス - 表示順
 					component: componentName, // 文字列
 					props: pl.props,
 					resolve: rsv as (value: unknown) => void,

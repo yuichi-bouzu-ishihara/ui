@@ -16,5 +16,8 @@
   "enabledMcpjsonServers": [
     "context7",
     "playwright"
-  ]
+  ],
+  "enabledPlugins": {
+    "ecc@ecc": true
+  }
 }
