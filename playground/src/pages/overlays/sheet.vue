@@ -30,7 +30,6 @@ const list = ref([
 		name: 'ASheet',
 		click: () => sheet.open({
 			component: ASheet,
-			allowDuplicate: false,
 		}),
 	},
 	{
@@ -38,7 +37,6 @@ const list = ref([
 		name: 'BSheet',
 		click: () => sheet.open({
 			component: BSheet,
-			allowDuplicate: false,
 		}),
 	},
 	{
@@ -47,7 +45,6 @@ const list = ref([
 		click: () => sheet.open({
 			component: NestSheet,
 			props: { title: 'Title', content: 'Text Content is here.<br />Please Test Message.', icon: 'edit', buttonName: 'OK' } as NestSheetProps,
-			allowDuplicate: true,
 		}),
 	},
 	{
@@ -55,7 +52,6 @@ const list = ref([
 		name: 'PagenationSheet',
 		click: () => sheet.open({
 			component: PagenationSheet,
-			allowDuplicate: true,
 		}),
 	},
 	{
