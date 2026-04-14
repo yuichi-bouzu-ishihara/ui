@@ -130,7 +130,10 @@ const classes = computed(() => {
 	}
 })
 const depth = computed(() => {
-	return list.value.length - (props.index + 1)
+	// props.index は InternalPayload.index（ユニーク ID）なので、list 内での位置を探す
+	const myPosition = list.value.findIndex(item => item.index === props.index)
+	if (myPosition === -1) return 0
+	return list.value.length - (myPosition + 1)
 })
 const backgroundColor = computed(() => {
 	let str = ''
