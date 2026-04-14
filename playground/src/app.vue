@@ -15,8 +15,8 @@
 			</DrawerLayer>
 			<SheetLayer style="z-index: 10">
 				<component :is="sheetComponents[item.component]"
-					v-for="(item, index) in sheet.list.value.filter(item => item.component !== '')"
-					:key="`sheetLayer-item-${item.index}`" v-bind="item.props" :index="index" />
+					v-for="item in sheet.list.value.filter(item => item.component !== '')"
+					:key="`sheetLayer-item-${item.index}`" v-bind="item.props" :index="item.index" />
 			</SheetLayer>
 			<ModalLayer style="z-index: 15" :components="modalComponents" />
 			<ProcessingLayer style="z-index: 20" />

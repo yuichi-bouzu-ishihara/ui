@@ -2,8 +2,8 @@
 	<div ref="element" :class="`sheetLayer${isOpen ? ' _open' : ''}`">
 		<div class="sheetLayer-inner">
 			<TransitionGroup name="sheet" @after-leave="afterLeave">
-				<component :is="basics[item.component]" v-for="(item, index) in list.filter(item => item.component !== '')"
-					:key="`sheetLayer-inner-item-${item.index}`" v-bind="item.props" :index="index" />
+				<component :is="basics[item.component]" v-for="item in list.filter(item => item.component !== '')"
+					:key="`sheetLayer-inner-item-${item.index}`" v-bind="item.props" :index="item.index" />
 				<slot />
 			</TransitionGroup>
 		</div>
