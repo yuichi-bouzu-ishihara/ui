@@ -1,6 +1,7 @@
 <template>
 	<div class="image" :class="classes">
-		<img v-if="isMounted" ref="element" class="image-inner" v-bind="{ src, alt }" @load="loaded" @error="error">
+		<img v-if="isMounted" ref="element" class="image-inner" v-bind="{ src, alt }" :loading="lazy ? 'lazy' : 'eager'"
+			decoding="auto" @load="loaded" @error="error">
 	</div>
 </template>
 
@@ -11,7 +12,7 @@ import { ref, computed, toRefs, watchEffect, onMounted } from 'vue'
 const props = defineProps({
 	src: { type: String, default: '' }, // 画像パス
 	alt: { type: String, default: '' }, // 代替テキスト
-	// lazy: { type: Boolean, default: true }, // 画像の読み込みを遅らせるかどうか。 Observer を使用して実装した方がいいかも。
+	lazy: { type: Boolean, default: true }, // 画像の遅延読み込み（native lazy loading）
 	loader: { type: Boolean, default: true }, // 読み込み中表示をするかどうか
 	background: { type: Boolean, default: true }, // 背景を塗るかどうか
 	userDrag: { type: Boolean, default: true }, // ドラッグを許可するかどうか
