@@ -2,6 +2,7 @@ export type TypographyConfig = {
 	font: {
 		family: FontFamily
 		weight: FontWeight
+		latinBaselineAdjust?: string // 欧文・和文混植時の欧文ベースライン調整値 e.g. '-0.05em'（全TypeFace共通のデフォルト）
 	}
 	largeTitle: TypeFace
 	title1: TypeFace
@@ -41,4 +42,5 @@ export type TypeFace = {
 	lineHeight: string
 	capHeightBaselineTop: string // e.g. 0.24em - margin-top
 	capHeightBaselineBottom: string // e.g. 0.3em - margin-bottom
+	latinBaselineAdjust?: string // 欧文・和文混植時の欧文ベースライン調整値 e.g. '-0.05em'（font レベルの設定を上書き）
 }
