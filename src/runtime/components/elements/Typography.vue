@@ -3,18 +3,19 @@
 	文字を表現するコンポーネント
 -->
 <template>
-	<component :is="tag" :class="classes" :style="styles">
+	<component :is="tag" ref="elRef" :class="classes" :style="styles">
 		<slot />
 	</component>
 </template>
 
 <script setup lang="ts">
-import { computed, watch, ref } from 'vue'
+import { computed, watch, ref, useTemplateRef } from 'vue'
 import { useCss } from '../../composables/css'
 import { useNumber } from '../../composables/number'
 import { useRegex } from '../../composables/regex'
+import { useTypography } from '../../composables/elements/typography'
 
-// Stores & Composables --------------------------------
+// Composables --------------------------------
 const { getSize } = useCss()
 const { isPureNumber } = useNumber()
 const { isCssColor } = useRegex()
@@ -68,6 +69,10 @@ const props = defineProps({
 
 // Data --------------------------------
 const type = ref<string>('')
+const elRef = useTemplateRef<HTMLElement>('elRef')
+
+// Baseline Adjust --------------------------------
+useTypography().applyLatinBaselineAdjust(elRef, type)
 
 // Computed --------------------------------
 const classes = computed(() => {
@@ -573,6 +578,60 @@ $cn: '.typography'; // コンポーネントセレクタ名
 		&._capHeightBaseline {
 			margin-top: -0.4em;
 			margin-bottom: -0.4em;
+		}
+
+		// 欧文・和文混植時のベースライン調整
+		// 各タイプの CSS変数 → font レベルの CSS変数 → 0 のフォールバックチェーン
+		&._largeTitle .typography-latin {
+			vertical-align: var(--typography-large-title-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._title1 .typography-latin {
+			vertical-align: var(--typography-title1-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._title2 .typography-latin {
+			vertical-align: var(--typography-title2-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._title3 .typography-latin {
+			vertical-align: var(--typography-title3-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._headline .typography-latin {
+			vertical-align: var(--typography-headline-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._subheadline .typography-latin {
+			vertical-align: var(--typography-subheadline-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._lead .typography-latin {
+			vertical-align: var(--typography-lead-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._body .typography-latin {
+			vertical-align: var(--typography-body-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._caption1 .typography-latin {
+			vertical-align: var(--typography-caption1-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._caption2 .typography-latin {
+			vertical-align: var(--typography-caption2-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._caption3 .typography-latin {
+			vertical-align: var(--typography-caption3-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._callout .typography-latin {
+			vertical-align: var(--typography-callout-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
+		}
+
+		&._footnote .typography-latin {
+			vertical-align: var(--typography-footnote-latin-baseline-adjust, var(--typography-font-latin-baseline-adjust, 0));
 		}
 
 		// 省略する行数

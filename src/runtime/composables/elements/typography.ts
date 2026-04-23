@@ -1,13 +1,20 @@
 /**
  * Typography に関する関数をまとめたファイル
  */
+import type { Ref } from 'vue'
+import { onMounted, onUpdated, watch } from 'vue'
 import { useString } from '../string'
 import { useUI } from '../ui'
+import { segmentText } from '../text-segmenter'
 import type { UIConfig } from '../../types'
 import type { TypographyConfig, FontFamily, FontWeight, TypeFace } from '../../types/typography'
 import { useAppConfig, useState, readonly } from '#imports'
 
 const DATA_VALUE = 'typography'
+
+const PROCESSED_ATTR = 'data-baseline-processed'
+const CLASS_JA = 'typography-ja'
+const CLASS_LATIN = 'typography-latin'
 
 export const useTypography = () => {
 	const config = useState<TypographyConfig | null>('ui-typography-config', () => null)
@@ -53,6 +60,11 @@ export const useTypography = () => {
 					--typography-font-weight-extrabold: ${typedValue.weight.extrabold || 'inherit'};
 				`
 				}
+				if ('latinBaselineAdjust' in typedValue && typedValue.latinBaselineAdjust) {
+					cssVariables += `
+					--typography-font-latin-baseline-adjust: ${typedValue.latinBaselineAdjust};
+				`
+				}
 			}
 			else if (isTypeFace(typedValue)) {
 				cssVariables += `
@@ -62,6 +74,7 @@ export const useTypography = () => {
 				--typography-${useString().camelToKebab(key)}-line-height: ${typedValue.lineHeight || 1.675};
 				--typography-${useString().camelToKebab(key)}-cap-height-baseline-top: ${typedValue.capHeightBaselineTop || '0em'};
 				--typography-${useString().camelToKebab(key)}-cap-height-baseline-bottom: ${typedValue.capHeightBaselineBottom || '0em'};
+				${typedValue.latinBaselineAdjust ? `--typography-${useString().camelToKebab(key)}-latin-baseline-adjust: ${typedValue.latinBaselineAdjust};` : ''}
 			`
 			}
 			else if (key === 'mark') {
@@ -84,9 +97,122 @@ export const useTypography = () => {
 		return value && typeof value === 'object' && ('fontSize' in value || 'fontWeight' in value || 'lineHeight' in value)
 	}
 
+	// ---- 欧文・和文混植ベースライン調整 ----
+
+	/**
+	 * latinBaselineAdjust が設定されているかを確認する
+	 * TypeFace レベル → font レベルの優先順位
+	 */
+	const hasLatinBaselineAdjust = (typeName: string): boolean => {
+		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
+		const typography = appConfig.typography
+		if (!typography) return false
+
+		const typeFace = typography[typeName as keyof typeof typography]
+		if (typeFace && typeof typeFace === 'object' && 'latinBaselineAdjust' in typeFace && typeFace.latinBaselineAdjust) {
+			return true
+		}
+
+		if (typography.font && typography.font.latinBaselineAdjust) {
+			return true
+		}
+
+		return false
+	}
+
+	/**
+	 * 処理済みの span を元のテキストノードに戻す
+	 */
+	const unwrapProcessedSpans = (el: HTMLElement) => {
+		const spans = el.querySelectorAll(`.${CLASS_JA}, .${CLASS_LATIN}`)
+		spans.forEach((span) => {
+			const parent = span.parentNode
+			if (!parent) return
+			const textNode = document.createTextNode(span.textContent || '')
+			parent.replaceChild(textNode, span)
+		})
+		el.normalize()
+		el.removeAttribute(PROCESSED_ATTR)
+	}
+
+	/**
+	 * テキストノードをセグメント化された span に置換する
+	 */
+	const processTextNode = (textNode: Text) => {
+		const text = textNode.textContent
+		if (!text || !text.trim()) return
+
+		const segments = segmentText(text)
+		if (segments.length === 0) return
+
+		const firstType = segments[0]?.type
+		const allSameType = firstType !== undefined && segments.every(s => s.type === firstType)
+		if (allSameType) return
+
+		const fragment = document.createDocumentFragment()
+		segments.forEach((segment) => {
+			const span = document.createElement('span')
+			span.className = segment.type === 'ja' ? CLASS_JA : CLASS_LATIN
+			span.textContent = segment.text
+			fragment.appendChild(span)
+		})
+
+		textNode.parentNode?.replaceChild(fragment, textNode)
+	}
+
+	/**
+	 * 要素内のテキストノードを再帰的に走査・処理する
+	 */
+	const walkAndProcess = (node: Node) => {
+		if (node.nodeType === Node.TEXT_NODE) {
+			processTextNode(node as Text)
+			return
+		}
+
+		if (node.nodeType === Node.ELEMENT_NODE) {
+			const el = node as HTMLElement
+			if (el.classList.contains(CLASS_JA) || el.classList.contains(CLASS_LATIN)) return
+
+			const children = Array.from(el.childNodes)
+			children.forEach(child => walkAndProcess(child))
+		}
+	}
+
+	/**
+	 * 欧文・和文混植時のベースライン調整を適用する
+	 * Typography コンポーネントから呼び出す
+	 * @param elRef ルート要素への ref
+	 * @param typeName タイポグラフィタイプ名 (e.g. 'body', 'title1')
+	 */
+	const applyLatinBaselineAdjust = (elRef: Ref<HTMLElement | null>, typeName: Ref<string>) => {
+		const apply = () => {
+			const el = elRef.value
+			if (!el) return
+
+			if (!hasLatinBaselineAdjust(typeName.value)) {
+				if (el.hasAttribute(PROCESSED_ATTR)) {
+					unwrapProcessedSpans(el)
+				}
+				return
+			}
+
+			if (el.hasAttribute(PROCESSED_ATTR)) {
+				unwrapProcessedSpans(el)
+			}
+
+			walkAndProcess(el)
+			el.setAttribute(PROCESSED_ATTR, '')
+		}
+
+		onMounted(apply)
+		onUpdated(apply)
+		watch(typeName, apply)
+	}
+
 	return {
 		init,
 		isTypeFace,
+		applyLatinBaselineAdjust,
 		font: {
 			family: {
 				base: config.value ? readonly(config.value).font.family.base : '',
