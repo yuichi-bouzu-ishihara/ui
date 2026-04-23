@@ -40,7 +40,7 @@ export const useTypography = () => {
 		let cssVariables = ':root {'
 		for (const [key, value] of Object.entries(config.value)) {
 			// valueの型を明示的に指定
-			const typedValue = value as { family?: FontFamily, weight?: FontWeight } | TypeFace
+			const typedValue = value as { family?: FontFamily, weight?: FontWeight, latinBaselineAdjust?: string } | TypeFace
 
 			if (key === 'font') {
 				if ('family' in typedValue && typedValue.family) {
@@ -104,16 +104,14 @@ export const useTypography = () => {
 	 * TypeFace レベル → font レベルの優先順位
 	 */
 	const hasLatinBaselineAdjust = (typeName: string): boolean => {
-		const appConfig = useAppConfig().ui as unknown as UIConfig ?? {}
-		const typography = appConfig.typography
-		if (!typography) return false
+		if (!config.value) return false
 
-		const typeFace = typography[typeName as keyof typeof typography]
+		const typeFace = config.value[typeName as keyof TypographyConfig]
 		if (typeFace && typeof typeFace === 'object' && 'latinBaselineAdjust' in typeFace && typeFace.latinBaselineAdjust) {
 			return true
 		}
 
-		if (typography.font && typography.font.latinBaselineAdjust) {
+		if (config.value.font?.latinBaselineAdjust) {
 			return true
 		}
 
