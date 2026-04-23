@@ -205,6 +205,10 @@ export const useTypography = () => {
 		onMounted(apply)
 		onUpdated(apply)
 		watch(typeName, apply)
+		// init() より先に Typography がマウントされた場合に備え、config が設定された時点で再適用する
+		watch(config, (newVal) => {
+			if (newVal) apply()
+		})
 	}
 
 	return {
