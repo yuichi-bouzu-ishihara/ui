@@ -135,24 +135,28 @@ export const defaultOptions = {
 			height: '48px',
 			paddingH: '14.5px',
 			radius: '3px',
+			slotGap: '0.5em',
 		},
 		medium: {
 			textSize: '13px',
 			height: '44px',
 			paddingH: '10.75px',
 			radius: '3px',
+			slotGap: '0.5em',
 		},
 		small: {
 			textSize: '12px',
 			height: '36px',
 			paddingH: '9.25px',
 			radius: '3px',
+			slotGap: '0.5em',
 		},
 		xsmall: {
 			textSize: '11px',
 			height: '32px',
 			paddingH: '7.5px',
 			radius: '3px',
+			slotGap: '0.5em',
 		},
 	},
 	webfont: {

@@ -245,9 +245,6 @@ onMounted(async () => {
 
 $cn: '.button'; // コンポーネントセレクタ名
 
-// 変数
-$btn-slot-gap: 0.5em; // ボタン内の要素間隔
-
 @include mix.component-styles($cn) using ($mode) {
 	@if $mode =='base' {
 		position: relative;
@@ -280,6 +277,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			border-radius: var(--button-xsmall-radius);
 
 			#{$cn}-inner-slot {
+				gap: var(--button-xsmall-slot-gap);
 				padding: 0 var(--button-xsmall-padding-h);
 				margin-top: var(--button-xsmall-text-adjust-top);
 			}
@@ -290,6 +288,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			border-radius: var(--button-small-radius);
 
 			#{$cn}-inner-slot {
+				gap: var(--button-small-slot-gap);
 				padding: 0 var(--button-small-padding-h);
 				margin-top: var(--button-small-text-adjust-top);
 			}
@@ -301,6 +300,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 			border-radius: var(--button-large-radius);
 
 			#{$cn}-inner-slot {
+				gap: var(--button-large-slot-gap);
 				padding: 0 var(--button-large-padding-h);
 				margin-top: var(--button-large-text-adjust-top);
 			}
@@ -537,7 +537,7 @@ $btn-slot-gap: 0.5em; // ボタン内の要素間隔
 				flex-direction: row;
 				justify-content: center;
 				align-items: center;
-				gap: $btn-slot-gap;
+				gap: var(--button-medium-slot-gap);
 				width: 100%;
 				height: 100%;
 				padding: 0 var(--button-medium-padding-h);

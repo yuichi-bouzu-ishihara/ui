@@ -28,4 +28,5 @@ export type ButtonSize = {
 	paddingH: string // テキストの水平パディング e.g. 14px
 	height: string
 	radius: string // 角丸 e.g. 4px
+	slotGap: string // ボタン内の要素間隔 e.g. 0.5em
 }
