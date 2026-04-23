@@ -29,4 +29,17 @@ export type WebfontConfig = {
 			exOS: string[]
 		}[]
 	}
+	googleFont: {
+		list: {
+			family: string // e.g. "Noto Sans JP"
+			weight: string[] // e.g. ["400", "700"]
+			italic?: boolean // イタリックを含むかどうか
+			display?: string // font-display値 e.g. "swap"
+			sizeAdjust: string // e.g. 100%
+			ascentOverride: string // e.g. 100%
+			descentOverride: string // e.g. 100%
+			exLocation: string[]
+			exOS: string[]
+		}[]
+	}
 }

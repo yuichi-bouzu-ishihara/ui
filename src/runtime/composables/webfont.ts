@@ -4,6 +4,7 @@
 import type { UIConfig } from '../types'
 import { useWebFontTypeSquare } from './webfont/type-square'
 import { useWebFontAdobeFont } from './webfont/adobe-font'
+import { useWebFontGoogleFont } from './webfont/google-font'
 import { useAppConfig } from '#imports'
 
 export const useWebFont = () => {
@@ -29,6 +30,9 @@ const init = () => {
 	}
 	if (config.typeSquare) {
 		useWebFontTypeSquare().init(config.typeSquare)
+	}
+	if (config.googleFont) {
+		useWebFontGoogleFont().init(config.googleFont)
 	}
 
 	return true

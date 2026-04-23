@@ -63,7 +63,10 @@ export const useWebFontAdobeFont = () => {
 							new Promise<void>((resolve, reject) => {
 								const cssUrl = `https://use.typekit.net/${fontConfig.projectId}.css`
 								fetch(cssUrl)
-									.then(response => response.text())
+									.then((response) => {
+										if (!response.ok) throw new Error(`Failed to fetch Adobe Font CSS: ${response.status}`)
+										return response.text()
+									})
 									.then((cssText) => {
 										// @font-faceを抽出
 										const fontFaceRegex = /@font-face\s*\{[^}]*\}/g

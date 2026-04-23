@@ -184,6 +184,21 @@ export const defaultOptions = {
 				},
 			],
 		},
+		googleFont: {
+			list: [
+				{
+					family: '',
+					weight: ['400'],
+					italic: false,
+					display: 'swap',
+					sizeAdjust: '100%',
+					ascentOverride: 'normal',
+					descentOverride: 'normal',
+					exLocation: [''],
+					exOS: [''],
+				},
+			],
+		},
 	},
 	typography: {
 		font: {
