@@ -41,11 +41,13 @@ const isFullwidthChar = (char: string): boolean => {
 
 /**
  * テキストを欧文・和文のセグメントに分割する
+ * 空白のみのセグメントは隣接するセグメントに吸収される
  */
 export const segmentText = (text: string): TextSegment[] => {
 	if (!text) return []
 
-	const segments: TextSegment[] = []
+	// 1. 文字種ごとにセグメント化
+	const rawSegments: TextSegment[] = []
 	let currentText = ''
 	let currentType: 'ja' | 'latin' | null = null
 
@@ -60,14 +62,38 @@ export const segmentText = (text: string): TextSegment[] => {
 			currentText += char
 		}
 		else {
-			segments.push({ text: currentText, type: currentType })
+			rawSegments.push({ text: currentText, type: currentType })
 			currentType = charType
 			currentText = char
 		}
 	}
 
 	if (currentText && currentType) {
-		segments.push({ text: currentText, type: currentType })
+		rawSegments.push({ text: currentText, type: currentType })
+	}
+
+	// 2. 空白のみのセグメントを隣接セグメントに吸収する
+	// テンプレートの改行・インデントが独立した latin セグメントになるのを防ぐ
+	const segments: TextSegment[] = []
+	for (const segment of rawSegments) {
+		if (segment.text.trim() === '') {
+			// 空白のみ: 直前のセグメントに結合する（なければ次のセグメントの型に従う）
+			if (segments.length > 0) {
+				segments[segments.length - 1].text += segment.text
+			}
+			else {
+				// 先頭の空白は一旦 latin として追加し、後で次のセグメントに吸収
+				segments.push(segment)
+			}
+		}
+		else if (segments.length > 0 && segments[segments.length - 1].text.trim() === '') {
+			// 直前が空白のみのセグメント（先頭空白のケース）: 現在のセグメントの型に変更して結合
+			segments[segments.length - 1].type = segment.type
+			segments[segments.length - 1].text += segment.text
+		}
+		else {
+			segments.push(segment)
+		}
 	}
 
 	return segments
