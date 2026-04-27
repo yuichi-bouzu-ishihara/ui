@@ -10,7 +10,8 @@
       "Bash(npm run prepack:*)",
       "Bash(npm run test:types:*)",
       "Bash(npm run lint:*)",
-      "Bash(npm run test:*)"
+      "Bash(npm run test:*)",
+      "Bash(npx nuxi *)"
     ]
   },
   "enabledMcpjsonServers": [

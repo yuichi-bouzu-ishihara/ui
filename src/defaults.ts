@@ -509,5 +509,6 @@ export const defaultOptions = {
 		indentSize: 28,
 		lineColor: 'color-light-020',
 		fontSize: '14',
+		childrenGap: 8,
 	},
 }

@@ -52,7 +52,8 @@ const menuItems: TreeMenuItem[] = [
 			},
 		],
 		ui: [
-			{ icon: { name: 'add', size: 14 } },
+			{ icon: { name: 'add', size: 14, color: 'light' } },
+			{ icon: { name: 'more', size: 14, color: 'light' } },
 		],
 	},
 	{

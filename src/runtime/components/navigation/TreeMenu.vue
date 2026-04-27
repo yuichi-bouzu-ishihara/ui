@@ -3,8 +3,8 @@
 		<Row justify="between" align="center" nowrap v-bind="{ gap: config.gap }" @mouseenter="isHover = true"
 			@mouseleave="isHover = false">
 			<Row align="center" :gap="config.gap" nowrap>
-				<Clickable v-if="icon && hasChildren" class="treeMenu-toggle" @click="toggleExpanded"
-					role="button" :aria-label="isExpanded ? 'collapse' : 'expand'">
+				<Clickable v-if="icon && hasChildren" class="treeMenu-toggle" role="button"
+					:aria-label="isExpanded ? 'collapse' : 'expand'" @click="toggleExpanded">
 					<Box :w="config.iconSize" :h="config.iconSize">
 						<Column justify="center" align="center" fit>
 							<Icon v-bind="getToggleIcon" class="treeMenu-toggle-icon"
@@ -17,8 +17,8 @@
 						<Icon :name="icon" :size="config.iconSize" :color="current ? 'light' : 'light-060'" />
 					</Column>
 				</Box>
-				<Clickable class="treeMenu-header" :class="{ _current: current }" @click="handleClick"
-					role="treeitem" :aria-expanded="hasChildren ? isExpanded : undefined" :aria-selected="current">
+				<Clickable class="treeMenu-header" :class="{ _current: current }" role="treeitem"
+					:aria-expanded="hasChildren ? isExpanded : undefined" :aria-selected="current" @click="handleClick">
 					<Row align="center" gap="4" nowrap>
 						<Typography :font-size="config.fontSize" color="light" cap-height-baseline unselectable lineclamp="1">
 							{{ label }}
@@ -33,18 +33,20 @@
 					</Row>
 				</Clickable>
 			</Row>
-			<Row v-if="isHover && ui.length > 0" align="center" gap="10" nowrap>
+			<Row v-if="isHover && ui.length > 0" align="center" gap="4" nowrap>
 				<IconUI v-for="(uiItem, index) in ui" :key="`ui-item-${index}`" :to="uiItem.to" :icon="uiItem.icon"
-					@click="uiItem.click" />
+					:box="{ w: config.iconSize, h: config.iconSize }" @click="uiItem.click" />
 			</Row>
 		</Row>
 		<TransitionAcordion>
 			<Box v-if="hasChildren && isExpanded" role="group">
-				<Box h="12" />
+				<Box :h="config.childrenGap" />
 				<Box class="treeMenu-content" :pl="config.gap + config.iconSize" relative
 					:style="{ '--tree-menu-line-color': `var(--${config.lineColor})` }">
-					<TreeMenu v-for="(item, index) in children" :key="`treeMenu-child-${index}`"
-						v-bind="item" :show-count="showCount" :is-root="false" />
+					<template v-for="(item, index) in children" :key="`treeMenu-child-${index}`">
+						<Box v-if="index > 0" :h="config.childrenGap" />
+						<TreeMenu v-bind="item" :show-count="showCount" :is-root="false" />
+					</template>
 				</Box>
 			</Box>
 		</TransitionAcordion>
@@ -81,6 +83,7 @@ const defaultConfig: TreeMenuConfig = {
 	indentSize: 28,
 	lineColor: 'color-light-020',
 	fontSize: '14',
+	childrenGap: 8,
 }
 const config = computed(() => {
 	const appConfig = useAppConfig()?.ui as { treeMenu?: Partial<TreeMenuConfig> } | undefined

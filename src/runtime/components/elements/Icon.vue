@@ -15,18 +15,27 @@ import { useGradation } from '../../composables/gradation'
 import { useNumber } from '../../composables/number'
 import { useRegex } from '../../composables/regex'
 
+// Types -------------------------------------
+export type Props = {
+	name?: string
+	size?: number
+	color?: string
+	gradation?: string
+	originalColor?: boolean
+}
+
 // Stores & Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { isPureNumber } = useNumber() // 数値に関する関数
 const { isCssColor } = useRegex()
 
 // Props -------------------------------------
-const props = defineProps({
-	color: { type: String, default: 'text' }, // モジュールに設定されたカラー、または、#hex、rgb(r,g,b)、rgba(r,g,b,a) のカラー
-	gradation: { type: String, default: '' }, // グラデーションの設定
-	originalColor: { type: Boolean, default: false }, // カラーを svg のオリジナルカラーにするかどうか
-	name: { type: String, default: '' },
-	size: { type: [Number, String], default: 11 },
+const props = withDefaults(defineProps<Props>(), {
+	color: 'text',
+	gradation: '',
+	originalColor: false,
+	name: '',
+	size: 11,
 })
 
 // Computed -------------------------------------

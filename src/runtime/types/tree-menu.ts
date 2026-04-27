@@ -25,4 +25,5 @@ export type TreeMenuConfig = {
 	indentSize: number // ネストごとの左パディング e.g. 28
 	lineColor: string // 縦接続線の色 e.g. 'color-light-020'
 	fontSize: string // ラベルフォントサイズ e.g. '14'
+	childrenGap: number // 子メニュー間の上下スペース e.g. 8
 }
