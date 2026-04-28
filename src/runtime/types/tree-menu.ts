@@ -11,7 +11,7 @@ export type TreeMenuItem = {
 
 // hover 時に表示されるアクションアイコン
 export type TreeMenuUI = {
-	icon: { name?: string; size?: number; color?: string }
+	icon: { name?: string, size?: number, color?: string }
 	to?: string
 	click?: () => void
 }

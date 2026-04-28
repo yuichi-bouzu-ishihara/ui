@@ -60,7 +60,6 @@ const menuItems: TreeMenuItem[] = [
 		label: 'Settings',
 		icon: 'setting',
 		click: () => {
-			// eslint-disable-next-line no-alert
 			alert('Custom click handler!')
 		},
 	},

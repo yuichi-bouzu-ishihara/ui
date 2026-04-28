@@ -185,7 +185,7 @@ const isItemLink = (tab: TabsItem, displayIndex: number) => {
 
 const handleItemClick = (tab: TabsItem, displayIndex: number) => {
 	if (!isCentered.value) {
-		tab.click && tab.click()
+		tab.click?.()
 		return
 	}
 	const originalIndex = displayIndex % list.value.length
