@@ -223,10 +223,10 @@ const updateItemRects = async () => {
 	}
 }
 
-// rect 確定 → 初期センタリング（instant） → itemRects 更新
+// rect 確定・リサイズ → センタリング再計算 → itemRects 更新
 watch(() => rect.value, async () => {
+	await updateCenterPosition()
 	if (isCentered.value && !isCenteredReady.value) {
-		await updateCenterPosition()
 		await nextTick()
 		isCenteredReady.value = true
 	}
@@ -277,7 +277,7 @@ $border-height: 0.5; // ボーダーの高さ
 				width: max-content;
 
 				&._ready {
-					transition: transform var.$transition-base;
+					transition: transform var.$transition-base-duration var.$transition-base-timing-function;
 				}
 			}
 		}
