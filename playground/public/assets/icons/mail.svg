@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/mail</title>
+    <g id="icon/mail" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="ol" transform="translate(2.000000, 4.000000)" fill="#FFFFFF">
+            <path d="M19,-1 C20.1045695,-1 21,-0.1045695 21,1 L21,1 L21,15 C21,16.1045695 20.1045695,17 19,17 L19,17 L1,17 C-0.1045695,17 -1,16.1045695 -1,15 L-1,15 L-1,1 C-1,-0.1045695 -0.1045695,-1 1,-1 L1,-1 Z M19,3.079 L11.2493901,9.28111277 C10.5646051,9.82894075 9.60958436,9.86318 8.89101991,9.38383052 L8.7506099,9.28111277 L1,3.08 L1,15 L19,15 L19,3.079 Z M18.399,1 L1.6,1 L10,7.71937515 L18.399,1 Z" id="Combined-Shape"></path>
+        </g>
+    </g>
+</svg>

@@ -504,4 +504,14 @@ export const defaultOptions = {
 	video: {
 		defaultVolume: 0.2,
 	},
+	treeMenu: {
+		gap: 8,
+		iconSize: 20,
+		toggleIconName: 'arrowDown',
+		toggleIconSize: 12,
+		indentSize: 28,
+		lineColor: 'color-light-020',
+		fontSize: '14',
+		childrenGap: 8,
+	},
 }

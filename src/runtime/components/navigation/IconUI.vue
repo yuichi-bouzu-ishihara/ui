@@ -16,14 +16,11 @@ import { useRoute } from 'vue-router'
 import { useBreakPoint } from '../../composables/break-point'
 import BasicLink from '../elements/BasicLink.vue'
 import Box from '../layout/Box.vue'
-import Icon from '../elements/Icon.vue'
+import Icon, { type Props as IconProps } from '../elements/Icon.vue'
 import NoticeIcon from './NoticeIcon.vue'
 
 // Types --------------------------------------------------
-type Icon = {
-	name: string
-	size?: number
-	color?: string
+type IconUIIconProps = IconProps & {
 	scale?: number
 }
 type BoxStyle = {
@@ -40,7 +37,7 @@ const route = useRoute()
 // Props --------------------------------------------------
 const props = defineProps({
 	to: { type: String, default: '' },
-	icon: { type: Object as () => Icon | null, default: () => null },
+	icon: { type: Object as () => IconUIIconProps | null, default: () => null },
 	enabled: { type: Boolean, default: true },
 	notice: { type: Boolean, default: false },
 	box: { type: Object as () => BoxStyle | null, default: () => null },
