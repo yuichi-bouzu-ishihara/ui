@@ -17,8 +17,9 @@ export default defineNuxtPlugin((nuxtApp) => {
 					}
 				}
 			})
-			// 監視を開始
-			observer.observe(el)
+			// 監視を開始（getBoundingClientRect が border-box を返すのに合わせ、
+			// padding/border 変化でも発火するよう border-box を観測する）
+			observer.observe(el, { box: 'border-box' })
 
 			// 後で監視を停止できるように、要素に observer を保存
 			el.__resizeObserver__ = observer

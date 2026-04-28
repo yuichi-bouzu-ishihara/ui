@@ -3,7 +3,8 @@
 		<Row ref="tabsListRef" class="tabs-list" :class="{ _ready: isCenteredReady }" :gap="itemGap" justify="center"
 			align="start" nowrap fit-h :style="listStyle">
 			<component :is="isItemLink(tab, index) ? BasicLink : 'div'" v-for="(tab, index) in displayList"
-				:key="`tabs-list-item-${index}`" class="tabs-list-item" :class="displayItemClasses(index)" :style="itemWidth"
+				:key="`tabs-list-item-${index}`" v-resize="(r: DOMRectReadOnly) => handleItemResize(index, r)"
+				class="tabs-list-item" :class="displayItemClasses(index)" :style="itemWidth"
 				:to="isItemLink(tab, index) ? tab.path : undefined" replace no-hover-style @click="handleItemClick(tab, index)">
 				<Row justify="center" align="center" gap="6" fit-h>
 					<Icon v-if="tab.icon" :name="tab.icon.name" :size="tab.icon.size || 16" color="var(--custom-text-color)" />
@@ -83,7 +84,7 @@ const isCenteredGradationMask = computed(() => {
 const tabsClasses = computed(() => {
 	return {
 		_centered: isCentered.value,
-		'_centered-gradation-mask': isCentered.value && isCenteredGradationMask.value,
+		_centeredGradationMask: isCentered.value && isCenteredGradationMask.value,
 	}
 })
 const auto = computed(() => {
@@ -215,35 +216,52 @@ const updateCenterPosition = async () => {
 }
 
 // Watch ------------------
-const updateItemRects = async () => {
-	if (rect.value && tabsListRef.value) {
-		await nextTick()
-		const element = tabsListRef.value?.$el || tabsListRef.value
-		if (element && 'querySelectorAll' in element) {
-			const items = (element as HTMLElement).querySelectorAll('.tabs-list-item')
-			const newRects: DOMRectReadOnly[] = []
-			items.forEach((item: Element) => {
-				newRects.push(item.getBoundingClientRect())
-			})
-			itemRectList.value = newRects
-		}
-	}
+// 各アイテムの v-resize から呼ばれる。フォント読み込み・CSS変数の遅延注入・
+// ハイドレーションミスマッチによる DOM 差し替え等にも自然に追随する。
+const handleItemResize = (index: number, r: DOMRectReadOnly) => {
+	const len = displayList.value.length
+	const next = itemRectList.value.slice(0, len)
+	next[index] = r
+	itemRectList.value = next
+	if (isCentered.value) updateCenterPosition()
 }
 
-// rect 確定・リサイズ → センタリング再計算 → itemRects 更新
+// コンテナサイズ変更時、サイズ変化を伴わない位置ずれ（justify-content: center で
+// アイテムがシフトするケース等）も拾えるよう、全アイテムを再計測する
+const remeasureAllItems = async () => {
+	if (!rect.value || !tabsListRef.value) return
+	await nextTick()
+	const element = tabsListRef.value?.$el || tabsListRef.value
+	if (!element || !('querySelectorAll' in element)) return
+	const items = (element as HTMLElement).querySelectorAll('.tabs-list-item')
+	const newRects: DOMRectReadOnly[] = []
+	items.forEach((item: Element) => {
+		newRects.push(item.getBoundingClientRect())
+	})
+	itemRectList.value = newRects
+}
+
+// rect 確定・リサイズ → センタリング再計算 → 全アイテム再計測
 watch(() => rect.value, async () => {
 	await updateCenterPosition()
 	if (isCentered.value && !isCenteredReady.value) {
 		await nextTick()
 		isCenteredReady.value = true
 	}
-	await updateItemRects()
+	await remeasureAllItems()
 }, { immediate: true, deep: true })
 
-// activeIndex 変更 → センタリング更新 → itemRects 更新
-watch(displayActiveIndex, async () => {
-	await updateCenterPosition()
-	await updateItemRects()
+// activeIndex 変更 → センタリング再計算（アイテム rect は v-resize で最新）
+watch(displayActiveIndex, () => {
+	updateCenterPosition()
+})
+
+// displayList の項目数変更 → 余分な itemRectList を切り詰める
+// （新しい index の rect は各アイテムの v-resize マウント時に投入される）
+watch(() => displayList.value.length, (newLen) => {
+	if (itemRectList.value.length > newLen) {
+		itemRectList.value = itemRectList.value.slice(0, newLen)
+	}
 })
 </script>
 
@@ -288,7 +306,7 @@ $border-height: 0.5; // ボーダーの高さ
 				}
 			}
 
-			&._centered-gradation-mask {
+			&._centeredGradationMask {
 				mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
 				-webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
 			}
