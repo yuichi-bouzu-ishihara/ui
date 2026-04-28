@@ -356,6 +356,9 @@ export const defaultOptions = {
 		itemPaddingBottom: '8px', // アイテムの下部パディング e.g. 4px
 		itemPaddingSide: '1em', // アイテムの左右パディング e.g. 16px
 		itemWidthAuto: false, // アイテムの幅を自動調整するかどうか e.g. true, false
+		centered: false, // センタリングモード（current item を中央に表示） e.g. true, false
+		cloneCount: 1, // センタリング時の左右クローン数 e.g. 1, 2
+		centeredGradationMask: false, // センタリング時の左右グラデーションマスク e.g. true, false
 	},
 	container: {
 		base: {
@@ -500,5 +503,15 @@ export const defaultOptions = {
 	},
 	video: {
 		defaultVolume: 0.2,
+	},
+	treeMenu: {
+		gap: 8,
+		iconSize: 20,
+		toggleIconName: 'arrowDown',
+		toggleIconSize: 12,
+		indentSize: 28,
+		lineColor: 'color-light-020',
+		fontSize: '14',
+		childrenGap: 8,
 	},
 }

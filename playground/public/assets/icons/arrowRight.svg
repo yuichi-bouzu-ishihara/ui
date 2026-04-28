@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/arrowRight</title>
+    <g id="icon/arrowRight" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M16.741325,21.441325 C17.486225,22.186225 18.6939465,22.186225 19.4388465,21.441325 C20.1399288,20.7402427 20.1811689,19.629187 19.5625669,18.8798725 L19.4388465,18.7438036 L12.6933146,12 L19.4388465,5.25619642 C20.1399288,4.55511409 20.1811689,3.44405838 19.5625669,2.69474389 L19.4388465,2.55867498 C18.7377641,1.85759265 17.6267084,1.81635251 16.8773939,2.43495457 L16.741325,2.55867498 L7.3,12 L16.741325,21.441325 Z" id="Path" fill="#FFFFFF" transform="translate(13.648761, 12.000000) scale(-1, 1) translate(-13.648761, -12.000000) "></path>
+    </g>
+</svg>

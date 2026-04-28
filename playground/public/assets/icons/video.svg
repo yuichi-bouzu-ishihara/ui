@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon/video</title>
+    <g id="icon/video" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <path d="M15,4 C16.1045695,4 17,4.8954305 17,6 L17,6 L17,7.306 L19.8733264,5.34754531 C21.1594547,4.47063961 22.8880193,5.33554562 22.9947986,6.85131721 L23,7 L23,17 C23,18.6068415 21.2009427,19.5576477 19.8733264,18.6524547 L19.8733264,18.6524547 L17,16.693 L17,18 C17,19.0543618 16.1841222,19.9181651 15.1492623,19.9945143 L15,20 L3,20 C1.8954305,20 1,19.1045695 1,18 L1,18 L1,6 C1,4.8954305 1.8954305,4 3,4 L3,4 Z M15,6 L3,6 L3,18 L15,18 L15,6 Z M21,7 L17,9.72727273 L17,14.2727273 L21,17 L21,7 Z" id="Combined-Shape" fill="#FFFFFF"></path>
+    </g>
+</svg>
