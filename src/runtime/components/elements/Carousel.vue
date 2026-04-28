@@ -1,101 +1,84 @@
 <template>
-	<div ref="element" class="carousel">
-		<div v-for="(item, i) in list" :key="`carousel-item-${i}`" class="carousel-item">
-			<Image v-bind="item" cover />
+	<div ref="emblaRef" class="carousel">
+		<div class="carousel-track">
+			<slot />
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
-import Image from './Image.vue'
+import { computed, onMounted, watch } from 'vue'
+import emblaCarouselVue from 'embla-carousel-vue'
+import type { EmblaOptionsType } from 'embla-carousel'
 
-type ListItem = {
-	src: string
-	alt: string
-}
+// スロットの直下要素が 1 スライドにマッピングされる。
+// 子は単一ルート要素であること（<template v-for> によるフラグメントは不可）。
 
 // Models ------------------
-const index = defineModel<number>('index')
+const index = defineModel<number>('index', { default: 0 })
 
 // Props ------------------
-defineProps({
-	list: { type: Array as () => ListItem[], default: () => [] },
+type Props = {
+	/** アクティブスライドを中央揃えにする */
+	centered?: boolean
+	/** 末尾⇄先頭をループさせる */
+	loop?: boolean
+}
+const props = withDefaults(defineProps<Props>(), {
+	centered: false,
+	loop: false,
 })
 
-// Data ------------------
-const element = ref<HTMLElement | null>(null)
-const activeIndex = ref(index.value)
-let scrollTimeout: NodeJS.Timeout | null = null
+// Embla ------------------
+const options = computed<EmblaOptionsType>(() => ({
+	axis: 'x',
+	align: props.centered ? 'center' : 'start',
+	loop: props.loop,
+	startIndex: index.value,
+	skipSnaps: false,
+}))
+
+const [emblaRef, emblaApi] = emblaCarouselVue(options)
 
 // Methods ------------------
-const updateIndexOnScroll = () => {
-	if (element.value) {
-		const scrollLeft = element.value.scrollLeft
-		const itemWidth = element.value.clientWidth
-		const nextIndex = Math.round(scrollLeft / itemWidth)
-		if (activeIndex.value !== nextIndex) {
-			// スクロールが止まったときに更新する
-			if (scrollTimeout) {
-				clearTimeout(scrollTimeout)
-			}
-			scrollTimeout = setTimeout(() => {
-				activeIndex.value = nextIndex
-				index.value = nextIndex
-			}, 150) // 150ms 後にスクロールが止まったと判断
-		}
-	}
-}
-const setIndex = (nv: number) => {
-	if (element.value) {
-		const items = element.value.children
-		if (items[nv]) {
-			items[nv].scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' })
-		}
+const syncIndexFromEmbla = () => {
+	const next = emblaApi.value?.selectedScrollSnap()
+	if (next != null && next !== index.value) {
+		index.value = next
 	}
 }
 
 // Watch ------------------
 watch(
 	() => index.value,
-	(nv) => {
-		if (nv !== undefined) {
-			setIndex(nv)
+	(i) => {
+		if (i == null || !emblaApi.value) return
+		if (emblaApi.value.selectedScrollSnap() !== i) {
+			emblaApi.value.scrollTo(i)
 		}
 	},
 )
 
 // Lifecycle Hooks ------------------
 onMounted(() => {
-	if (element.value) {
-		element.value.addEventListener('scroll', updateIndexOnScroll)
-	}
-})
-onUnmounted(() => {
-	if (element.value) {
-		element.value.removeEventListener('scroll', updateIndexOnScroll)
-	}
+	emblaApi.value?.on('select', syncIndexFromEmbla)
 })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .carousel {
-	display: flex;
+	position: relative;
 	width: 100%;
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	-ms-overflow-style: none;
-	scrollbar-width: none;
+	overflow: hidden;
 
-	&::-webkit-scrollbar {
-		display: none;
-	}
-
-	&-item {
-		flex: 0 0 100%;
-		scroll-snap-align: center; // スクロール位置を中央に合わせる
-		scroll-snap-stop: always; // 一つづつスクロールする
-		width: 100%;
+	&-track {
+		display: flex;
+		// Embla 必須: スライドは flex 不縮なブロック。
+		// 幅・余白は親が CSS で決める（ハードコードしない）。
+		> * {
+			flex: 0 0 auto;
+			min-width: 0;
+		}
 	}
 }
 </style>
