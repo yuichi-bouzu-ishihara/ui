@@ -356,6 +356,8 @@ export const defaultOptions = {
 		itemPaddingBottom: '8px', // アイテムの下部パディング e.g. 4px
 		itemPaddingSide: '1em', // アイテムの左右パディング e.g. 16px
 		itemWidthAuto: false, // アイテムの幅を自動調整するかどうか e.g. true, false
+		centered: false, // センタリングモード（current item を中央に表示） e.g. true, false
+		cloneCount: 1, // センタリング時の左右クローン数 e.g. 1, 2
 	},
 	container: {
 		base: {

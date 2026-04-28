@@ -6,6 +6,8 @@
 				<Tabs :list="iconList" />
 				<Tabs :list="list" item-width-auto />
 				<Tabs :list="iconList" item-width-auto gap="56px" :color="{ text: 'var(--color-danger)' }" />
+				<Tabs :list="centeredList" centered item-width-auto />
+				<Tabs :list="centeredList" centered item-width-auto :clone-count="2" />
 			</Column>
 		</Container>
 	</div>
@@ -89,10 +91,39 @@ const iconList = ref([
 	},
 ])
 
+const centeredList = ref([
+	{
+		name: 'Home',
+		current: true,
+		click: () => handleCenteredClick('Home'),
+	},
+	{
+		name: 'Search',
+		current: false,
+		click: () => handleCenteredClick('Search'),
+	},
+	{
+		name: 'Explore',
+		current: false,
+		click: () => handleCenteredClick('Explore'),
+	},
+	{
+		name: 'Settings',
+		current: false,
+		click: () => handleCenteredClick('Settings'),
+	},
+])
+
 // method ------------------------------------------------------------
 const handleIconClick = (index) => {
 	iconList.value.forEach((item, i) => {
 		item.current = i === index
+	})
+}
+
+const handleCenteredClick = (name) => {
+	centeredList.value.forEach((item) => {
+		item.current = item.name === name
 	})
 }
 // ver.Link

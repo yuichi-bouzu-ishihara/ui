@@ -1,9 +1,9 @@
 <template>
-	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs" :style="styles">
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs" :class="{ _centered: isCentered }" :style="styles">
 		<Row ref="tabsListRef" class="tabs-list" :gap="itemGap" justify="center" align="start" nowrap fit-h>
-			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
-				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
-				@click="tab.click && tab.click()">
+			<component :is="isItemLink(tab, index) ? BasicLink : 'div'" v-for="(tab, index) in displayList"
+				:key="`tabs-list-item-${index}`" class="tabs-list-item" :class="displayItemClasses(index)" :style="itemWidth"
+				:to="isItemLink(tab, index) ? tab.path : undefined" replace no-hover-style @click="handleItemClick(tab, index)">
 				<Row justify="center" align="center" gap="6" fit-h>
 					<Icon v-if="tab.icon" :name="tab.icon.name" :size="tab.icon.size || 16" color="var(--custom-text-color)" />
 					<Typography v-else-if="tab.name" v-bind="typography" color="var(--custom-text-color)" bold center unselectable
@@ -16,14 +16,14 @@
 				</Row>
 			</component>
 		</Row>
-		<div v-if="activeIndex !== -1 && rect && itemRectList[activeIndex]" class="tabs-bar"
-			:style="`transform: translateX(${(itemRectList[activeIndex]?.left ?? 0) - rect.left}px); width: ${itemRectList[activeIndex]?.width ?? 0}px`" />
+		<div v-if="displayActiveIndex !== -1 && rect && itemRectList[displayActiveIndex]" class="tabs-bar"
+			:style="`transform: translateX(${(itemRectList[displayActiveIndex]?.left ?? 0) - rect.left}px); width: ${itemRectList[displayActiveIndex]?.width ?? 0}px`" />
 	</Box>
 </template>
 
 <script setup lang="ts">
-import { computed, toRefs, ref, watch, nextTick, type PropType } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, toRefs, ref, watch, nextTick, onMounted, type PropType } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
 import NoticeIcon from './NoticeIcon.vue'
@@ -47,6 +47,7 @@ export type TabsItem = {
 
 // Composables ------------------------------------------------------------
 const route = useRoute()
+const router = useRouter()
 const tabs = useTabs()
 
 // Props --------------
@@ -54,6 +55,8 @@ const props = defineProps({
 	list: { type: Array as () => TabsItem[], default: () => [] },
 	gap: { type: String, default: 'var(--tabs-gap)' },
 	itemWidthAuto: { type: Boolean, default: false },
+	centered: { type: Boolean, default: false },
+	cloneCount: { type: Number, default: 0 },
 	color: { type: Object as PropType<CustomColor>, default: null },
 })
 const { list } = toRefs(props)
@@ -73,18 +76,31 @@ const styles = computed(() => {
 const auto = computed(() => {
 	return tabs.itemWidthAuto || props.itemWidthAuto
 })
+const isCentered = computed(() => {
+	return tabs.centered || props.centered
+})
+const resolvedCloneCount = computed(() => {
+	return props.cloneCount > 0 ? props.cloneCount : tabs.cloneCount
+})
 const itemWidth = computed(() => {
+	if (isCentered.value) return ''
 	return auto.value ? '' : `width: calc(100% / ${list.value.length});`
 })
-const itemClasses = computed(() => (index: number) => {
-	const item = list.value[index]
-	return {
-		_icon: item?.icon,
-		_current: item?.current ?? (item?.path ? activeIndex.value === index : false),
-		_disabled: !item?.click && !item?.path,
-		_auto: auto.value,
+
+// センタリング用: 元リストを左右にクローンして拡張したリスト
+const displayList = computed(() => {
+	if (!isCentered.value) return list.value
+	const original = list.value
+	if (original.length === 0) return original
+	const clones: TabsItem[] = []
+	const count = resolvedCloneCount.value
+	for (let i = 0; i < count; i++) {
+		clones.push(...original)
 	}
+	return [...clones, ...original, ...clones]
 })
+
+// 元リスト内での activeIndex
 const activeIndex = computed(() => {
 	let index = -1
 	if (route && route.path) {
@@ -98,15 +114,86 @@ const activeIndex = computed(() => {
 	}
 	return index
 })
+
+// 表示リスト内での activeIndex（センタリング時は中央セットのインデックス）
+const displayActiveIndex = computed(() => {
+	if (activeIndex.value === -1) return -1
+	if (!isCentered.value) return activeIndex.value
+	const offset = list.value.length * resolvedCloneCount.value
+	return offset + activeIndex.value
+})
+
+const displayItemClasses = computed(() => (index: number) => {
+	const originalIndex = isCentered.value
+		? index % list.value.length
+		: index
+	const item = list.value[originalIndex]
+	const isActive = isCentered.value
+		? originalIndex === activeIndex.value
+		: (item?.current ?? (item?.path ? activeIndex.value === index : false))
+	return {
+		_icon: item?.icon,
+		_current: isActive,
+		_disabled: !item?.click && !item?.path,
+		_auto: auto.value || isCentered.value,
+	}
+})
+
 const typography = computed(() => {
 	return { [`${useTabs().typography}`]: true }
 })
 const itemGap = computed(() => {
-	return auto.value ? props.gap : ''
+	return (auto.value || isCentered.value) ? props.gap : ''
 })
 
+// Methods ------------------
+// センタリング時、クローンアイテムは BasicLink ではなく div にする（ルーター遷移の重複を防ぐ）
+// オリジナルセット内のアイテムのみ BasicLink として描画する
+const isItemLink = (tab: TabsItem, displayIndex: number) => {
+	if (!tab.path) return false
+	if (!isCentered.value) return true
+	const originalLength = list.value.length
+	const offset = originalLength * resolvedCloneCount.value
+	return displayIndex >= offset && displayIndex < offset + originalLength
+}
+
+const handleItemClick = (tab: TabsItem, displayIndex: number) => {
+	if (!isCentered.value) {
+		tab.click && tab.click()
+		return
+	}
+	// クローンアイテムのクリック → 元リストのインデックスに変換してハンドラを実行
+	const originalIndex = displayIndex % list.value.length
+	const originalItem = list.value[originalIndex]
+	if (originalItem?.click) {
+		originalItem.click()
+	}
+	else if (originalItem?.path) {
+		router.replace(originalItem.path)
+	}
+}
+
+// センタリング: active item をコンテナ中央にスクロール
+const scrollToCenter = async (smooth = false) => {
+	if (!isCentered.value) return
+	await nextTick()
+	const element = tabsListRef.value?.$el || tabsListRef.value
+	if (!element || !('querySelectorAll' in element)) return
+	const container = element as HTMLElement
+	const items = container.querySelectorAll('.tabs-list-item')
+	const targetIndex = displayActiveIndex.value
+	if (targetIndex === -1 || !items[targetIndex]) return
+	const targetEl = items[targetIndex] as HTMLElement
+	const containerWidth = container.offsetWidth
+	const targetLeft = targetEl.offsetLeft
+	const targetWidth = targetEl.offsetWidth
+	container.scrollTo({
+		left: targetLeft - (containerWidth / 2) + (targetWidth / 2),
+		behavior: smooth ? 'smooth' : 'instant',
+	})
+}
+
 // Watch ------------------
-// itemWidthAutoの場合の初期化と更新処理
 const updateItemRects = async () => {
 	if (rect.value && tabsListRef.value) {
 		await nextTick()
@@ -123,6 +210,16 @@ const updateItemRects = async () => {
 }
 
 watch(() => rect.value, updateItemRects, { immediate: true, deep: true })
+
+// センタリング時: activeIndex が変わったらスムーズスクロール
+watch(displayActiveIndex, async () => {
+	await scrollToCenter(true)
+	await updateItemRects()
+})
+
+onMounted(() => {
+	scrollToCenter()
+})
 </script>
 
 <style lang="scss">
@@ -152,6 +249,19 @@ $border-height: 0.5; // ボーダーの高さ
 			height: var(--tabs-bar-background-height);
 			background-color: var(--custom-bar-color);
 			opacity: 0.2;
+		}
+
+		&._centered {
+			#{$cn}-list {
+				overflow-x: scroll;
+				justify-content: flex-start;
+				-ms-overflow-style: none;
+				scrollbar-width: none;
+
+				&::-webkit-scrollbar {
+					display: none;
+				}
+			}
 		}
 
 		&-list {

@@ -51,6 +51,8 @@ export const useTabs = () => {
 		barColor: config.value?.barColor ? readonly(config.value).barColor : '',
 		barBackgroundHeight: config.value?.barBackgroundHeight ? readonly(config.value).barBackgroundHeight : '',
 		itemWidthAuto: config.value?.itemWidthAuto ? readonly(config.value).itemWidthAuto : false,
+		centered: config.value?.centered ? readonly(config.value).centered : false,
+		cloneCount: config.value?.cloneCount ? readonly(config.value).cloneCount : 1,
 		gap: config.value?.gap ? readonly(config.value).gap : '',
 	}
 }
