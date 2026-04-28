@@ -21,8 +21,8 @@
 			</Box>
 		</Marquee>
 
-		<h3>Overlay</h3>
-		<Marquee :duration="12" overlay>
+		<h3>Gradation Mask</h3>
+		<Marquee :duration="12" gradation-mask>
 			<Box v-for="i in 6" :key="i" w="160" h="80" r="8" color="light" :style="{ display: 'flex', alignItems: 'center', justifyContent: 'center' }">
 				Card {{ i }}
 			</Box>

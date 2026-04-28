@@ -21,15 +21,15 @@ const props = defineProps({
 	reverse: { type: Boolean, default: false },
 	/** ホバー時にアニメーションを一時停止する */
 	pauseOnHover: { type: Boolean, default: false },
-	/** 左右にグラデーションオーバーレイを表示する */
-	overlay: { type: Boolean, default: false },
+	/** 左右にグラデーションマスクを表示する */
+	gradationMask: { type: Boolean, default: false },
 })
 
 // Computed --------------------------------------------------------
 const classes = computed(() => ({
 	_reverse: props.reverse,
 	_pauseOnHover: props.pauseOnHover,
-	_overlay: props.overlay,
+	_gradationMask: props.gradationMask,
 }))
 
 const styles = computed(() => ({
@@ -79,8 +79,8 @@ $cn: '.marquee';
 			animation-play-state: paused;
 		}
 
-		// オーバーレイ（左右グラデーション）
-		&._overlay {
+		// グラデーションマスク（左右）
+		&._gradationMask {
 			&::before,
 			&::after {
 				content: '';
