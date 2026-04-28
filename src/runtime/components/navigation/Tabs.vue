@@ -1,13 +1,15 @@
 <template>
-	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs" :style="styles">
-		<Row ref="tabsListRef" class="tabs-list" :gap="itemGap" justify="center" align="start" nowrap fit-h>
-			<component :is="tab.path ? BasicLink : 'div'" v-for="(tab, index) in list" :key="`tabs-list-item-${index}`"
-				class="tabs-list-item" :class="itemClasses(index)" :style="itemWidth" :to="tab.path" replace no-hover-style
-				@click="tab.click && tab.click()">
+	<Box v-resize="(r: DOMRectReadOnly) => rect = r" class="tabs" :class="tabsClasses" :style="styles">
+		<Row ref="tabsListRef" class="tabs-list" :class="{ _ready: isCenteredReady }" :gap="itemGap" justify="center"
+			align="start" nowrap fit-h :style="listStyle">
+			<component :is="isItemLink(tab, index) ? BasicLink : 'div'" v-for="(tab, index) in displayList"
+				:key="`tabs-list-item-${index}`" v-resize="(r: DOMRectReadOnly) => handleItemResize(index, r)"
+				class="tabs-list-item" :class="displayItemClasses(index)" :style="itemWidth"
+				:to="isItemLink(tab, index) ? tab.path : undefined" replace no-hover-style @click="handleItemClick(tab, index)">
 				<Row justify="center" align="center" gap="6" fit-h>
 					<Icon v-if="tab.icon" :name="tab.icon.name" :size="tab.icon.size || 16" color="var(--custom-text-color)" />
 					<Typography v-else-if="tab.name" v-bind="typography" color="var(--custom-text-color)" bold center unselectable
-						cap-height-baseline lineclamp="1">
+						cap-height-baseline nowrap>
 						{{ tab.name }}
 					</Typography>
 					<Box v-if="tab.notice" mr="-8">
@@ -16,14 +18,14 @@
 				</Row>
 			</component>
 		</Row>
-		<div v-if="activeIndex !== -1 && rect && itemRectList[activeIndex]" class="tabs-bar"
-			:style="`transform: translateX(${(itemRectList[activeIndex]?.left ?? 0) - rect.left}px); width: ${itemRectList[activeIndex]?.width ?? 0}px`" />
+		<div v-if="displayActiveIndex !== -1 && rect && itemRectList[displayActiveIndex]" class="tabs-bar"
+			:style="barStyle" />
 	</Box>
 </template>
 
 <script setup lang="ts">
 import { computed, toRefs, ref, watch, nextTick, type PropType } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useTabs } from '../../composables/navigation/tabs'
 import Icon from '../elements/Icon.vue'
 import NoticeIcon from './NoticeIcon.vue'
@@ -47,6 +49,7 @@ export type TabsItem = {
 
 // Composables ------------------------------------------------------------
 const route = useRoute()
+const router = useRouter()
 const tabs = useTabs()
 
 // Props --------------
@@ -54,6 +57,9 @@ const props = defineProps({
 	list: { type: Array as () => TabsItem[], default: () => [] },
 	gap: { type: String, default: 'var(--tabs-gap)' },
 	itemWidthAuto: { type: Boolean, default: false },
+	centered: { type: Boolean, default: false },
+	centeredGradationMask: { type: Boolean, default: false },
+	cloneCount: { type: Number, default: 0 },
 	color: { type: Object as PropType<CustomColor>, default: null },
 })
 const { list } = toRefs(props)
@@ -62,6 +68,8 @@ const { list } = toRefs(props)
 const rect = ref<DOMRectReadOnly | null>(null)
 const itemRectList = ref<DOMRectReadOnly[]>([])
 const tabsListRef = ref<{ $el?: HTMLElement } | null>(null)
+const listTranslateX = ref(0)
+const isCenteredReady = ref(false) // 初期位置確定後に true → CSS transition を有効化
 
 // Computed ------------------
 const styles = computed(() => {
@@ -70,21 +78,43 @@ const styles = computed(() => {
 		'--custom-bar-color': props.color?.text ? props.color.text : 'var(--tabs-bar-color)',
 	}
 })
+const isCenteredGradationMask = computed(() => {
+	return tabs.centeredGradationMask || props.centeredGradationMask
+})
+const tabsClasses = computed(() => {
+	return {
+		_centered: isCentered.value,
+		_centeredGradationMask: isCentered.value && isCenteredGradationMask.value,
+	}
+})
 const auto = computed(() => {
 	return tabs.itemWidthAuto || props.itemWidthAuto
 })
+const isCentered = computed(() => {
+	return tabs.centered || props.centered
+})
+const resolvedCloneCount = computed(() => {
+	return props.cloneCount > 0 ? props.cloneCount : tabs.cloneCount
+})
 const itemWidth = computed(() => {
+	if (isCentered.value) return ''
 	return auto.value ? '' : `width: calc(100% / ${list.value.length});`
 })
-const itemClasses = computed(() => (index: number) => {
-	const item = list.value[index]
-	return {
-		_icon: item?.icon,
-		_current: item?.current ?? (item?.path ? activeIndex.value === index : false),
-		_disabled: !item?.click && !item?.path,
-		_auto: auto.value,
+
+// センタリング用: 元リストを左右にクローンして拡張したリスト
+const displayList = computed(() => {
+	if (!isCentered.value) return list.value
+	const original = list.value
+	if (original.length === 0) return original
+	const clones: TabsItem[] = []
+	const count = resolvedCloneCount.value
+	for (let i = 0; i < count; i++) {
+		clones.push(...original)
 	}
+	return [...clones, ...original, ...clones]
 })
+
+// 元リスト内での activeIndex
 const activeIndex = computed(() => {
 	let index = -1
 	if (route && route.path) {
@@ -98,31 +128,141 @@ const activeIndex = computed(() => {
 	}
 	return index
 })
+
+// 表示リスト内での activeIndex（センタリング時は中央セットのインデックス）
+const displayActiveIndex = computed(() => {
+	if (activeIndex.value === -1) return -1
+	if (!isCentered.value) return activeIndex.value
+	const offset = list.value.length * resolvedCloneCount.value
+	return offset + activeIndex.value
+})
+
+const displayItemClasses = computed(() => (index: number) => {
+	const originalIndex = isCentered.value
+		? index % list.value.length
+		: index
+	const item = list.value[originalIndex]
+	const isActive = isCentered.value
+		? originalIndex === activeIndex.value
+		: (item?.current ?? (item?.path ? activeIndex.value === index : false))
+	return {
+		_icon: item?.icon,
+		_current: isActive,
+		_disabled: !item?.click && !item?.path,
+		_auto: auto.value || isCentered.value,
+	}
+})
+
 const typography = computed(() => {
 	return { [`${useTabs().typography}`]: true }
 })
 const itemGap = computed(() => {
-	return auto.value ? props.gap : ''
+	return (auto.value || isCentered.value) ? props.gap : ''
+})
+const listStyle = computed(() => {
+	if (!isCentered.value) return ''
+	return `transform: translateX(${listTranslateX.value}px);`
+})
+const barStyle = computed(() => {
+	const activeRect = itemRectList.value[displayActiveIndex.value]
+	if (!activeRect) return ''
+	const width = activeRect.width ?? 0
+	if (isCentered.value) {
+		return `left: 50%; transform: translateX(-50%); width: ${width}px;`
+	}
+	const left = (activeRect.left ?? 0) - (rect.value?.left ?? 0)
+	return `transform: translateX(${left}px); width: ${width}px;`
 })
 
-// Watch ------------------
-// itemWidthAutoの場合の初期化と更新処理
-const updateItemRects = async () => {
-	if (rect.value && tabsListRef.value) {
-		await nextTick()
-		const element = tabsListRef.value?.$el || tabsListRef.value
-		if (element && 'querySelectorAll' in element) {
-			const items = (element as HTMLElement).querySelectorAll('.tabs-list-item')
-			const newRects: DOMRectReadOnly[] = []
-			items.forEach((item: Element) => {
-				newRects.push(item.getBoundingClientRect())
-			})
-			itemRectList.value = newRects
-		}
+// Methods ------------------
+const isItemLink = (tab: TabsItem, displayIndex: number) => {
+	if (!tab.path) return false
+	if (!isCentered.value) return true
+	const originalLength = list.value.length
+	const offset = originalLength * resolvedCloneCount.value
+	return displayIndex >= offset && displayIndex < offset + originalLength
+}
+
+const handleItemClick = (tab: TabsItem, displayIndex: number) => {
+	if (!isCentered.value) {
+		tab.click && tab.click()
+		return
+	}
+	const originalIndex = displayIndex % list.value.length
+	const originalItem = list.value[originalIndex]
+	if (originalItem?.click) {
+		originalItem.click()
+	}
+	else if (originalItem?.path) {
+		router.replace(originalItem.path)
 	}
 }
 
-watch(() => rect.value, updateItemRects, { immediate: true, deep: true })
+// センタリング: active item の中心がコンテナ中央に来るよう tabs-list を translateX
+// offsetLeft はレイアウト位置（transform に影響されない）なので安定して計算可能
+const updateCenterPosition = async () => {
+	if (!isCentered.value || !rect.value) return
+	await nextTick()
+	const element = tabsListRef.value?.$el || tabsListRef.value
+	if (!element || !('querySelectorAll' in element)) return
+	const container = element as HTMLElement
+	const items = container.querySelectorAll('.tabs-list-item')
+	const targetIndex = displayActiveIndex.value
+	if (targetIndex === -1 || !items[targetIndex]) return
+	const targetEl = items[targetIndex] as HTMLElement
+	const containerWidth = rect.value.width
+	const targetCenter = targetEl.offsetLeft + targetEl.offsetWidth / 2
+	listTranslateX.value = containerWidth / 2 - targetCenter
+}
+
+// Watch ------------------
+// 各アイテムの v-resize から呼ばれる。フォント読み込み・CSS変数の遅延注入・
+// ハイドレーションミスマッチによる DOM 差し替え等にも自然に追随する。
+const handleItemResize = (index: number, r: DOMRectReadOnly) => {
+	const len = displayList.value.length
+	const next = itemRectList.value.slice(0, len)
+	next[index] = r
+	itemRectList.value = next
+	if (isCentered.value) updateCenterPosition()
+}
+
+// コンテナサイズ変更時、サイズ変化を伴わない位置ずれ（justify-content: center で
+// アイテムがシフトするケース等）も拾えるよう、全アイテムを再計測する
+const remeasureAllItems = async () => {
+	if (!rect.value || !tabsListRef.value) return
+	await nextTick()
+	const element = tabsListRef.value?.$el || tabsListRef.value
+	if (!element || !('querySelectorAll' in element)) return
+	const items = (element as HTMLElement).querySelectorAll('.tabs-list-item')
+	const newRects: DOMRectReadOnly[] = []
+	items.forEach((item: Element) => {
+		newRects.push(item.getBoundingClientRect())
+	})
+	itemRectList.value = newRects
+}
+
+// rect 確定・リサイズ → センタリング再計算 → 全アイテム再計測
+watch(() => rect.value, async () => {
+	await updateCenterPosition()
+	if (isCentered.value && !isCenteredReady.value) {
+		await nextTick()
+		isCenteredReady.value = true
+	}
+	await remeasureAllItems()
+}, { immediate: true, deep: true })
+
+// activeIndex 変更 → センタリング再計算（アイテム rect は v-resize で最新）
+watch(displayActiveIndex, () => {
+	updateCenterPosition()
+})
+
+// displayList の項目数変更 → 余分な itemRectList を切り詰める
+// （新しい index の rect は各アイテムの v-resize マウント時に投入される）
+watch(() => displayList.value.length, (newLen) => {
+	if (itemRectList.value.length > newLen) {
+		itemRectList.value = itemRectList.value.slice(0, newLen)
+	}
+})
 </script>
 
 <style lang="scss">
@@ -152,6 +292,24 @@ $border-height: 0.5; // ボーダーの高さ
 			height: var(--tabs-bar-background-height);
 			background-color: var(--custom-bar-color);
 			opacity: 0.2;
+		}
+
+		&._centered {
+			overflow: hidden;
+
+			#{$cn}-list {
+				justify-content: flex-start;
+				width: max-content;
+
+				&._ready {
+					transition: transform var.$transition-base-duration var.$transition-base-timing-function;
+				}
+			}
+
+			&._centeredGradationMask {
+				mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+				-webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+			}
 		}
 
 		&-list {
