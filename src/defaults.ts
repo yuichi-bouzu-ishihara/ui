@@ -358,6 +358,7 @@ export const defaultOptions = {
 		itemWidthAuto: false, // アイテムの幅を自動調整するかどうか e.g. true, false
 		centered: false, // センタリングモード（current item を中央に表示） e.g. true, false
 		cloneCount: 1, // センタリング時の左右クローン数 e.g. 1, 2
+		centeredGradationMask: false, // センタリング時の左右グラデーションマスク e.g. true, false
 	},
 	container: {
 		base: {

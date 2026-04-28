@@ -57,6 +57,7 @@ const props = defineProps({
 	gap: { type: String, default: 'var(--tabs-gap)' },
 	itemWidthAuto: { type: Boolean, default: false },
 	centered: { type: Boolean, default: false },
+	centeredGradationMask: { type: Boolean, default: false },
 	cloneCount: { type: Number, default: 0 },
 	color: { type: Object as PropType<CustomColor>, default: null },
 })
@@ -76,8 +77,14 @@ const styles = computed(() => {
 		'--custom-bar-color': props.color?.text ? props.color.text : 'var(--tabs-bar-color)',
 	}
 })
+const isCenteredGradationMask = computed(() => {
+	return tabs.centeredGradationMask || props.centeredGradationMask
+})
 const tabsClasses = computed(() => {
-	return { _centered: isCentered.value }
+	return {
+		_centered: isCentered.value,
+		'_centered-gradation-mask': isCentered.value && isCenteredGradationMask.value,
+	}
 })
 const auto = computed(() => {
 	return tabs.itemWidthAuto || props.itemWidthAuto
@@ -279,6 +286,11 @@ $border-height: 0.5; // ボーダーの高さ
 				&._ready {
 					transition: transform var.$transition-base-duration var.$transition-base-timing-function;
 				}
+			}
+
+			&._centered-gradation-mask {
+				mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
+				-webkit-mask-image: linear-gradient(to right, transparent 0%, black 20%, black 80%, transparent 100%);
 			}
 		}
 

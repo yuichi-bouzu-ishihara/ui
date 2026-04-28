@@ -12,4 +12,5 @@ export type TabsConfig = {
 	itemWidthAuto: boolean // アイテムの幅を自動調整するかどうか e.g. true, false
 	centered: boolean // センタリングモード（current item を中央に表示） e.g. true, false
 	cloneCount: number // センタリング時の左右クローン数 e.g. 1, 2
+	centeredGradationMask: boolean // センタリング時の左右グラデーションマスク e.g. true, false
 }

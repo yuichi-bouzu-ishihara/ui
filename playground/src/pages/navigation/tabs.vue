@@ -7,6 +7,7 @@
 				<Tabs :list="list" item-width-auto />
 				<Tabs :list="iconList" item-width-auto gap="56px" :color="{ text: 'var(--color-danger)' }" />
 				<Tabs :list="centeredList" centered item-width-auto />
+				<Tabs :list="centeredList" centered centered-gradation-mask item-width-auto />
 				<Tabs :list="centeredList" centered item-width-auto :clone-count="2" />
 			</Column>
 		</Container>

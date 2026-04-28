@@ -53,6 +53,7 @@ export const useTabs = () => {
 		itemWidthAuto: config.value?.itemWidthAuto ? readonly(config.value).itemWidthAuto : false,
 		centered: config.value?.centered ? readonly(config.value).centered : false,
 		cloneCount: config.value?.cloneCount ? readonly(config.value).cloneCount : 1,
+		centeredGradationMask: config.value?.centeredGradationMask ? readonly(config.value).centeredGradationMask : false,
 		gap: config.value?.gap ? readonly(config.value).gap : '',
 	}
 }
