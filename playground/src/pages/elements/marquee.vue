@@ -21,6 +21,16 @@
 			</Box>
 		</Marquee>
 
+		<h3>Paused (toggle)</h3>
+		<button @click="isPaused = !isPaused" :style="{ alignSelf: 'flex-start', padding: '4px 12px', cursor: 'pointer' }">
+			{{ isPaused ? 'Resume' : 'Pause' }}
+		</button>
+		<Marquee :paused="isPaused">
+			<Box v-for="i in 5" :key="i" w="120" h="60" r="8" color="light" :style="{ display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+				Item {{ i }}
+			</Box>
+		</Marquee>
+
 		<h3>Gradation Mask</h3>
 		<Marquee :duration="12" gradation-mask>
 			<Box v-for="i in 6" :key="i" w="160" h="80" r="8" color="light" :style="{ display: 'flex', alignItems: 'center', justifyContent: 'center' }">
@@ -31,6 +41,7 @@
 </template>
 
 <script setup lang="ts">
+const isPaused = ref(false)
 </script>
 
 <style lang="scss">
