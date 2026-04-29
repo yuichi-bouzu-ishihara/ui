@@ -79,6 +79,39 @@
 					Dokuro's modification surgery, he ended up becoming the
 					villainous Weird.
 				</Typography>
+				<!-- Linebreak: 狭い幅で英語が単語境界で改行されることを確認 -->
+				<Typography title3>
+					Linebreak (狭い幅での折り返し検証)
+				</Typography>
+				<Box color="light010" w="280px">
+					<Column gap="1em">
+						<Typography caption2 color="text-secondary">
+							長い英文 — 単語境界で改行され、単語の途中では切れない
+						</Typography>
+						<Typography body linebreak>
+							The implementation requires comprehensive understanding of internationalization and accessibility standards.
+						</Typography>
+						<Typography caption2 color="text-secondary">
+							長い和文 — 文字単位で自然に折り返す
+						</Typography>
+						<Typography body linebreak>
+							これは日本語の長い文章で、文字単位で自然に折り返されることを確認するためのサンプルテキストです。
+						</Typography>
+						<Typography caption2 color="text-secondary">
+							和英混植 — 英単語は割らず、和文は文字単位で改行
+						</Typography>
+						<Typography body linebreak>
+							このAPIのimplementationは複雑で、internationalizationの考慮が必要です。
+						</Typography>
+						<Typography caption2 color="text-secondary">
+							長い URL — ボックス内に収まる
+						</Typography>
+						<Typography body linebreak>
+							https://example.com/very/long/path/that-should-still-wrap-inside-the-box?query=value&another=parameter
+						</Typography>
+					</Column>
+				</Box>
+
 				<CodeHighlighter title="Typography Config" lang="json" :code="JSON.stringify(useTypography().font, null, 2)" />
 			</Column>
 		</Container>

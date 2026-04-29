@@ -559,8 +559,11 @@ $cn: '.typography'; // コンポーネントセレクタ名
 		&._linebreak {
 			// pre-line によって、改行コードによって改行されるようになると同時に、
 			// 空白文字（タブを含む）が連続している場合は1つの空白文字に置き換えられます。
+			// 欧文は単語境界で改行（word-break: normal がデフォルト）、
+			// 和文は CJK の通常挙動で文字単位に改行される。
+			// overflow-wrap: anywhere で URL や長い英数字列もボックス内に収める。
 			white-space: pre-line;
-			word-break: break-all;
+			overflow-wrap: anywhere;
 		}
 
 		// 改行不可
