@@ -107,54 +107,54 @@ $height: calc(var(--height) + $padding-top + $padding-bottom);
 	}
 
 	// 無効でなければ表示する
-	&:not(._disabled):hover &-inner,
-	&._defaultOpen &-inner {
+	&:not(._disabled):hover > &-inner,
+	&._defaultOpen > &-inner {
 		opacity: 1;
 	}
 
 	// 上方向に表示する
-	&:not(._disabled)._up &-inner {
+	&:not(._disabled)._up > &-inner {
 		left: calc(#{$width} / 2 * -1 + 50%);
 		bottom: calc(50% + #{$start}); // デフォルトは、tipsでラップしている要素の上端
 		transform: translateY(0px);
 	}
 
-	&:not(._disabled)._up:hover &-inner,
-	&._defaultOpen._up &-inner {
+	&:not(._disabled)._up:hover > &-inner,
+	&._defaultOpen._up > &-inner {
 		transform: translateY(calc(#{$distance} * -1));
 	}
 
 	// 下方向に表示する
-	&:not(._disabled)._down &-inner {
+	&:not(._disabled)._down > &-inner {
 		top: calc(50% + #{$start}); // デフォルトは、tipsでラップしている要素の下端
 		left: calc(#{$width} / 2 * -1 + 50%);
 		transform: translateY(0px);
 	}
 
-	&:not(._disabled)._down:hover &-inner,
-	&._defaultOpen._down &-inner {
+	&:not(._disabled)._down:hover > &-inner,
+	&._defaultOpen._down > &-inner {
 		transform: translateY($distance);
 	}
 
 	// 右方向に表示する
-	&:not(._disabled)._right &-inner {
+	&:not(._disabled)._right > &-inner {
 		left: calc(50% + #{$start}); // デフォルトは、tipsでラップしている要素の右端
 		top: calc(#{$height} / 2 * -1 + 50%);
 	}
 
-	&:not(._disabled)._right:hover &-inner,
-	&._defaultOpen._right &-inner {
+	&:not(._disabled)._right:hover > &-inner,
+	&._defaultOpen._right > &-inner {
 		transform: translateX($distance);
 	}
 
 	// 左方向に表示する
-	&:not(._disabled)._left &-inner {
+	&:not(._disabled)._left > &-inner {
 		right: calc(50% + #{$start}); // tipsでラップしている要素の左端
 		top: calc(#{$height} / 2 * -1 + 50%);
 	}
 
-	&:not(._disabled)._left:hover &-inner,
-	&._defaultOpen._left &-inner {
+	&:not(._disabled)._left:hover > &-inner,
+	&._defaultOpen._left > &-inner {
 		transform: translateX(calc(#{$distance} * -1));
 	}
 }
