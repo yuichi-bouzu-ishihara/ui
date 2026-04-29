@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, watch } from 'vue'
+import { onMounted, watch } from 'vue'
 import emblaCarouselVue from 'embla-carousel-vue'
 import type { EmblaOptionsType } from 'embla-carousel'
 
@@ -30,15 +30,19 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // Embla ------------------
-const options = computed<EmblaOptionsType>(() => ({
+// 初期化用の options。reactive な ref を渡すと embla-carousel-vue が
+// options 変更ごとに reInit() を呼び、scrollTo のアニメーションが
+// 即時ジャンプで上書きされてしまう。プレーンオブジェクトで渡し、
+// 設定変更（centered / loop）は下の watch で手動 reInit する。
+const initialOptions: EmblaOptionsType = {
 	axis: 'x',
 	align: props.centered ? 'center' : 'start',
 	loop: props.loop,
 	startIndex: index.value,
 	skipSnaps: false,
-}))
+}
 
-const [emblaRef, emblaApi] = emblaCarouselVue(options)
+const [emblaRef, emblaApi] = emblaCarouselVue(initialOptions)
 
 // Methods ------------------
 const syncIndexFromEmbla = () => {
@@ -49,6 +53,7 @@ const syncIndexFromEmbla = () => {
 }
 
 // Watch ------------------
+// v-model:index → Embla（アニメーションあり）
 watch(
 	() => index.value,
 	(i) => {
@@ -56,6 +61,21 @@ watch(
 		if (emblaApi.value.selectedScrollSnap() !== i) {
 			emblaApi.value.scrollTo(i)
 		}
+	},
+)
+
+// centered / loop の変更時のみ reInit。現在位置を保ったまま再構築する。
+watch(
+	() => [props.centered, props.loop] as const,
+	([centered, loop]) => {
+		if (!emblaApi.value) return
+		emblaApi.value.reInit({
+			axis: 'x',
+			align: centered ? 'center' : 'start',
+			loop,
+			startIndex: emblaApi.value.selectedScrollSnap(),
+			skipSnaps: false,
+		})
 	},
 )
 
