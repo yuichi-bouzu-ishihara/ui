@@ -19,6 +19,8 @@ const props = defineProps({
 	cloneCount: { type: Number, default: 4 },
 	/** アニメーション方向を反転する */
 	reverse: { type: Boolean, default: false },
+	/** アニメーションを停止する */
+	paused: { type: Boolean, default: false },
 	/** ホバー時にアニメーションを一時停止する */
 	pauseOnHover: { type: Boolean, default: false },
 	/** 左右にグラデーションマスクを表示する */
@@ -27,6 +29,7 @@ const props = defineProps({
 
 // Computed --------------------------------------------------------
 const classes = computed(() => ({
+	_paused: props.paused,
 	_reverse: props.reverse,
 	_pauseOnHover: props.pauseOnHover,
 	_gradationMask: props.gradationMask,
@@ -66,6 +69,11 @@ $cn: '.marquee';
 		min-width: max-content;
 		animation: marquee-scroll var(--marquee-duration) linear infinite;
 		backface-visibility: hidden;
+	}
+
+	// 停止
+	&._paused &-content {
+		animation-play-state: paused;
 	}
 
 	// 反転
