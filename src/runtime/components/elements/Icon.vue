@@ -18,7 +18,7 @@ import { useRegex } from '../../composables/regex'
 // Types -------------------------------------
 export type Props = {
 	name?: string
-	size?: number
+	size?: number | string
 	color?: string
 	gradation?: string
 	originalColor?: boolean
