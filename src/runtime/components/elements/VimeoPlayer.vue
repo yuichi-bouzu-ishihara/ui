@@ -585,9 +585,9 @@ watch(
 		videoDuration.value = 0
 		bufferStartCount.value = 0
 
-		// Vimeo Player SDK は loadVideo に { id, h } を受け付ける（Unlisted動画対応）
+		// Unlisted動画は hash 付き URL を渡す必要がある（SDK は h オプションを認識しない）
 		const loadOptions = newVideoHash
-			? { id: typeof newVideoId === 'number' ? newVideoId : Number(newVideoId), h: newVideoHash }
+			? `https://vimeo.com/${newVideoId}/${newVideoHash}`
 			: newVideoId
 
 		vimeoPlayer
@@ -708,9 +708,11 @@ onMounted(async () => {
 	 * @see https://help.vimeo.com/hc/ja/articles/12426260232977-%E3%83%97%E3%83%AC%E3%82%A4%E3%83%A4%E3%83%BC%E3%81%AE%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
 	 */
 	vimeoPlayer = new Player(element.value, {
-		id: props.videoId,
-		// Unlisted 動画の場合のみ hash トークンを付与（空文字を渡さないように分岐）
-		...(props.videoHash ? { h: props.videoHash } : {}),
+		// Unlisted動画は hash 付き URL を渡す。Public動画は id のみで OK。
+		// SDK の oEmbed URL 構築では id 単独だと https://vimeo.com/{id} になりUnlistedは 404 になるため。
+		...(props.videoHash
+			? { url: `https://vimeo.com/${props.videoId}/${props.videoHash}` }
+			: { id: props.videoId }),
 		background: props.background,
 		controls: props.controller,
 		// 他 Vimeo Player が再生されたら自動的に停止するオプション
@@ -729,7 +731,7 @@ onMounted(async () => {
 		title: false,
 		portrait: false,
 		byline: false,
-	} as ConstructorParameters<typeof Player>[1])
+	} as unknown as ConstructorParameters<typeof Player>[1])
 	await Promise.all([getVideoSize(), setThumbnail()])
 	updateVideoSize()
 	vimeoPlayer.on('bufferend', onBufferEnd)
