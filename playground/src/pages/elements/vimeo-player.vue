@@ -7,7 +7,9 @@
 				placeholder="e.g. 6986d8766e" />
 			<FieldFooter description="Optional. Required for Unlisted videos." />
 			<Row justify="center">
-				<Button :disabled="!inputVideoId" @click="loadVideo">Load</Button>
+				<Button :disabled="!inputVideoId" @click="loadVideo">
+					Load
+				</Button>
 			</Row>
 		</Container>
 		<Column v-else gap="20">
