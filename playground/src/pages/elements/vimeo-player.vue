@@ -1,10 +1,14 @@
 <template>
 	<Box class="pageElementsVimeoPlayer">
 		<Container v-if="!videoId" gap="20">
-			<Input v-model="videoId" name="videoId" label="Vimeo Video ID" placeholder="e.g. 1123117748" focus />
+			<Input v-model="inputVideoId" name="videoId" label="Vimeo Video ID" placeholder="e.g. 1123117748" />
 			<FieldFooter focus description="Please enter the Vimeo Video ID." />
-			<Input v-model="videoHash" name="videoHash" label="Vimeo Video Hash (Unlisted only)" placeholder="e.g. 6986d8766e" />
+			<Input v-model="inputVideoHash" name="videoHash" label="Vimeo Video Hash (Unlisted only)"
+				placeholder="e.g. 6986d8766e" />
 			<FieldFooter description="Optional. Required for Unlisted videos." />
+			<Row justify="center">
+				<Button :disabled="!inputVideoId" @click="loadVideo">Load</Button>
+			</Row>
 		</Container>
 		<Column v-else gap="20">
 			<Container wide>
@@ -19,8 +23,8 @@
 					</Box>
 				</Box>
 				<Ratio golden>
-					<VimeoPlayer v-bind="{ videoId, videoHash, autoplay, loop, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
-						v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
+					<VimeoPlayer v-bind="{ videoId, videoHash, autoplay, loop, cover }" ref="vimeoPlayer"
+						v-model:current-time="currentTime" v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
 						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" :controls="controls"
 						:always-show-controls="ctrAlwaysShowControls" contain @ready="onReady" @play="onPlay" @pause="onPause"
 						@ended="onEnded" @error="onError" @metadataloaded="onLoaded" @bufferend="onBufferEnd"
@@ -51,8 +55,14 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 
+const inputVideoId = ref('')
+const inputVideoHash = ref('')
 const videoId = ref('')
 const videoHash = ref('')
+const loadVideo = () => {
+	videoId.value = inputVideoId.value.trim()
+	videoHash.value = inputVideoHash.value.trim()
+}
 const currentTime = ref(0)
 const seekTime = ref(0)
 const isSeeking = ref(false)
