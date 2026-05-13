@@ -37,6 +37,8 @@ const seeking = defineModel<boolean>('seeking', { default: false })
 // Props --------------------------------------------------
 const props = defineProps({
 	videoId: { type: [String, Number], required: true },
+	// Unlisted 動画用の hash トークン。空文字なら Public 扱い。
+	videoHash: { type: String, default: '' },
 	background: { type: Boolean, default: false },
 	thumbnailSrc: { type: String, default: '' },
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
@@ -537,7 +539,10 @@ const setThumbnail = async () => {
 	if (!props.thumbnailSrc) {
 		// サムネイル取得
 		try {
-			thumbnailUrl.value = await useVimeoPublicApi().getThumbnailUrl(props.videoId.toString())
+			thumbnailUrl.value = await useVimeoPublicApi().getThumbnailUrl(
+				props.videoId.toString(),
+				props.videoHash || undefined,
+			)
 		}
 		catch (error: unknown) {
 			console.error('Vimeo thumbnail error:', error)
@@ -571,8 +576,8 @@ const setVolume = async (value: number) => {
 
 // Watchers ------------------------------------------------
 watch(
-	() => props.videoId,
-	(newVideoId) => {
+	() => [props.videoId, props.videoHash] as const,
+	([newVideoId, newVideoHash]) => {
 		if (!vimeoPlayer) return
 		// 新しい動画がロードされる際にready状態をリセット
 		isReady.value = false
@@ -580,8 +585,13 @@ watch(
 		videoDuration.value = 0
 		bufferStartCount.value = 0
 
+		// Unlisted動画は hash 付き URL を渡す必要がある（SDK は h オプションを認識しない）
+		const loadOptions = newVideoHash
+			? `https://vimeo.com/${newVideoId}/${newVideoHash}`
+			: newVideoId
+
 		vimeoPlayer
-			.loadVideo(newVideoId)
+			.loadVideo(loadOptions as Parameters<typeof vimeoPlayer.loadVideo>[0])
 			.then(() => {
 				// 動画のロードが成功した後の処理
 			})
@@ -698,7 +708,11 @@ onMounted(async () => {
 	 * @see https://help.vimeo.com/hc/ja/articles/12426260232977-%E3%83%97%E3%83%AC%E3%82%A4%E3%83%A4%E3%83%BC%E3%81%AE%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%83%BC%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
 	 */
 	vimeoPlayer = new Player(element.value, {
-		id: props.videoId,
+		// Unlisted動画は hash 付き URL を渡す。Public動画は id のみで OK。
+		// SDK の oEmbed URL 構築では id 単独だと https://vimeo.com/{id} になりUnlistedは 404 になるため。
+		...(props.videoHash
+			? { url: `https://vimeo.com/${props.videoId}/${props.videoHash}` }
+			: { id: props.videoId }),
 		background: props.background,
 		controls: props.controller,
 		// 他 Vimeo Player が再生されたら自動的に停止するオプション
@@ -717,7 +731,7 @@ onMounted(async () => {
 		title: false,
 		portrait: false,
 		byline: false,
-	} as ConstructorParameters<typeof Player>[1])
+	} as unknown as ConstructorParameters<typeof Player>[1])
 	await Promise.all([getVideoSize(), setThumbnail()])
 	updateVideoSize()
 	vimeoPlayer.on('bufferend', onBufferEnd)
