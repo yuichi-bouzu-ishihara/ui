@@ -3,6 +3,8 @@
 		<Container v-if="!videoId" gap="20">
 			<Input v-model="videoId" name="videoId" label="Vimeo Video ID" placeholder="e.g. 1123117748" focus />
 			<FieldFooter focus description="Please enter the Vimeo Video ID." />
+			<Input v-model="videoHash" name="videoHash" label="Vimeo Video Hash (Unlisted only)" placeholder="e.g. 6986d8766e" />
+			<FieldFooter description="Optional. Required for Unlisted videos." />
 		</Container>
 		<Column v-else gap="20">
 			<Container wide>
@@ -17,7 +19,7 @@
 					</Box>
 				</Box>
 				<Ratio golden>
-					<VimeoPlayer v-bind="{ videoId, autoplay, loop, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
+					<VimeoPlayer v-bind="{ videoId, videoHash, autoplay, loop, cover }" ref="vimeoPlayer" v-model:current-time="currentTime"
 						v-model:seeking="isSeeking" v-model:volume="volume" v-model:muted="muted"
 						:style="`opacity: ${isMetadataLoaded ? 1 : 0}`" :controls="controls"
 						:always-show-controls="ctrAlwaysShowControls" contain @ready="onReady" @play="onPlay" @pause="onPause"
@@ -50,6 +52,7 @@
 import { ref } from 'vue'
 
 const videoId = ref('')
+const videoHash = ref('')
 const currentTime = ref(0)
 const seekTime = ref(0)
 const isSeeking = ref(false)

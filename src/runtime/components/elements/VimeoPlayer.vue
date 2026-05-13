@@ -37,6 +37,8 @@ const seeking = defineModel<boolean>('seeking', { default: false })
 // Props --------------------------------------------------
 const props = defineProps({
 	videoId: { type: [String, Number], required: true },
+	// Unlisted 動画用の hash トークン。空文字なら Public 扱い。
+	videoHash: { type: String, default: '' },
 	background: { type: Boolean, default: false },
 	thumbnailSrc: { type: String, default: '' },
 	controller: { type: Boolean, default: false }, // Vimeo Player Embed のコントローラーの表示/非表示
@@ -537,7 +539,10 @@ const setThumbnail = async () => {
 	if (!props.thumbnailSrc) {
 		// サムネイル取得
 		try {
-			thumbnailUrl.value = await useVimeoPublicApi().getThumbnailUrl(props.videoId.toString())
+			thumbnailUrl.value = await useVimeoPublicApi().getThumbnailUrl(
+				props.videoId.toString(),
+				props.videoHash || undefined,
+			)
 		}
 		catch (error: unknown) {
 			console.error('Vimeo thumbnail error:', error)
@@ -571,8 +576,8 @@ const setVolume = async (value: number) => {
 
 // Watchers ------------------------------------------------
 watch(
-	() => props.videoId,
-	(newVideoId) => {
+	() => [props.videoId, props.videoHash] as const,
+	([newVideoId, newVideoHash]) => {
 		if (!vimeoPlayer) return
 		// 新しい動画がロードされる際にready状態をリセット
 		isReady.value = false
@@ -580,8 +585,13 @@ watch(
 		videoDuration.value = 0
 		bufferStartCount.value = 0
 
+		// Vimeo Player SDK は loadVideo に { id, h } を受け付ける（Unlisted動画対応）
+		const loadOptions = newVideoHash
+			? { id: typeof newVideoId === 'number' ? newVideoId : Number(newVideoId), h: newVideoHash }
+			: newVideoId
+
 		vimeoPlayer
-			.loadVideo(newVideoId)
+			.loadVideo(loadOptions as Parameters<typeof vimeoPlayer.loadVideo>[0])
 			.then(() => {
 				// 動画のロードが成功した後の処理
 			})
@@ -699,6 +709,8 @@ onMounted(async () => {
 	 */
 	vimeoPlayer = new Player(element.value, {
 		id: props.videoId,
+		// Unlisted 動画の場合のみ hash トークンを付与（空文字を渡さないように分岐）
+		...(props.videoHash ? { h: props.videoHash } : {}),
 		background: props.background,
 		controls: props.controller,
 		// 他 Vimeo Player が再生されたら自動的に停止するオプション
