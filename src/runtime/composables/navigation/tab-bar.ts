@@ -1,6 +1,6 @@
 import { readonly, useState } from '#imports'
 
-export const useNavigationTabBar = () => {
+export const useTabBar = () => {
 	// State -----------------------------------------------
 	const height = useState('tabBarHeight', () => 0)
 

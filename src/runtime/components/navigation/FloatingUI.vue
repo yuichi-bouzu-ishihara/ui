@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useNavigationTabBar } from '../../composables/navigation/tab-bar'
+import { useTabBar } from '../../composables/navigation/tab-bar'
 
 // Props -----------------------------------------------
 const props = defineProps({
@@ -26,6 +26,6 @@ const props = defineProps({
 
 // Computed -----------------------------------------------
 const bottom = computed(() => {
-	return props.noTabBarHeight ? 36 : useNavigationTabBar().height.value + 36
+	return props.noTabBarHeight ? 36 : useTabBar().height.value + 36
 })
 </script>
