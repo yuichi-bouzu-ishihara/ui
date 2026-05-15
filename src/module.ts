@@ -108,9 +108,8 @@ export default defineNuxtModule<ModuleOptions>({
 		addImportsDir(resolve(runtimeDir, 'composables', 'elements'))
 		addImportsDir(resolve(runtimeDir, 'composables', 'layout'))
 		addImportsDir(resolve(runtimeDir, 'composables', 'overlays'))
-		// addImportsDir(resolve(runtimeDir, 'composables', 'forms'))
-		// addImportsDir(resolve(runtimeDir, 'composables', 'navigation'))
-		// addImportsDir(resolve(runtimeDir, 'composables', 'transition'))
+		addImportsDir(resolve(runtimeDir, 'composables', 'forms'))
+		addImportsDir(resolve(runtimeDir, 'composables', 'navigation'))
 
 		// Classes
 		addImportsDir(resolve(runtimeDir, 'classes'))
