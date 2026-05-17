@@ -1,7 +1,7 @@
 <template>
-	<Box class="slotHeader" relative>
+	<Box class="slotHeader" :class="{ _bgBlur: blur }" relative>
 		<Box v-if="blur" class="slotHeader-blur" :bg-blur="blur" absolute top="0" left="0" w="100%" h="100%" />
-		<Box class="slotHeader-bg" :color="background" :bg-blur="blur" absolute top="0" left="0" w="100%" h="100%" />
+		<Box class="slotHeader-bg" :color="background" absolute top="0" left="0" w="100%" h="100%" />
 		<Row class="slotHeader-inner" justify="center" align="center" :gap="GAP" nowrap fit>
 			<div class="slotHeader-inner-left">
 				<Box :h="UI_SIZE">
@@ -86,6 +86,9 @@ $transition-base: var.$transition-base;
 
 	&-bg {
 		border-radius: inherit;
+	}
+
+	&._bgBlur &-bg {
 		opacity: 0.9;
 	}
 
