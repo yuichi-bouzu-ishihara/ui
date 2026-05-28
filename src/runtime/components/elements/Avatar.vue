@@ -14,22 +14,24 @@
 			</template>
 		</div>
 		<template v-if="border">
-			<div :class="`avatar-border _${color}`" :style="borderStyles" />
+			<div :class="`avatar-border ${bdColorClassName}`" :style="borderStyles" />
 		</template>
 	</Box>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import Box from '../layout/Box.vue'
 import { useCss } from '../../composables/css'
 import { useAvatar } from '../../composables/elements/avatar'
+import { useRegex } from '../../composables/regex'
+import Box from '../layout/Box.vue'
 import SkeletonShape from '../elements/SkeletonShape.vue'
 import Image from './Image.vue'
 
 // Composables -------------------------------------
 const { getSize } = useCss() // css に関する関数
 const { config: avatarConfig } = useAvatar()
+const { isCssColor } = useRegex()
 
 // Props --------------------------------------------------------
 const props = defineProps({
@@ -81,12 +83,22 @@ const borderStyles = computed(() => {
 			height,
 		}
 	}
+	if (props.borderColor && isCssColor(props.borderColor)) {
+		obj = {
+			...obj,
+			backgroundColor: props.borderColor,
+		}
+	}
 	return obj
 })
 // 線の色
-const color = computed(() => {
-	const str = props.borderColor
-	return str
+const bdColorClassName = computed(() => {
+	if (props.borderColor && isCssColor(props.borderColor)) {
+		return ''
+	}
+	else {
+		return `_${props.borderColor}`
+	}
 })
 // スタイル生成
 const styles = computed(() => {
