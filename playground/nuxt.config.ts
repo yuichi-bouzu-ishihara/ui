@@ -39,10 +39,10 @@ export default defineNuxtConfig({
           height: 38,
         },
         avatar: {
-          maskSrc: 'url(/assets/images/circle-mask.svg)',
+          maskSrc: 'url(/assets/images/avatar-mask.svg)',
         },
         skeletonShape: {
-          avatarSvgSrc: 'url(/assets/images/circle-mask.svg)',
+          avatarSvgSrc: 'url(/assets/images/avatar-mask.svg)',
         },
         webfont: {
           googleFont: {
