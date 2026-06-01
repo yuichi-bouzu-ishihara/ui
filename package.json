@@ -59,6 +59,7 @@
   "dependencies": {
     "@vimeo/player": "^2.22.0",
     "deepmerge-ts": "^7.1.4",
+    "embla-carousel-vue": "^8.6.0",
     "html2canvas": "^1.4.1",
     "normalize.css": "^8.0.1",
     "ts-debounce": "^4.0.0",
