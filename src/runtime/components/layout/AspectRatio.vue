@@ -57,7 +57,6 @@ const classes = computed(() => {
 $cn: '.aspectRatio'; // コンポーネントクラス名
 
 #{$cn} {
-	width: 100%;
 	max-width: 100%;
 	max-height: 100%;
 
