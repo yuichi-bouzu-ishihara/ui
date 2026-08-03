@@ -1,5 +1,5 @@
 # Node.jsのベースイメージを使用
-FROM node:20.19.0-slim
+FROM node:24.18.1-slim
 
 ENV TZ Asia/Tokyo
 

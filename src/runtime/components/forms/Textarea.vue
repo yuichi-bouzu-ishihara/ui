@@ -238,7 +238,12 @@ $cn: '.textarea'; // コンポーネントセレクタ名
 			padding-top: 0.2em;
 			padding-bottom: 0.36em;
 
-			// プレースホルダーを非表示にする
+		}
+
+		// プレースホルダーを非表示にする
+		// NOTE: ::after は疑似要素のため ::placeholder を連結できず不正セレクタになる。
+		// セレクタリストに含めると規則全体が破棄されるため、 -field のみに適用する。
+		&-field {
 			&::placeholder {
 				color: var(--color-text-000);
 				transition: var.$transition-base;
