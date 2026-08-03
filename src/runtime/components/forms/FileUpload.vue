@@ -71,7 +71,9 @@ const { formatFileSize } = useFile()
 const { watch, destroy } = useFileDrop()
 
 // Models ----------
-const model = defineModel<File | null>({ default: () => null })
+// NOTE: DefineModelDefault<File | null> は (() => File) | null に分配されるため、
+// ファクトリ関数ではなく null を直接指定する。既定値は null のまま変わらない。
+const model = defineModel<File | null>({ default: null })
 
 // Emits ----------
 const emit = defineEmits<{
