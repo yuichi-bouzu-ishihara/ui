@@ -201,8 +201,9 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   // 使用する SCSS ファイルを配列で指定
+  // NOTE: css エントリはモジュール ID として解決されるため、絶対パスで指定する。
   css: [
-    '../../src/runtime/scss/style.scss',
+    path.resolve(__dirname, '../src/runtime/scss/style.scss'),
   ],
 
   runtimeConfig,
