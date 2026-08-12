@@ -6,6 +6,7 @@ import { useCss } from '../css'
 import type { UIConfig } from '../../types'
 import type { SheetConfig } from '../../types/sheet'
 import { useState, useAppConfig, readonly } from '#imports'
+import { getCurrentScope, onScopeDispose } from 'vue'
 import type { Component } from 'vue'
 
 // Types ---------------------
@@ -29,6 +30,30 @@ const DATA_VALUE = 'sheet'
 
 // グローバルなコンポーネントマップ（複数のbasicsを統合）
 const globalComponentMap = new Map<Component, string>()
+
+// close 直前に実行するコールバックを index ごとに保持する（onBeforeClose で登録）
+type BeforeCloseCallback = () => void | Promise<void>
+const beforeCloseCallbacks = new Map<number, Set<BeforeCloseCallback>>()
+
+/**
+ * 指定したシートの beforeClose コールバックを順に実行する。
+ * list から除去する「前」に呼ばれる。コールバックが throw してもクローズ自体は止めない（ログのみ）。
+ * @param {InternalPayload[]} items - これから閉じるシート
+ */
+const runBeforeClose = async (items: InternalPayload[]): Promise<void> => {
+	for (const item of items) {
+		const callbacks = beforeCloseCallbacks.get(item.index)
+		if (!callbacks) continue
+		for (const cb of callbacks) {
+			try {
+				await cb()
+			}
+			catch (error) {
+				console.error(`[useSheet] onBeforeClose callback failed for index ${item.index}`, error)
+			}
+		}
+	}
+}
 
 // コンポーネント型から名前を取得（Componentのみ受け付ける）
 const getComponentName = (component: Component): string => {
@@ -78,29 +103,31 @@ export const useSheet = () => {
 	 * シートを閉じる
 	 * @param index - シートのインデックス。'all' の場合はすべて閉じる、number[] の場合は複数同時に閉じる
 	 * @param result - シートの結果
+	 * @returns {Promise<void>} beforeClose コールバックの完了後に resolve する
 	 */
-	const close = (index: number | number[] | 'all', result: unknown = true) => {
-		let closing: InternalPayload[] = []
-
+	const close = async (index: number | number[] | 'all', result: unknown = true): Promise<void> => {
+		// 閉じる対象を確定する（InternalPayload.index プロパティで検索）
+		let closing: InternalPayload[]
 		if (index === 'all') {
 			closing = [...list.value]
-			list.value = []
-			current.value = null
 		}
 		else if (Array.isArray(index)) {
-			// 複数インデックスを同時に閉じる（InternalPayload.index プロパティで検索）
 			const indexSet = new Set(index)
 			closing = list.value.filter(item => indexSet.has(item.index))
-			list.value = list.value.filter(item => !indexSet.has(item.index))
-			current.value = list.value[list.value.length - 1] || null
 		}
 		else {
-			// 単一インデックスを閉じる（InternalPayload.index プロパティで検索）
-			const item = list.value.find(item => item.index === index)
-			if (item) closing = [item]
-			list.value = list.value.filter(item => item.index !== index)
-			current.value = list.value[list.value.length - 1] || null
+			closing = list.value.filter(item => item.index === index)
 		}
+
+		if (closing.length === 0) return
+
+		// list から除去する「前」に beforeClose コールバックを実行する（await 可能）
+		await runBeforeClose(closing)
+
+		// list を更新する（await 中の list 変更に備え、対象 index のみを確実に除去する）
+		const closingIndices = new Set(closing.map(item => item.index))
+		list.value = list.value.filter(item => !closingIndices.has(item.index))
+		current.value = list.value[list.value.length - 1] || null
 
 		// Promise を resolve する
 		closing.forEach(item => item.resolve?.(result))
@@ -140,7 +167,7 @@ export const useSheet = () => {
 		 * @param {Payload} pl - ペイロード（componentはコンポーネント型のみ）
 		 * @returns {Promise<unknown>} シートの結果
 		 */
-		open: (pl: Payload): Promise<unknown> => {
+		open: async (pl: Payload): Promise<unknown> => {
 			// コンポーネント型から名前を解決（必ず文字列になる）
 			const componentName = getComponentName(pl.component)
 
@@ -151,13 +178,13 @@ export const useSheet = () => {
 
 			// 重複チェック（allowDuplicate が false の場合）
 			if (!allowDuplicate && existingItems.length > 0) {
-				// 既存のシートをすべて close する
+				// 既存のシートをすべて close する（beforeClose の完了を待ってから開き直す）
 				const indicesToClose = existingItems
 					.filter(item => item.index >= 0)
 					.map(item => item.index)
 
 				if (indicesToClose.length > 0) {
-					close(indicesToClose)
+					await close(indicesToClose)
 				}
 			}
 
@@ -197,6 +224,36 @@ export const useSheet = () => {
 			Object.entries(components).forEach(([name, component]) => {
 				globalComponentMap.set(component, name)
 			})
+		},
+
+		/**
+		 * 指定した index のシートが閉じる「直前」に実行するコールバックを登録する。
+		 * ✕ボタン・ボタン・ページ遷移・プログラム close のいずれの経路でも、
+		 * シートが list から除去される前（＝ unmount 前、ページ遷移ガード時は遷移確定前）に呼ばれる。
+		 * 呼び出したコンポーネントのスコープ破棄時に自動で解除される。
+		 * @param {number} index - 対象シートの index（props.index / $attrs.index）
+		 * @param {BeforeCloseCallback} cb - 実行するコールバック（async 可）
+		 * @returns {() => void} 手動で解除する関数
+		 */
+		onBeforeClose: (index: number, cb: BeforeCloseCallback): (() => void) => {
+			let callbacks = beforeCloseCallbacks.get(index)
+			if (!callbacks) {
+				callbacks = new Set()
+				beforeCloseCallbacks.set(index, callbacks)
+			}
+			callbacks.add(cb)
+
+			const off = () => {
+				const set = beforeCloseCallbacks.get(index)
+				if (!set) return
+				set.delete(cb)
+				if (set.size === 0) beforeCloseCallbacks.delete(index)
+			}
+
+			// setup / effect スコープ内なら破棄時に自動解除する
+			if (getCurrentScope()) onScopeDispose(off)
+
+			return off
 		},
 
 		close,
