@@ -136,7 +136,7 @@ const getPxByVw = (vw: number, viewport: number = BASE_VIEWPORT): number => {
  * @see /src/assets/scss/global/_functions.scss
  */
 const getMaxPxVw = (px: number, viewport: number = BASE_VIEWPORT): string => {
-	let v: string = 'auto'
+	let v: string
 	// 0 は max(0,0) と返すと無効になってしまうので回避する。
 	if (px === 0) {
 		v = '0'
@@ -161,7 +161,7 @@ const getMaxPxVw = (px: number, viewport: number = BASE_VIEWPORT): string => {
  * @see /src/assets/scss/global/_functions.scss
  */
 const getSize = (px: number, absolute: boolean, viewport: number = BASE_VIEWPORT): string => {
-	let v: string = 'auto'
+	let v: string
 	if (absolute) {
 		v = `${px}px`
 	}
