@@ -203,7 +203,7 @@ const getExtension = async (fileUrl: string): Promise<string> => {
 		return extension
 	}
 	catch (error) {
-		throw new Error(`Failed to get file extension: ${error}`)
+		throw new Error(`Failed to get file extension: ${error}`, { cause: error })
 	}
 }
 

@@ -167,7 +167,7 @@ const elementEncodeBase64 = async (
 	height = 0,
 ) => {
 	// 1. エレメントをクローンする
-	let clonedElement = null
+	let clonedElement: HTMLElement
 	if (element instanceof HTMLElement) {
 		// cloneNodeを使用する
 		clonedElement = element.cloneNode(true) as HTMLElement // キャスト変更
