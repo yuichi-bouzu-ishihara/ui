@@ -12,4 +12,12 @@ describe('ssr', async () => {
     const html = await $fetch('/')
     expect(html).toContain('<div>basic</div>')
   })
+
+  it('renders FieldFooter border by default and applies _noBorder with no-border prop', async () => {
+    const html = await $fetch('/')
+    // default: hairline element is rendered
+    expect(html).toContain('fieldFooter-border')
+    // no-border: the modifier class is applied to the component root
+    expect(html).toContain('_noBorder')
+  })
 })

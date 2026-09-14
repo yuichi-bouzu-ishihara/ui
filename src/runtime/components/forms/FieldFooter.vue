@@ -29,6 +29,7 @@ const props = defineProps({
 	message: { type: String, default: '' }, // エラーなどを伝えるメッセージ
 	focus: { type: Boolean, default: false }, // フォーカスをあてる
 	fail: { type: Boolean, default: false }, // バリデーションに失敗したかどうか
+	noBorder: { type: Boolean, default: false }, // ボーダーを表示しない
 })
 
 // Computed -------------------------------------------
@@ -36,6 +37,7 @@ const classes = computed(() => {
 	return {
 		_focus: props.focus,
 		_fail: props.fail,
+		_noBorder: props.noBorder,
 	}
 })
 </script>
@@ -76,6 +78,10 @@ $cn: '.fieldFooter'; // コンポーネントセレクタ名
 			&-inner {
 				background-color: var(--color-danger);
 			}
+		}
+
+		&._noBorder &-border {
+			display: none;
 		}
 
 		&-txt {

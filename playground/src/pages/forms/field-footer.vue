@@ -5,6 +5,8 @@
 				<Input v-model="value" name="inputTest" label="ラベル" placeholder="プレースホルダー" maxlength="10" validation="always"
 					focus @focus="focus = true" @blur="focus = false" @valid="fail = false" @invalid="fail = true" />
 				<FieldFooter v-bind="{ fail, focus, message }" description="This Area is Description Insert." />
+				<Box h="40" />
+				<FieldFooter no-border v-bind="{ fail, focus, message }" description="noBorder: ボーダー非表示版" />
 			</Typography>
 		</Row>
 	</div>
