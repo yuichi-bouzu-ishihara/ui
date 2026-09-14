@@ -133,3 +133,50 @@ squash コミットの本文へ写すこと。
 | `b319fde` | GREEN（autopause の composable） |
 | `94d86aa` | VideoPlayer 本体 |
 | `31830ba` | プレイグラウンド |
+
+---
+
+## 追記: 4.22.0 で出した回帰と、その修正
+
+4.22.0 をリリースした直後、tokyo-anime-mart で
+「画面外へスクロールしても動画が再生され続ける」不具合が見つかった。
+
+### 原因
+
+`autoplay` を video 要素へ属性として渡すだけだった。`autoplay` は HTML の
+一度きりの属性で、後から false にしても再生中の動画は止まらない。
+VimeoPlayer は `autoplay` を監視して play / pause を呼んでいたため、
+乗り換えたときにこの挙動が落ちた。
+
+上の「意図的に検証していないこと」で `VideoPlayer.vue` のユニットテストを
+見送った判断が、この抜けを通した。テスト基盤の導入自体は依然として
+重いままなので、代わりに**呼び分けのロジックを純関数へ切り出して**
+同じ種類の抜けを捕まえられるようにした。
+
+### 修正
+
+| 段階 | コマンド | 結果 |
+| --- | --- | --- |
+| RED | `npx vitest run test/video-playback.test.ts` | `Error: Cannot find module '../src/runtime/composables/elements/video-playback'` |
+| GREEN | 同上 | `Test Files 1 passed (1)` / `Tests 5 passed (5)` |
+| 全体 | `npx vitest run` | `Test Files 3 passed (3)` / `Tests 15 passed (15)` |
+
+`applyPlaybackState(element, shouldPlay)` を追加し、`autoplay` の変化を
+監視して呼ぶようにした。テストは次を保証する。
+
+| # | 保証される内容 |
+| --- | --- |
+| 1 | 再生を要求されたら play を呼び pause は呼ばない |
+| 2 | 停止を要求されたら pause を呼び play は呼ばない |
+| 3 | 要素が未設定でも例外を投げない |
+| 4 | 自動再生が拒否されても未処理の rejection にならない |
+| 5 | play が Promise を返さない環境でも壊れない |
+
+### あわせて追加した poster prop
+
+既存の `thumbnail` は動画の上に重ねる画像で `currentTime === 0` のときだけ
+表示するため、ループで巻き戻るたびに一瞬出てしまう恐れがある。
+native の `poster` 属性を渡す `poster` prop を追加し、ループ用途では
+そちらを使えるようにした。
+
+コミット: `6bc0288`（RED）→ `0866e44`（GREEN）
