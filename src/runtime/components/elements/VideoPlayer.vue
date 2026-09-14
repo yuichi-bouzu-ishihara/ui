@@ -4,7 +4,7 @@
 		<!-- cover / background では親の大きさいっぱいに敷くため Ratio を通さない。 -->
 		<component :is="fill ? 'div' : Ratio" class="videoPlayer-frame" v-bind="fill ? {} : { wideScreen: true }">
 			<Box class="videoPlayer-bg" absolute top="0" left="0" w="100%" h="100%" z-index="-1" />
-			<video ref="player" class="videoPlayer-video" v-bind="{ src, autoplay, volume, muted, loop, preload }"
+			<video ref="player" class="videoPlayer-video" v-bind="{ src, autoplay, volume, muted, loop, preload }" :poster="poster || undefined"
 				:playsinline="playsinline || undefined" :webkit-playsinline="playsinline || undefined" @loadedmetadata="onReady"
 				@play="onPlay" @pause="onPause" @ended="onEnded" @error="onError" @timeupdate="onTimeUpdate" />
 			<Image v-if="thumbnail && currentTime === 0" class="videoPlayer-thumbnail" :src="thumbnail" :cover="cover"
@@ -31,6 +31,7 @@ import VideoPlayerControls from './VideoPlayerControls.vue'
 import Ratio from '../layout/Ratio.vue'
 import { useVideo } from '../../composables/elements/video'
 import { useVideoAutopause } from '../../composables/elements/video-autopause'
+import { applyPlaybackState } from '../../composables/elements/video-playback'
 
 // Composables --------------
 const { config } = useVideo()
@@ -43,7 +44,10 @@ const currentTime = defineModel<number>('current-time', { default: 0 })
 // Props --------------
 const props = defineProps({
 	src: { type: String, required: true },
-	thumbnail: { type: String, default: '' },
+	thumbnail: { type: String, default: '' }, // 動画の上に重ねる画像。currentTime が 0 のときだけ表示する
+	// 再生前に video 要素自身が表示する画像（native の poster 属性）。
+	// thumbnail と違い、ループで巻き戻っても出てこない。
+	poster: { type: String, default: '' },
 	autoplay: { type: Boolean, default: false },
 	controls: { type: [Boolean, Array] as PropType<boolean | string[]>, default: false },
 	alwaysShowControls: { type: Boolean, default: false }, // コントロールを常に表示するかどうか
@@ -167,6 +171,12 @@ watch(currentTime, (time) => {
 	if (seeking.value && player.value) {
 		player.value.currentTime = time
 	}
+})
+
+// autoplay は HTML の一度きりの属性で、後から false にしても再生中の動画は止まらない。
+// 表示・非表示に追従して再生を切り替えられるよう、変化を監視して明示的に呼び分ける。
+watch(() => props.autoplay, (enabled) => {
+	applyPlaybackState(player.value, enabled)
 })
 
 // autopause の登録・解除 --------------
