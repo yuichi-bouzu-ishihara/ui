@@ -14,8 +14,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
 import { useSheet } from '../../composables/overlays/sheet'
 import TransitionFade from '../transition/TransitionFade.vue'
 import SheetMessage from './SheetMessage.vue'
@@ -35,7 +35,7 @@ const basics: Record<
 
 // Stores & Composables ---------------------------
 const { close, list, isOpen, setIsOpen } = useSheet()
-const route = useRoute()
+const router = useRouter()
 
 // Computed ---------------------------
 const backdrop = computed(() => {
@@ -53,16 +53,17 @@ const afterLeave = () => {
 	}
 }
 
-// Watchers -------------------------
-watch(
-	() => route.path,
-	(newPath, oldPath) => {
-		if (newPath != oldPath) {
-			// ページ遷移時に閉じる
-			close('all')
-		}
-	},
-)
+// Navigation Guard -------------------------
+// ページ遷移の「前」にシートを閉じる。
+// beforeClose コールバック（各シートの route/router 処理）の完了を待ってから遷移を通すため、
+// watch(route.path)（遷移確定後に発火）ではなく router ガードを使う。
+const removeGuard = router.beforeEach(async (to, from) => {
+	if (to.path !== from.path && list.value.length > 0) {
+		await close('all')
+	}
+	// 何も return しない = 遷移を許可する
+})
+onBeforeUnmount(removeGuard)
 </script>
 
 <style lang="scss">
