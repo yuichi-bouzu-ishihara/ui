@@ -130,7 +130,7 @@ const slotStyle = computed(() => {
 <style lang="scss">
 .row {
 	display: flex;
-	width: auto;
+	// width は宣言しない。同じ詳細度のクラスが当てた幅を、CSS の出力順しだいで打ち消してしまうため（#7）。
 
 	&._justify-stretch {
 		&>* {
