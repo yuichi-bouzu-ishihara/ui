@@ -34,6 +34,11 @@
 								Per 33.333%
 							</Box>
 						</Ratio>
+						<!-- 幅 100% を当てた FileUpload が、Ratio の幅いっぱいに広がること（#7） -->
+						<Ratio golden>
+							<FileUpload class="pageLayoutRatio-fileUpload" accept="image/png,image/jpeg"
+								:label="{ idle: 'Ratio の中の FileUpload' }" />
+						</Ratio>
 					</Column>
 				</Typography>
 			</Container>
@@ -71,4 +76,9 @@
 <script setup>
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.pageLayoutRatio-fileUpload {
+	width: 100%;
+	height: 100%;
+}
+</style>
