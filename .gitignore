@@ -67,5 +67,7 @@ packs/*
 
 # Claude Code / ECC
 everything-claude-code
-.claude
+# .claude 配下はローカル用。Claude Code routines 向けのプラグイン設定（settings.json）のみ共有する
+.claude/*
+!.claude/settings.json
 .mcp.json
