@@ -3,7 +3,8 @@
 		<input :id="getId" v-model="checked" type="checkbox" class="switch-input" v-bind="{ name }"
 			:disabled="disabled || readonly">
 		<label :for="getId" class="switch-handle" />
-		<ControlLabel class="switch-label" :for-id="getId" v-bind="{ label, description }">
+		<ControlLabel v-if="label || description || $slots.default" class="switch-label" :for-id="getId"
+			v-bind="{ label, description }">
 			<slot />
 		</ControlLabel>
 		<input v-if="readonly" type="hidden" v-bind="{ name }" :value="checked">
