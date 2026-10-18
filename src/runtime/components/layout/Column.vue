@@ -100,7 +100,7 @@ $cn: 'column'; // コンポーネントクラス名
 .#{$cn} {
 	display: flex;
 	flex-direction: column;
-	width: auto;
+	// width は宣言しない。同じ詳細度のクラスが当てた幅を、CSS の出力順しだいで打ち消してしまうため（#7）。
 
 	&._reverse {
 		flex-direction: column-reverse;
