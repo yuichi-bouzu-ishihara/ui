@@ -55,7 +55,9 @@ $cn: '.processingLock'; // コンポーネントセレクタ名
 		width: 100vw;
 		height: 100vh;
 
-		&-percent {
+		// Typography で描画され、同じ要素に .typography { display: block; margin: 0 } も付くため、
+		// .processingLock の子孫として (0,2,0) で書き、読み込み順でパーセントが中央からずれないようにする。
+		#{$cn}-percent {
 			position: absolute;
 			top: 0;
 			left: 0;

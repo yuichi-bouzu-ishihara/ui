@@ -156,10 +156,15 @@ $cn: '.circleCheck'; // コンポーネントセレクタ名
 
 #{$cn} {
 	position: relative;
-	display: flex;
 	align-items: center;
 	justify-content: center;
 	aspect-ratio: 1 / 1; // % サイズ指定時に正方形アスペクト比を維持する
+
+	// Box で描画され、同じ要素に .box { display: block } も付くため、
+	// 同じクラスを重ねて (0,2,0) にし、読み込み順でチェックマークが中央からずれないようにする。
+	&#{$cn} {
+		display: flex;
+	}
 
 	&-circular {
 		width: 100%;

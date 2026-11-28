@@ -300,11 +300,17 @@ $perview: var(--per-view);
 		}
 	}
 
+	// Typography で描画され、同じ要素に .typography { line-height; text-align } も付くため、
+	// 値が違う 2 つは .inputDatalist の子孫として (0,2,0) で書き、読み込み順に依存しないようにする。
+	& &-label {
+		line-height: inherit;
+		text-align: inherit;
+	}
+
 	&-label {
-		// フォント関連スタイルをすべて継承する
+		// フォント関連スタイルをすべて継承する（line-height / text-align は上の (0,2,0) のルール）
 		font: inherit;
 		font-size: inherit;
-		line-height: inherit;
 		font-weight: inherit;
 		font-style: inherit;
 		font-variant: inherit;
@@ -314,7 +320,6 @@ $perview: var(--per-view);
 		word-spacing: inherit;
 		text-indent: inherit;
 		text-shadow: inherit;
-		text-align: inherit;
 		color: var(--color-text);
 
 		position: absolute;

@@ -527,16 +527,18 @@ $cn: '.button'; // コンポーネントセレクタ名
 				width: 100%;
 				height: 0;
 			}
+		}
 
-			// loading 中に表示される要素のスタイル
-			&-loader {
-				position: absolute;
-				inset: 0;
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				margin: auto;
-			}
+		// loading 中に表示される要素のスタイル
+		// Box で描画され、同じ要素に .box { display: block } も付くため、ラベル枠と同じく
+		// .button の子孫として (0,2,0) で書き、読み込み順で Spinner が左上に寄らないようにする。
+		#{$cn}-inner-loader {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: auto;
 		}
 
 		// ラベル枠は Typography で描画され、同じ要素に .typography も付く。
