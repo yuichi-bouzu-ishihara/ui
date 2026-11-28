@@ -179,7 +179,9 @@ $xsmall-size: 32px;
 			min-height: $large-size;
 		}
 
-		.button-inner-slot {
+		// Button の基本ルール .button .button-inner-slot (0,2,0) に読み込み順で負けないよう、
+		// 同じ要素に付く .button を重ねて (0,3,0) にする。
+		&.button .button-inner-slot {
 			padding: 0;
 			margin-top: 0 !important; // Button slot の上下の調整をキャンセル。
 		}
