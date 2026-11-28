@@ -124,6 +124,22 @@ describe('Button のラベル枠（.button-inner-slot）', () => {
 		}
 	})
 
+	it('IconButton がラベル枠の余白を消す指定は、基本の配置ルールより強い', () => {
+		// Arrange: IconButton の外側の要素には .button と .iconButton の両方が付く
+		const iconButtonRules = compileRules(`${COMPONENTS_DIR}IconButton.vue`)
+		const [base] = selectorsDeclaring(buttonRules, SLOT_SELECTOR, 'display')
+
+		// Act: IconButton がラベル枠の padding を上書きしているセレクタ
+		const paddingOverrides = selectorsDeclaring(iconButtonRules, SLOT_SELECTOR, 'padding')
+
+		// Assert: 同点だと読み込み順でアイコンの周りに余白が戻るため、基本ルールより強くする
+		expect(paddingOverrides).not.toEqual([])
+		for (const selector of paddingOverrides) {
+			expect(iconButtonRules.get(selector)).toContain('padding: 0')
+			expect(compareSpecificity(specificityOf(selector), specificityOf(base!)), selector).toBeGreaterThan(0)
+		}
+	})
+
 	it('ラベル枠に付く Typography の修飾クラスは、配置のプロパティを宣言しない', () => {
 		// Arrange & Act: (0,2,0) の修飾クラスが配置を宣言すると、ラベル枠のルールと同点になり読み込み順で決まってしまう
 		const conflicts = SLOT_TYPOGRAPHY_MODIFIERS.flatMap(modifier =>
