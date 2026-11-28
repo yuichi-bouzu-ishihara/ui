@@ -528,30 +528,6 @@ $cn: '.button'; // コンポーネントセレクタ名
 				height: 0;
 			}
 
-			&-slot {
-				// font - start -----
-				text-decoration: none;
-				// font - end -----
-
-				display: inline-flex;
-				flex-direction: row;
-				justify-content: center;
-				align-items: center;
-				gap: var(--button-medium-slot-gap);
-				width: 100%;
-				height: 100%;
-				padding: 0 var(--button-medium-padding-h);
-				margin-top: var(--button-medium-text-adjust-top);
-				pointer-events: none;
-				transition: all var.$transition-fast-duration var.$transition-base-timing-function;
-
-				&:hover:not(._disabled),
-				&:focus:not(.focus-visible),
-				&:active:not(._disabled) {
-					outline: none;
-				}
-			}
-
 			// loading 中に表示される要素のスタイル
 			&-loader {
 				position: absolute;
@@ -560,6 +536,34 @@ $cn: '.button'; // コンポーネントセレクタ名
 				justify-content: center;
 				align-items: center;
 				margin: auto;
+			}
+		}
+
+		// ラベル枠は Typography で描画され、同じ要素に .typography も付く。
+		// .typography { display: block; text-align: left; margin: 0 } と同じ詳細度 (0,1,0) だと
+		// CSS の読み込み順で勝敗が決まり、本番ビルドではラベルが左上に寄るため、
+		// .button の子孫として (0,2,0) で書き、読み込み順に依存しないようにする。
+		#{$cn}-inner-slot {
+			// font - start -----
+			text-decoration: none;
+			// font - end -----
+
+			display: inline-flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			gap: var(--button-medium-slot-gap);
+			width: 100%;
+			height: 100%;
+			padding: 0 var(--button-medium-padding-h);
+			margin-top: var(--button-medium-text-adjust-top);
+			pointer-events: none;
+			transition: all var.$transition-fast-duration var.$transition-base-timing-function;
+
+			&:hover:not(._disabled),
+			&:focus:not(.focus-visible),
+			&:active:not(._disabled) {
+				outline: none;
 			}
 		}
 	}
