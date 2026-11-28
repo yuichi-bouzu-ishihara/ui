@@ -209,7 +209,9 @@ $cn: '.radioPanel'; // コンポーネントクラス名
 			transform: scale(0.98);
 		}
 
-		&-text {
+		// Typography で描画され、同じ要素に .typography { color } も付くため、
+		// .radioPanel-item の子孫として (0,2,0) で書き、読み込み順でテーマの色が消えないようにする。
+		& &-text {
 			color: var(--forms-radio-panel-text-color);
 		}
 

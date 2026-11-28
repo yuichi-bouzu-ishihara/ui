@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
-import { compileString } from 'sass'
+import { compileStyleRules } from './utils/compileStyleRules'
 
 /**
  * Button のラベル枠（.button-inner-slot）の配置が、CSS の読み込み順に左右されないことを検証する。
@@ -20,23 +18,8 @@ type Specificity = [number, number, number]
 
 const COMPONENTS_DIR = '../src/runtime/components/elements/'
 
-/** .vue の <style lang="scss"> を取り出してコンパイルし、セレクタごとの宣言に分ける。 */
-const compileRules = (path: string) => {
-	const url = new URL(path, import.meta.url)
-	const source = readFileSync(fileURLToPath(url), 'utf8')
-	const scss = source.match(/<style lang="scss">([\s\S]*?)<\/style>/)?.[1] ?? ''
-	// @use の相対パスを解決するため、元ファイルの URL を渡す。
-	const { css } = compileString(scss, { url })
-	// @charset とコメントが次のセレクタにくっつかないよう、先に取り除く。
-	const plainCss = css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/@charset[^;]*;/g, '')
-	const rules = new Map<string, string[]>()
-	for (const [, selectors, body] of plainCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-		for (const selector of selectors!.split(',').map(s => s.trim())) {
-			rules.set(selector, [...(rules.get(selector) ?? []), ...body!.split(';').map(d => d.trim()).filter(Boolean)])
-		}
-	}
-	return rules
-}
+/** テストファイルからの相対パスで .vue の SCSS をコンパイルし、セレクタごとの宣言に分ける。 */
+const compileRules = (path: string) => compileStyleRules(new URL(path, import.meta.url))
 
 /** id・クラス/属性/擬似クラス・要素の数で詳細度を数える（このテストで扱う単純なセレクタ向け）。 */
 const specificityOf = (selector: string): Specificity => {

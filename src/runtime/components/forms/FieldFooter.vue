@@ -84,7 +84,9 @@ $cn: '.fieldFooter'; // コンポーネントセレクタ名
 			display: none;
 		}
 
-		&-txt {
+		// Typography で描画され、同じ要素に .typography { text-align: left } も付くため、
+		// .fieldFooter の子孫として (0,2,0) で書き、読み込み順に依存しないようにする。
+		#{$cn}-txt {
 			text-align: inherit;
 		}
 	}

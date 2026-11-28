@@ -1,7 +1,5 @@
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
 import { describe, it, expect } from 'vitest'
-import { compileString } from 'sass'
+import { compileStyleRules } from './utils/compileStyleRules'
 
 /**
  * Row / Column の基本クラスが width を宣言しないことを検証する。
@@ -16,19 +14,8 @@ import { compileString } from 'sass'
  * 原因となる宣言が基本クラスに無いことをコンパイル後の CSS で確かめる。
  */
 
-/** .vue の <style lang="scss"> を取り出してコンパイルし、セレクタごとの宣言に分ける。 */
-const compileRules = (path: string) => {
-	const source = readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8')
-	const scss = source.match(/<style lang="scss">([\s\S]*?)<\/style>/)?.[1] ?? ''
-	const { css } = compileString(scss)
-	const rules = new Map<string, string[]>()
-	for (const [, selectors, body] of css.matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
-		for (const selector of selectors!.split(',').map(s => s.trim())) {
-			rules.set(selector, [...(rules.get(selector) ?? []), ...body!.split(';').map(d => d.trim()).filter(Boolean)])
-		}
-	}
-	return rules
-}
+/** テストファイルからの相対パスで .vue の SCSS をコンパイルし、セレクタごとの宣言に分ける。 */
+const compileRules = (path: string) => compileStyleRules(new URL(path, import.meta.url))
 
 /** 指定したセレクタの width 宣言を返す。 */
 const widthOf = (rules: Map<string, string[]>, selector: string) =>
